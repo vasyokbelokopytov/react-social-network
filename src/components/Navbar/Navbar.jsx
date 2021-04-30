@@ -1,12 +1,12 @@
 import React from 'react';
-import c from './Navbar.module.css';
+import styles from './Navbar.module.css';
 
 import Link from './Link/Link';
 
 const Navbar = () => {
   return (
-    <nav className={c.nav}>
-      <Link title="Main" path="/main" img="https://via.placeholder.com/27" />
+    <nav className={styles.nav}>
+      <Link title="Main" exact path="/" img="https://via.placeholder.com/27" />
       <Link
         title="Messages"
         path="/messages"

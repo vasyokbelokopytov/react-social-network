@@ -1,12 +1,17 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import c from './Link.module.css';
+import styles from './Link.module.css';
 
 const Link = (props) => {
   return (
-    <NavLink className={c.link} activeClassName={c.selected} to={props.path}>
-      <img className={c.icon} src={props.img} alt="icon"></img>
-      <div className={c.title}>{props.title}</div>
+    <NavLink
+      className={styles.link}
+      activeClassName={styles.selected}
+      to={props.path}
+      exact={props.exact}
+    >
+      <img className={styles.icon} src={props.img} alt="icon"></img>
+      <div className={styles.title}>{props.title}</div>
     </NavLink>
   );
 };

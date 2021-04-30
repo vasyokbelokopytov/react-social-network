@@ -1,17 +1,17 @@
 import React from 'react';
-import c from './Item.module.css';
+import styles from './Item.module.css';
 
 const Item = (props) => {
   return (
-    <article className={c.item}>
+    <article className={styles.item}>
       <img
-        className={c.img}
+        className={styles.img}
         src="https://via.placeholder.com/90"
         alt="user"
       ></img>
-      <div className={c.name}>{props.name}</div>
-      <div className={c.date}>{props.date}</div>
-      <div className={c.text}>{props.text}</div>
+      <div className={styles.name}>{props.name}</div>
+      <div className={styles.date}>{props.date}</div>
+      <div className={styles.text}>{props.text}</div>
     </article>
   );
 };

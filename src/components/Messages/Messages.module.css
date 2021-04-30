@@ -48,6 +48,7 @@
   padding: 1em;
 
   resize: none;
+  outline: none;
 }
 
 .submit {

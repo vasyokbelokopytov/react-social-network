@@ -1,11 +1,11 @@
 import React from 'react';
-import c from './Header.module.css';
+import styles from './Header.module.css';
 
 const Header = () => {
   return (
-    <header className={c.header}>
+    <header className={styles.header}>
       <img
-        className={c.logo}
+        className={styles.logo}
         src="https://via.placeholder.com/250x70"
         alt="logo"
       ></img>

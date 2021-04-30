@@ -1,16 +1,16 @@
 import React from 'react';
-import c from './Profile.module.css';
+import styles from './Profile.module.css';
 
 import User from './User/User';
 import Form from './Form/Form';
 import Posts from './Posts/Posts';
 
-const Profile = () => {
+const Profile = (props) => {
   return (
-    <section className={c.profile}>
+    <section className={styles.profile}>
       <User />
-      <Form />
-      <Posts />
+      <Form addPost={props.addPost} />
+      <Posts posts={props.state.posts} />
     </section>
   );
 };

@@ -1,8 +1,8 @@
 import React from 'react';
-import c from './Music.module.css';
+import styles from './Music.module.css';
 
 const Music = () => {
-  return <section className={c.music}>Music</section>;
+  return <section className={styles.music}>Music</section>;
 };
 
 export default Music;

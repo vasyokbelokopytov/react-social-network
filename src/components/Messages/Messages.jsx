@@ -1,102 +1,64 @@
 import React from 'react';
-import c from './Messages.module.css';
+import styles from './Messages.module.css';
 
 import Contact from './Contact/Contact';
 import Message from './Message/Message';
 
 const Messages = (props) => {
+  let messageElements = props.state.messages.map((message) => {
+    return (
+      <Message
+        key={message.id}
+        id={message.id}
+        sender={message.sender}
+        date={message.date}
+        text={message.text}
+      />
+    );
+  });
+
+  let contactElements = props.state.contacts.map((contact) => {
+    return (
+      <Contact
+        key={contact.id}
+        id={contact.id}
+        img={contact.img}
+        name={contact.name}
+        date={contact.date}
+        text={contact.text}
+      />
+    );
+  });
+
+  const textareaRef = React.createRef();
+
+  const addMessage = (e) => {
+    e.preventDefault();
+    let message = textareaRef.current.value;
+    alert(message);
+  };
+
   return (
-    <section className={c.messages}>
-      <section className={c.window}>
-        <div className={c.display}>
-          <Message
-            sender="foreign"
-            date="22:30"
-            text="          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam dolor molestiae eos inventore dolore nulla doloribus aperiam unde corporis cupiditate quibusdam, dignissimos voluptatum ipsa temporibus incidunt laborum mollitia dolorum doloremque vero dolores quod distinctio facilis enim! Soluta, sed. A ipsa officia accusamus, fugiat autem quibusdam excepturi velit inventore voluptas necessitatibus sed minus mollitia magni nam animi? Molestias modi debitis id voluptate quidem labore adipisci provident voluptates vel cumque quibusdam eligendi ut facilis dolorum, assumenda commodi quo. Porro eveniet sed nemo nobis, quidem aperiam molestias. Aut nostrum labore eius doloribus repellat, aperiam impedit cumque sed eaque reiciendis nihil cupiditate molestias officiis."
-          />
-          <Message sender="self" date="22:30" text="S" />
-          <Message sender="foreign" date="22:30" text="Моя ответочка" />
-        </div>
-        <form className={c.form}>
+    <section className={styles.messages}>
+      <section className={styles.window}>
+        <div className={styles.display}>{messageElements}</div>
+        <form className={styles.form}>
           <textarea
-            className={c.textarea}
+            className={styles.textarea}
             name="message"
             placeholder="You can write your message here..."
+            ref={textareaRef}
           ></textarea>
-          <button className={c.submit} type="submit">
+          <button className={styles.submit} type="submit" onClick={addMessage}>
             <img
-              className={c.icon}
+              className={styles.icon}
               src="https://via.placeholder.com/27"
               alt="submit"
             />
           </button>
         </form>
       </section>
-      <section className={c.contacts}>
-        <Contact
-          id="1"
-          img="https://via.placeholder.com/90"
-          name="Vasily Belokopytov"
-          date="21:00"
-          text="Я жостик"
-        />
-        <Contact
-          id="2"
-          img="https://via.placeholder.com/90"
-          name="Тимур Будюков"
-          date="Чт"
-          text="Я не жостик"
-        />
-        <Contact
-          id="3"
-          img="https://via.placeholder.com/90"
-          name="Денис Захлебаев"
-          date="30.02.2021"
-          text="Ну шо"
-        />
-        <Contact
-          id="4"
-          img="https://via.placeholder.com/90"
-          name="Vasily Belokopytov"
-          date="21:00"
-          text="Я жостик"
-        />
-        <Contact
-          id="5"
-          img="https://via.placeholder.com/90"
-          name="Vasily Belokopytov"
-          date="21:00"
-          text="Я жостик"
-        />
-        <Contact
-          id="6"
-          img="https://via.placeholder.com/90"
-          name="Vasily Belokopytov"
-          date="21:00"
-          text="Я жостик"
-        />
-        <Contact
-          id="7"
-          img="https://via.placeholder.com/90"
-          name="Vasily Belokopytov"
-          date="21:00"
-          text="Я жостик"
-        />
-        <Contact
-          id="8"
-          img="https://via.placeholder.com/90"
-          name="Vasily Belokopytov"
-          date="21:00"
-          text="Я жостик"
-        />
-        <Contact
-          id="9"
-          img="https://via.placeholder.com/90"
-          name="Vasily Belokopytov"
-          date="21:00"
-          text="Я жостик"
-        />
-      </section>
+      <section className={styles.contacts}>{contactElements}</section>
     </section>
   );
 };

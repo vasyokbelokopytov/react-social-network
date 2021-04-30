@@ -1,8 +1,8 @@
 import React from 'react';
-import c from './Settings.module.css';
+import styles from './Settings.module.css';
 
 const Settings = () => {
-  return <section className={c.settings}>Settings</section>;
+  return <section className={styles.settings}>Settings</section>;
 };
 
 export default Settings;
