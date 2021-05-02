@@ -20,12 +20,20 @@ const App = (props) => {
         <Route exact path="/" render={() => <Main />} />
         <Route
           path="/messages"
-          render={() => <Messages state={props.state.messagesPage} />}
+          render={() => (
+            <Messages
+              state={props.state.messagesPage}
+              dispatch={props.dispatch}
+            />
+          )}
         />
         <Route
           path="/profile"
           render={() => (
-            <Profile state={props.state.profilePage} addPost={props.addPost} />
+            <Profile
+              state={props.state.profilePage}
+              dispatch={props.dispatch}
+            />
           )}
         />
         <Route path="/news" render={() => <News />} />

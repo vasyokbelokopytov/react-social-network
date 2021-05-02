@@ -28,5 +28,5 @@ body {
   border-radius: 8px;
 
   padding: 45px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }

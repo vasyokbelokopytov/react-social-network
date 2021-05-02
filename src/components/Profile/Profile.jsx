@@ -9,7 +9,7 @@ const Profile = (props) => {
   return (
     <section className={styles.profile}>
       <User />
-      <Form addPost={props.addPost} />
+      <Form dispatch={props.dispatch} newPostText={props.state.newPostText} />
       <Posts posts={props.state.posts} />
     </section>
   );

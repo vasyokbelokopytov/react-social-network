@@ -4,7 +4,11 @@ import styles from './Contact.module.css';
 
 const Contact = (props) => {
   return (
-    <NavLink className={styles.item} to={`/messages/${props.id}`}>
+    <NavLink
+      className={styles.item}
+      to={`/messages/${props.id}`}
+      activeClassName={styles.selected}
+    >
       <img className={styles.img} src={props.img} alt="contact"></img>
       <div className={styles.name}>{props.name}</div>
       <div className={styles.date}>{props.date}</div>

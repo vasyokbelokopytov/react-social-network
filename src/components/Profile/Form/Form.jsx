@@ -1,12 +1,20 @@
 import React from 'react';
 import styles from './Form.module.css';
 
+import {
+  addPostActionCreator,
+  updateNewPostTextActionCreator,
+} from '../../../redux/profile-reducer';
+
 const Form = (props) => {
-  const textareaRef = React.createRef();
   const addPost = (e) => {
     e.preventDefault();
-    const newPostText = textareaRef.current.value;
-    props.addPost(newPostText);
+    props.dispatch(addPostActionCreator());
+  };
+
+  const onTextareaChange = (e) => {
+    const newPostText = e.target.value;
+    props.dispatch(updateNewPostTextActionCreator(newPostText));
   };
 
   return (
@@ -16,8 +24,9 @@ const Form = (props) => {
         className={styles.textarea}
         name="text"
         placeholder="You can share your thoughts here..."
-        ref={textareaRef}
-      ></textarea>
+        value={props.newPostText}
+        onChange={onTextareaChange}
+      />
       <button className={styles.submit} type="submit" onClick={addPost}>
         Share
       </button>

@@ -4,6 +4,11 @@ import styles from './Messages.module.css';
 import Contact from './Contact/Contact';
 import Message from './Message/Message';
 
+import {
+  sendMessageActionCreator,
+  updateNewMessageTextActionCreator,
+} from '../../redux/messages-reducer';
+
 const Messages = (props) => {
   let messageElements = props.state.messages.map((message) => {
     return (
@@ -30,12 +35,14 @@ const Messages = (props) => {
     );
   });
 
-  const textareaRef = React.createRef();
+  const updateNewMessageText = (e) => {
+    let text = e.target.value;
+    props.dispatch(updateNewMessageTextActionCreator(text));
+  };
 
-  const addMessage = (e) => {
+  const sendMessage = (e) => {
     e.preventDefault();
-    let message = textareaRef.current.value;
-    alert(message);
+    props.dispatch(sendMessageActionCreator());
   };
 
   return (
@@ -47,9 +54,10 @@ const Messages = (props) => {
             className={styles.textarea}
             name="message"
             placeholder="You can write your message here..."
-            ref={textareaRef}
+            value={props.state.newMessageText}
+            onChange={updateNewMessageText}
           ></textarea>
-          <button className={styles.submit} type="submit" onClick={addMessage}>
+          <button className={styles.submit} type="submit" onClick={sendMessage}>
             <img
               className={styles.icon}
               src="https://via.placeholder.com/27"
