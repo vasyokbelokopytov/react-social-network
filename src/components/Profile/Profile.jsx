@@ -2,15 +2,19 @@ import React from 'react';
 import styles from './Profile.module.css';
 
 import User from './User/User';
-import Form from './Form/Form';
-import Posts from './Posts/Posts';
+import FormContainer from './Form/FormContainer';
+import PostsContainer from './Posts/PostsContainer';
 
 const Profile = (props) => {
   return (
     <section className={styles.profile}>
       <User />
-      <Form dispatch={props.dispatch} newPostText={props.state.newPostText} />
-      <Posts posts={props.state.posts} />
+      <FormContainer
+      // store={props.store}
+      />
+      <PostsContainer
+      // store={props.store}
+      />
     </section>
   );
 };

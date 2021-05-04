@@ -4,13 +4,8 @@ import styles from './Messages.module.css';
 import Contact from './Contact/Contact';
 import Message from './Message/Message';
 
-import {
-  sendMessageActionCreator,
-  updateNewMessageTextActionCreator,
-} from '../../redux/messages-reducer';
-
 const Messages = (props) => {
-  let messageElements = props.state.messages.map((message) => {
+  let messageElements = props.messages.map((message) => {
     return (
       <Message
         key={message.id}
@@ -22,7 +17,7 @@ const Messages = (props) => {
     );
   });
 
-  let contactElements = props.state.contacts.map((contact) => {
+  let contactElements = props.contacts.map((contact) => {
     return (
       <Contact
         key={contact.id}
@@ -35,14 +30,14 @@ const Messages = (props) => {
     );
   });
 
-  const updateNewMessageText = (e) => {
+  const textareaChangeHandler = (e) => {
     let text = e.target.value;
-    props.dispatch(updateNewMessageTextActionCreator(text));
+    props.updateNewMessageText(text);
   };
 
-  const sendMessage = (e) => {
+  const buttonClickHandler = (e) => {
     e.preventDefault();
-    props.dispatch(sendMessageActionCreator());
+    props.sendMessage();
   };
 
   return (
@@ -54,10 +49,14 @@ const Messages = (props) => {
             className={styles.textarea}
             name="message"
             placeholder="You can write your message here..."
-            value={props.state.newMessageText}
-            onChange={updateNewMessageText}
+            value={props.newMessageText}
+            onChange={textareaChangeHandler}
           ></textarea>
-          <button className={styles.submit} type="submit" onClick={sendMessage}>
+          <button
+            className={styles.submit}
+            type="submit"
+            onClick={buttonClickHandler}
+          >
             <img
               className={styles.icon}
               src="https://via.placeholder.com/27"

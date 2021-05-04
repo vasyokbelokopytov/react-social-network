@@ -5,11 +5,12 @@ import './App.css';
 import Header from './components/Header/Header';
 import Navbar from './components/Navbar/Navbar';
 import Main from './components/Main/Main';
-import Messages from './components/Messages/Messages';
+// import Messages from './components/Messages/Messages';
 import Profile from './components/Profile/Profile';
 import News from './components/News/News';
 import Music from './components/Music/Music';
 import Settings from './components/Settings/Settings';
+import MessagesContainer from './components/Messages/MessagesContainer';
 
 const App = (props) => {
   return (
@@ -21,9 +22,8 @@ const App = (props) => {
         <Route
           path="/messages"
           render={() => (
-            <Messages
-              state={props.state.messagesPage}
-              dispatch={props.dispatch}
+            <MessagesContainer
+            //  store={props.store}
             />
           )}
         />
@@ -31,8 +31,7 @@ const App = (props) => {
           path="/profile"
           render={() => (
             <Profile
-              state={props.state.profilePage}
-              dispatch={props.dispatch}
+            // store={props.store}
             />
           )}
         />
