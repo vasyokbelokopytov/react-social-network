@@ -45,9 +45,11 @@ const profileReducer = (state = initialState, action) => {
         text: state.newPostText,
       };
 
-      state.posts.push(newPost);
-      state.newPostText = '';
-      return state;
+      return {
+        ...state,
+        posts: [...state.posts, newPost],
+        newPostText: '',
+      };
 
       function getStringDate() {
         const date = new Date();
@@ -66,9 +68,12 @@ const profileReducer = (state = initialState, action) => {
 
         return `${hours}:${minutes} ${dayTime} · ${day}.${month}.${year}`;
       }
+
     case UPDATE_NEW_POST_TEXT:
-      state.newPostText = action.text;
-      return state;
+      return {
+        ...state,
+        newPostText: action.text,
+      };
     default:
       return state;
   }

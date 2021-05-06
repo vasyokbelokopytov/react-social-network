@@ -124,9 +124,11 @@ const messagesReducer = (state = initialState, action) => {
         text: state.newMessageText,
       };
 
-      state.messages.push(newMessage);
-      state.newMessageText = '';
-      return state;
+      return {
+        ...state,
+        newMessageText: '',
+        messages: [...state.messages, newMessage],
+      };
 
       function getStringDate() {
         const date = new Date();
@@ -144,8 +146,10 @@ const messagesReducer = (state = initialState, action) => {
       }
 
     case UPDATE_NEW_MESSAGE_TEXT:
-      state.newMessageText = action.text;
-      return state;
+      return {
+        ...state,
+        newMessageText: action.text,
+      };
 
     default:
       return state;
