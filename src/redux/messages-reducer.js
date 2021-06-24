@@ -80,8 +80,7 @@ const initialState = {
       id: 1,
       sender: 'foreign',
       date: '22:30',
-      text:
-        '          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam dolor molestiae eos inventore dolore nulla doloribus aperiam unde corporis cupiditate quibusdam, dignissimos voluptatum ipsa temporibus incidunt laborum mollitia dolorum doloremque vero dolores quod distinctio facilis enim! Soluta, sed. A ipsa officia accusamus, fugiat autem quibusdam excepturi velit inventore voluptas necessitatibus sed minus mollitia magni nam animi? Molestias modi debitis id voluptate quidem labore adipisci provident voluptates vel cumque quibusdam eligendi ut facilis dolorum, assumenda commodi quo. Porro eveniet sed nemo nobis, quidem aperiam molestias. Aut nostrum labore eius doloribus repellat, aperiam impedit cumque sed eaque reiciendis nihil cupiditate molestias officiis.',
+      text: '          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam dolor molestiae eos inventore dolore nulla doloribus aperiam unde corporis cupiditate quibusdam, dignissimos voluptatum ipsa temporibus incidunt laborum mollitia dolorum doloremque vero dolores quod distinctio facilis enim! Soluta, sed. A ipsa officia accusamus, fugiat autem quibusdam excepturi velit inventore voluptas necessitatibus sed minus mollitia magni nam animi? Molestias modi debitis id voluptate quidem labore adipisci provident voluptates vel cumque quibusdam eligendi ut facilis dolorum, assumenda commodi quo. Porro eveniet sed nemo nobis, quidem aperiam molestias. Aut nostrum labore eius doloribus repellat, aperiam impedit cumque sed eaque reiciendis nihil cupiditate molestias officiis.',
     },
     {
       id: 2,
@@ -93,15 +92,13 @@ const initialState = {
       id: 3,
       sender: 'foreign',
       date: '22:14',
-      text:
-        '          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam dolor molestiae eos inventore dolore nulla doloribus aperiam unde corporis cupiditate quibusdam, dignissimos voluptatum ipsa temporibus inciam impedit cumque sed eaque reiciendis nihil cupiditate molestias officiis.',
+      text: '          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veniam dolor molestiae eos inventore dolore nulla doloribus aperiam unde corporis cupiditate quibusdam, dignissimos voluptatum ipsa temporibus inciam impedit cumque sed eaque reiciendis nihil cupiditate molestias officiis.',
     },
     {
       id: 4,
       sender: 'foreign',
       date: '22:30',
-      text:
-        'bore adipisci provident voluptates vel cumque quibusdam eligendi ut facilis dolorum, assumenda commodi quo. Porro eveniet sed nemo nobis, quidem aperiam molestias. Aut nostrum labore eius doloribus repellat, aperiam impedit cumque sed eaque reiciendis nihil cupiditate molestias officiis.',
+      text: 'bore adipisci provident voluptates vel cumque quibusdam eligendi ut facilis dolorum, assumenda commodi quo. Porro eveniet sed nemo nobis, quidem aperiam molestias. Aut nostrum labore eius doloribus repellat, aperiam impedit cumque sed eaque reiciendis nihil cupiditate molestias officiis.',
     },
     {
       id: 5,
@@ -156,9 +153,9 @@ const messagesReducer = (state = initialState, action) => {
   }
 };
 
-export const sendMessageActionCreator = () => ({ type: SEND_MESSAGE });
+export const sendMessageAC = () => ({ type: SEND_MESSAGE });
 
-export const updateNewMessageTextActionCreator = (newMessageText) => ({
+export const updateNewMessageTextAC = (newMessageText) => ({
   type: UPDATE_NEW_MESSAGE_TEXT,
   text: newMessageText,
 });

@@ -17,6 +17,8 @@ const Navbar = () => {
         path="/profile"
         img="https://via.placeholder.com/27"
       />
+      <Link title="Users" path="/users" img="https://via.placeholder.com/27" />
+
       <Link title="News" path="/news" img="https://via.placeholder.com/27" />
       <Link title="Music" path="/music" img="https://via.placeholder.com/27" />
       <Link

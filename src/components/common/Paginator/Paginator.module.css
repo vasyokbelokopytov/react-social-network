@@ -1,0 +1,51 @@
+.paginator {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  font-family: 'Montserrat', sans-serif;
+}
+
+.button {
+  display: block;
+  width: 3em;
+  height: 2em;
+
+  border: none;
+  border-radius: 0;
+
+  font-family: inherit;
+  font-size: 20px;
+
+  background-color: inherit;
+
+  padding: 0;
+  cursor: pointer;
+}
+
+.button:not(.currentPage):hover {
+  background-color: #f4f4f4;
+}
+
+.pageButtons {
+  grid-column: 2;
+  display: flex;
+  justify-self: center;
+}
+
+.pageButton:last-child {
+  margin-right: 0;
+}
+
+.prevButton {
+  grid-column: 1;
+  justify-self: end;
+}
+
+.nextButton {
+  grid-column: 3;
+  justify-self: start;
+}
+
+.currentPage {
+  background-color: #b9eff6;
+}

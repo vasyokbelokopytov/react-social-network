@@ -9,12 +9,8 @@ const Profile = (props) => {
   return (
     <section className={styles.profile}>
       <User />
-      <FormContainer
-      // store={props.store}
-      />
-      <PostsContainer
-      // store={props.store}
-      />
+      <FormContainer />
+      <PostsContainer />
     </section>
   );
 };

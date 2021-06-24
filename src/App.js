@@ -5,8 +5,8 @@ import './App.css';
 import Header from './components/Header/Header';
 import Navbar from './components/Navbar/Navbar';
 import Main from './components/Main/Main';
-// import Messages from './components/Messages/Messages';
 import Profile from './components/Profile/Profile';
+import UsersContainer from './components/Users/UsersContainer';
 import News from './components/News/News';
 import Music from './components/Music/Music';
 import Settings from './components/Settings/Settings';
@@ -19,22 +19,9 @@ const App = (props) => {
       <Navbar />
       <main className="main">
         <Route exact path="/" render={() => <Main />} />
-        <Route
-          path="/messages"
-          render={() => (
-            <MessagesContainer
-            //  store={props.store}
-            />
-          )}
-        />
-        <Route
-          path="/profile"
-          render={() => (
-            <Profile
-            // store={props.store}
-            />
-          )}
-        />
+        <Route path="/messages" render={() => <MessagesContainer />} />
+        <Route path="/profile" render={() => <Profile />} />
+        <Route path="/users" render={() => <UsersContainer />} />
         <Route path="/news" render={() => <News />} />
         <Route path="/music" render={() => <Music />} />
         <Route path="/settings" render={() => <Settings />} />
