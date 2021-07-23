@@ -1,54 +1,20 @@
+import { usersAPI } from '../api/api';
+
 const FOLLOW = 'FOLLOW';
 const UNFOLLOW = 'UNFOLLOW';
 const SET_USERS = 'SET-USERS';
 const SET_CURRENT_PAGE = 'SET-CURRENT-PAGE';
 const SET_TOTAL_USERS_COUNT = 'SET-TOTAL-USERS-COUNT';
 const TOGGLE_LOADER = 'TOGGLE-LOADER';
+const SET_FOLLOWING = 'TOGGLE-FOLLOWING';
 
 const initialState = {
-  // users: [
-  //   {
-  //     id: 1,
-  //     name: 'Vasily',
-  //     photoURL:
-  //       'https://i.pinimg.com/originals/bb/36/69/bb3669015ea166c1df4a1b308754f171.jpg',
-  //     location: {
-  //       country: 'Ukraine',
-  //       city: 'Kyiv',
-  //     },
-  //     status: 'hi',
-  //     followed: false,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Vasily',
-  //     photoURL:
-  //       'https://i.pinimg.com/originals/bb/36/69/bb3669015ea166c1df4a1b308754f171.jpg',
-  //     location: {
-  //       country: 'Russia',
-  //       city: 'Moscow',
-  //     },
-  //     status: 'hi',
-  //     followed: false,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Gena',
-  //     photoURL:
-  //       'https://i.pinimg.com/originals/bb/36/69/bb3669015ea166c1df4a1b308754f171.jpg',
-  //     location: {
-  //       country: 'Italy',
-  //       city: 'Milan',
-  //     },
-  //     status: 'Enough',
-  //     followed: true,
-  //   },
-  // ],
   users: [],
   pageSize: 10,
   totalUsersCount: 0,
   currentPage: 1,
   isFetching: false,
+  isFollowing: [],
 };
 
 const usersReducer = (state = initialState, action) => {
@@ -107,27 +73,80 @@ const usersReducer = (state = initialState, action) => {
         isFetching: !state.isFetching,
       };
 
+    case SET_FOLLOWING:
+      return {
+        ...state,
+        isFollowing: action.isFollowing
+          ? [...state.isFollowing, action.id]
+          : state.isFollowing.filter((id) => id !== action.id),
+      };
+
     default:
       return state;
   }
 };
 
-export const followAC = (userId) => ({ type: FOLLOW, userId });
+export const follow = (userId) => ({ type: FOLLOW, userId });
 
-export const unfollowAC = (userId) => ({ type: UNFOLLOW, userId });
+export const unfollow = (userId) => ({ type: UNFOLLOW, userId });
 
-export const setUsersAC = (users) => ({ type: SET_USERS, users });
+export const setUsers = (users) => ({ type: SET_USERS, users });
 
-export const setCurrentPageAC = (currentPage) => ({
+export const setCurrentPage = (currentPage) => ({
   type: SET_CURRENT_PAGE,
   currentPage,
 });
 
-export const setTotalUsersCountAC = (totalUsersCount) => ({
+export const setTotalUsersCount = (totalUsersCount) => ({
   type: SET_TOTAL_USERS_COUNT,
   totalUsersCount,
 });
 
-export const toggleLoaderAC = () => ({ type: TOGGLE_LOADER });
+export const toggleLoader = () => ({ type: TOGGLE_LOADER });
+
+export const setFollowing = (isFollowing, id) => ({
+  type: SET_FOLLOWING,
+  isFollowing,
+  id,
+});
+
+export const getUsers = (currentPage = 1, pageSize = 10) => {
+  return (dispatch) => {
+    dispatch(setCurrentPage(currentPage));
+    dispatch(toggleLoader());
+
+    usersAPI.getUsers(currentPage, pageSize).then((data) => {
+      dispatch(toggleLoader());
+      dispatch(setUsers(data.items));
+      dispatch(setTotalUsersCount(data.totalCount));
+    });
+  };
+};
+
+export const followUser = (id) => {
+  return (dispatch) => {
+    dispatch(setFollowing(true, id));
+
+    usersAPI.follow(id).then((data) => {
+      if (data.resultCode === 0) {
+        dispatch(follow(id));
+        dispatch(setFollowing(false, id));
+      }
+    });
+  };
+};
+
+export const unfollowUser = (id) => {
+  return (dispatch) => {
+    dispatch(setFollowing(true, id));
+
+    usersAPI.unfollow(id).then((data) => {
+      if (data.resultCode === 0) {
+        dispatch(unfollow(id));
+        dispatch(setFollowing(false, id));
+      }
+    });
+  };
+};
 
 export default usersReducer;

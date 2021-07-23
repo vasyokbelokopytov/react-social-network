@@ -153,9 +153,9 @@ const messagesReducer = (state = initialState, action) => {
   }
 };
 
-export const sendMessageAC = () => ({ type: SEND_MESSAGE });
+export const sendMessage = () => ({ type: SEND_MESSAGE });
 
-export const updateNewMessageTextAC = (newMessageText) => ({
+export const updateNewMessageText = (newMessageText) => ({
   type: UPDATE_NEW_MESSAGE_TEXT,
   text: newMessageText,
 });

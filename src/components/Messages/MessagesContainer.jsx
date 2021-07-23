@@ -1,8 +1,11 @@
 import { connect } from 'react-redux';
+import { compose } from 'redux';
+
 import {
-  sendMessageAC,
-  updateNewMessageTextAC,
+  sendMessage,
+  updateNewMessageText,
 } from '../../redux/messages-reducer';
+import withAuthRedirect from '../../hoc/withAuthRedirect';
 
 import Messages from './Messages';
 
@@ -14,20 +17,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    updateNewMessageText: (text) => {
-      dispatch(updateNewMessageTextAC(text));
-    },
-    sendMessage: () => {
-      dispatch(sendMessageAC());
-    },
-  };
-};
-
-const MessagesContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  connect(mapStateToProps, {
+    updateNewMessageText,
+    sendMessage,
+  }),
+  withAuthRedirect
 )(Messages);
-
-export default MessagesContainer;

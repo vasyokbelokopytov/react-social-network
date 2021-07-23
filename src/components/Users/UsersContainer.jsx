@@ -1,43 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as axios from 'axios';
 
 import {
-  setUsersAC,
-  unfollowAC,
-  followAC,
-  setCurrentPageAC,
-  setTotalUsersCountAC,
-  toggleLoaderAC,
+  setCurrentPage,
+  getUsers,
+  followUser,
+  unfollowUser,
 } from '../../redux/users-reducer';
 
 import Users from './Users';
 
 class UsersContainer extends React.Component {
   componentDidMount() {
-    this.props.toggleLoader();
-    axios
-      .get(
-        `https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}`
-      )
-      .then((response) => {
-        this.props.toggleLoader();
-        this.props.setUsers(response.data.items);
-        this.props.setTotalUsersCount(response.data.totalCount);
-      });
+    this.props.getUsers(this.props.currentPage, this.props.pageSize);
   }
 
   pageChangeHandler = (pageNum) => {
-    this.props.setCurrentPage(pageNum);
-    this.props.toggleLoader();
-    axios
-      .get(
-        `https://social-network.samuraijs.com/api/1.0/users?page=${pageNum}&count=${this.props.pageSize}`
-      )
-      .then((response) => {
-        this.props.toggleLoader();
-        this.props.setUsers(response.data.items);
-      });
+    this.props.getUsers(pageNum, this.props.pageSize);
   };
 
   render() {
@@ -49,8 +28,9 @@ class UsersContainer extends React.Component {
         currentPage={this.props.currentPage}
         isFetching={this.props.isFetching}
         pageChangeHandler={this.pageChangeHandler}
-        follow={this.props.follow}
-        unfollow={this.props.unfollow}
+        isFollowing={this.props.isFollowing}
+        followUser={this.props.followUser}
+        unfollowUser={this.props.unfollowUser}
       />
     );
   }
@@ -63,35 +43,13 @@ const mapStateToProps = (state) => {
     totalUsersCount: state.usersPage.totalUsersCount,
     currentPage: state.usersPage.currentPage,
     isFetching: state.usersPage.isFetching,
+    isFollowing: state.usersPage.isFollowing,
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    follow: (userId) => {
-      dispatch(followAC(userId));
-    },
-
-    unfollow: (userId) => {
-      dispatch(unfollowAC(userId));
-    },
-
-    setUsers: (users) => {
-      dispatch(setUsersAC(users));
-    },
-
-    setCurrentPage: (currentPage) => {
-      dispatch(setCurrentPageAC(currentPage));
-    },
-
-    setTotalUsersCount: (totalUsersCount) => {
-      dispatch(setTotalUsersCountAC(totalUsersCount));
-    },
-
-    toggleLoader: () => {
-      dispatch(toggleLoaderAC());
-    },
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UsersContainer);
+export default connect(mapStateToProps, {
+  setCurrentPage,
+  getUsers,
+  followUser,
+  unfollowUser,
+})(UsersContainer);

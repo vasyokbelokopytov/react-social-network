@@ -13,23 +13,26 @@ const Users = (props) => {
       <h1 className={styles.title}>Search users:</h1>
       {/* <input className={styles.input} type="text" /> */}
 
-      {props.isFetching ? <Loader /> : ''}
-      {props.users.map((user) => {
-        return (
-          <UserItem
-            key={user.id}
-            id={user.id}
-            name={user.name}
-            photoURL={user.photos.small ?? userImg}
-            country="Ukraine"
-            city="Kyiv"
-            status={user.status}
-            followed={user.followed}
-            follow={props.follow}
-            unfollow={props.unfollow}
-          />
-        );
-      })}
+      {props.isFetching && <Loader />}
+      <div className={styles.usersList}>
+        {props.users.map((user) => {
+          return (
+            <UserItem
+              key={user.id}
+              id={user.id}
+              name={user.name}
+              photoURL={user.photos.small ?? userImg}
+              country="Ukraine"
+              city="Kyiv"
+              status={user.status}
+              followed={user.followed}
+              isFollowing={props.isFollowing}
+              followUser={props.followUser}
+              unfollowUser={props.unfollowUser}
+            />
+          );
+        })}
+      </div>
 
       <div className={styles.paginator}>
         <Paginator

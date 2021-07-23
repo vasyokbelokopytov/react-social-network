@@ -23,7 +23,7 @@ const Paginator = (props) => {
 
   return (
     <div className={styles.paginator}>
-      {currentPortion > 1 ? (
+      {currentPortion > 1 && (
         <button
           className={`${styles.button} ${styles.prevButton}`}
           onClick={() => {
@@ -33,8 +33,6 @@ const Paginator = (props) => {
         >
           . . .
         </button>
-      ) : (
-        ''
       )}
 
       <div className={styles.pageButtons}>
