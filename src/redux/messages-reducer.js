@@ -1,5 +1,4 @@
 const SEND_MESSAGE = 'SEND-MESSAGE';
-const UPDATE_NEW_MESSAGE_TEXT = 'UPDATE-NEW-MESSAGE-TEXT';
 
 const initialState = {
   contacts: [
@@ -107,8 +106,6 @@ const initialState = {
       text: 'njnj',
     },
   ],
-
-  newMessageText: '',
 };
 
 const messagesReducer = (state = initialState, action) => {
@@ -118,12 +115,11 @@ const messagesReducer = (state = initialState, action) => {
         id: state.messages.length + 1,
         sender: 'self',
         date: getStringDate(),
-        text: state.newMessageText,
+        text: action.message,
       };
 
       return {
         ...state,
-        newMessageText: '',
         messages: [...state.messages, newMessage],
       };
 
@@ -142,22 +138,11 @@ const messagesReducer = (state = initialState, action) => {
         return `${hours}:${minutes} ${dayTime}`;
       }
 
-    case UPDATE_NEW_MESSAGE_TEXT:
-      return {
-        ...state,
-        newMessageText: action.text,
-      };
-
     default:
       return state;
   }
 };
 
-export const sendMessage = () => ({ type: SEND_MESSAGE });
-
-export const updateNewMessageText = (newMessageText) => ({
-  type: UPDATE_NEW_MESSAGE_TEXT,
-  text: newMessageText,
-});
+export const sendMessage = (message) => ({ type: SEND_MESSAGE, message });
 
 export default messagesReducer;

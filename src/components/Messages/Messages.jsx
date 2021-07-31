@@ -3,6 +3,7 @@ import styles from './Messages.module.css';
 
 import Contact from './Contact/Contact';
 import Message from './Message/Message';
+import MessagesForm from './MessagesForm/MessagesForm';
 
 const Messages = (props) => {
   let messageElements = props.messages.map((message) => {
@@ -30,40 +31,16 @@ const Messages = (props) => {
     );
   });
 
-  const textareaChangeHandler = (e) => {
-    let text = e.target.value;
-    props.updateNewMessageText(text);
-  };
-
-  const buttonClickHandler = (e) => {
-    e.preventDefault();
-    props.sendMessage();
+  const submitHandler = (data) => {
+    props.sendMessage(data.message);
+    console.log(data);
   };
 
   return (
     <section className={styles.messages}>
       <section className={styles.window}>
         <div className={styles.display}>{messageElements}</div>
-        <form className={styles.form}>
-          <textarea
-            className={styles.textarea}
-            name="message"
-            placeholder="You can write your message here..."
-            value={props.newMessageText}
-            onChange={textareaChangeHandler}
-          ></textarea>
-          <button
-            className={styles.submit}
-            type="submit"
-            onClick={buttonClickHandler}
-          >
-            <img
-              className={styles.icon}
-              src="https://via.placeholder.com/27"
-              alt="submit"
-            />
-          </button>
-        </form>
+        <MessagesForm onSubmit={submitHandler} />
       </section>
       <section className={styles.contacts}>{contactElements}</section>
     </section>

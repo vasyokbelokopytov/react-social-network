@@ -11,7 +11,7 @@ import News from './components/News/News';
 import Music from './components/Music/Music';
 import Settings from './components/Settings/Settings';
 import MessagesContainer from './components/Messages/MessagesContainer';
-import Login from './components/Login/Login';
+import LoginContainer from './components/Login/LoginContainer';
 
 const App = (props) => {
   return (
@@ -26,7 +26,7 @@ const App = (props) => {
         <Route path="/news" render={() => <News />} />
         <Route path="/music" render={() => <Music />} />
         <Route path="/settings" render={() => <Settings />} />
-        <Route path="/login" render={() => <Login />} />
+        <Route path="/login" render={() => <LoginContainer />} />
       </main>
     </div>
   );

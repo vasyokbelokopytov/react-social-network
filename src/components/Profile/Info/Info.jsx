@@ -19,24 +19,33 @@ const Info = (props) => {
 
       <div className={styles.description}>
         {props.profile.contacts.instagram && (
-          <InfoItem name="Instagram" link={props.profile.contacts.instagram} />
+          <InfoItem
+            name="Instagram"
+            content={props.profile.contacts.instagram}
+          />
         )}
 
         {props.profile.contacts.facebook && (
-          <InfoItem name="Facebook" link={props.profile.contacts.facebook} />
+          <InfoItem name="Facebook" content={props.profile.contacts.facebook} />
         )}
 
         {props.profile.contacts.website && (
-          <InfoItem name="Website" link={props.profile.contacts.website} />
+          <InfoItem name="Website" content={props.profile.contacts.website} />
         )}
 
         {props.profile.contacts.instagram && (
-          <InfoItem name="Instagram" link={props.profile.contacts.instagram} />
+          <InfoItem
+            name="Instagram"
+            content={props.profile.contacts.instagram}
+          />
         )}
 
-        {props.profile.contacts.instagram && (
-          <InfoItem name="Status" content={props.profile.aboutMe} />
-        )}
+        <InfoItem
+          editable
+          name="Status"
+          content={props.status}
+          updateInfoItem={props.updateUserStatus}
+        />
       </div>
     </section>
   );

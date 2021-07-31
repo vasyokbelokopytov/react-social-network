@@ -31,7 +31,8 @@
 }
 
 .login {
-  font-size: 14px;
+  font-size: 18px;
+  margin-right: 20px;
 }
 
 .userImg {
@@ -41,4 +42,10 @@
   border-radius: 50%;
 
   margin-right: 15px;
+}
+
+.logoutIcon {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
 }

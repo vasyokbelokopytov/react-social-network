@@ -1,0 +1,37 @@
+.oldCheckbox {
+  width: 1px;
+  height: 1px;
+
+  position: absolute;
+
+  border: 0;
+
+  padding: 0;
+  margin: -1px;
+
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.newCheckbox {
+  display: block;
+  position: relative;
+
+  border-radius: 3px;
+  border: 1px solid #cdcdcd;
+  transition: all 500ms;
+
+  cursor: pointer;
+}
+
+.checkmark {
+  width: 85%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  fill: none;
+  stroke: white;
+  stroke-width: 2px;
+}
