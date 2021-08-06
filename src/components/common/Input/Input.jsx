@@ -8,7 +8,7 @@ const Input = ({ className, title, input, meta, ...props }) => {
     transition: 'border 500ms',
   };
 
-  const hasError = meta.touched && meta.error;
+  const hasError = meta.touched && (meta.error || meta.submitError);
 
   return (
     <label
@@ -16,7 +16,9 @@ const Input = ({ className, title, input, meta, ...props }) => {
     >
       <div className={styles.title}>{title}</div>
       <div className={styles.wrapper}>
-        {hasError && <div className={styles.error}>{meta.error}</div>}
+        {hasError && (
+          <div className={styles.error}>{meta.error || meta.submitError}</div>
+        )}
         <input
           className={styles.input}
           type="text"

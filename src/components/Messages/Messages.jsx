@@ -33,7 +33,6 @@ const Messages = (props) => {
 
   const submitHandler = (data) => {
     props.sendMessage(data.message);
-    console.log(data);
   };
 
   return (

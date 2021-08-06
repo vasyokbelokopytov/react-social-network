@@ -12,7 +12,6 @@ const initialState = {
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_USER_AUTH_DATA:
-      console.log('data', action.data);
       return {
         ...state,
         ...action.data,
@@ -32,7 +31,6 @@ export const getUserAuthData = () => {
   return (dispatch) => {
     authAPI.me().then((data) => {
       if (data.resultCode === 0) {
-        console.log(data);
         const { id, email, login } = data.data;
         dispatch(setUserAuthData(id, email, login, true));
       }
@@ -40,18 +38,22 @@ export const getUserAuthData = () => {
   };
 };
 
-export const login = (email, password, rememberMe) => {
+export const logIn = (email, password, rememberMe) => {
   return (dispatch) => {
-    authAPI.login(email, password, rememberMe).then((data) => {
-      console.log(data);
-      if (data.resultCode === 0) {
-        dispatch(getUserAuthData());
-      }
+    return new Promise((res, rej) => {
+      authAPI.login(email, password, rememberMe).then((data) => {
+        if (data.resultCode === 0) {
+          res();
+          dispatch(getUserAuthData());
+        } else {
+          res(data.messages);
+        }
+      });
     });
   };
 };
 
-export const logout = () => {
+export const logOut = () => {
   return (dispatch) => {
     authAPI.logout().then((data) => {
       if (data.resultCode === 0) {

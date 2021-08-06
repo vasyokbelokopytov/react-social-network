@@ -29,7 +29,7 @@ const Header = (props) => {
             className={styles.logoutIcon}
             src={logoutImg}
             alt="logout"
-            onClick={props.logout}
+            onClick={props.logOut}
           />
         </div>
       ) : (
