@@ -1,72 +1,65 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './InfoItem.module.css';
 
-class InfoItem extends React.Component {
-  state = {
-    editMode: false,
-    content: this.props.content,
-    inputValue: this.props.content,
+const InfoItem = (props) => {
+  const [editMode, setEditMode] = useState(false);
+  const [inputValue, setInputValue] = useState(props.content);
+
+  useEffect(() => {
+    setInputValue(props.content);
+  }, [props.content]);
+
+  const edit = () => {
+    if (props.editable) {
+      setEditMode(true);
+      setInputValue(props.content);
+    }
   };
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.content !== this.props.content) {
-      this.setState({ content: this.props.content });
-    }
-  }
-
-  edit() {
-    if (this.props.editable) {
-      this.setState({ editMode: true, inputValue: this.props.content });
-    }
-  }
-
-  inputChangeHandler(e) {
+  const inputChangeHandler = (e) => {
     const value = e.target.value;
-    this.setState({ inputValue: value });
-  }
+    setInputValue(value);
+  };
 
-  save() {
-    this.setState((state) => ({ editMode: false, content: state.inputValue }));
+  const save = () => {
+    setEditMode(false);
+    props.updateInfoItem(inputValue);
+  };
 
-    this.props.updateInfoItem(this.state.inputValue);
-  }
+  const close = () => {
+    setEditMode(false);
+  };
 
-  close() {
-    this.setState((state) => ({ editMode: false, inputValue: state.content }));
-  }
+  return (
+    <div className={styles.item}>
+      <span
+        className={styles.name}
+        style={props.editable ? { cursor: 'pointer' } : {}}
+        onClick={() => edit()}
+      >
+        {props.name}:{' '}
+      </span>
 
-  render() {
-    return (
-      <div className={styles.item}>
-        <span
-          className={styles.name}
-          style={this.props.editable ? { cursor: 'pointer' } : {}}
-          onClick={() => this.edit()}
-        >
-          {this.props.name}:{' '}
-        </span>
+      <span className={styles.content}>{props.content}</span>
 
-        <span className={styles.content}>{this.props.content}</span>
-
-        {this.props.editable && this.state.editMode && (
-          <div className={styles.editor}>
-            <input
-              autoFocus={true}
-              className={styles.input}
-              value={this.state.inputValue}
-              onChange={(e) => this.inputChangeHandler(e)}
-            />
-            <button className={styles.saveButton} onClick={() => this.save()}>
-              Save
-            </button>
-            <div className={styles.closeButton} onClick={() => this.close()}>
-              ✖
-            </div>
+      {props.editable && editMode && (
+        <div className={styles.editor}>
+          <input
+            autoFocus={true}
+            className={styles.input}
+            value={inputValue}
+            onChange={(e) => inputChangeHandler(e)}
+          />
+          <button className={styles.saveButton} onClick={() => save()}>
+            Save
+          </button>
+          <div className={styles.closeButton} onClick={() => close()}>
+            ✖
           </div>
-        )}
-      </div>
-    );
-  }
-}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default InfoItem;

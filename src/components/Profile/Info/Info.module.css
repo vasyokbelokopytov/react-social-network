@@ -6,7 +6,7 @@
     'img description';
   grid-template-columns: auto 1fr;
   grid-template-rows: auto 1fr;
-  grid-row-gap: 30px;
+  grid-row-gap: 15px;
   grid-column-gap: 15px;
   margin-bottom: 100px;
 }
@@ -14,8 +14,8 @@
 .imgWrapper {
   grid-area: img;
 
-  width: 185px;
-  height: 185px;
+  width: 200px;
+  height: 200px;
 
   border-radius: 8px;
 }

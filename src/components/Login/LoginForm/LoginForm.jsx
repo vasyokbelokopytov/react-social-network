@@ -21,7 +21,6 @@ const LoginForm = (props) => {
   return (
     <Form onSubmit={logIn}>
       {({ handleSubmit, submitError }) => {
-        console.log('submitError', submitError);
         return (
           <form className={styles.form} onSubmit={handleSubmit}>
             <Field name="email" validate={required}>

@@ -1,6 +1,6 @@
 import { authAPI } from '../api/api';
 
-const SET_USER_AUTH_DATA = 'SET-USER-DATA';
+const SET_USER_AUTH_DATA = 'social-network/auth/SET-USER-DATA';
 
 const initialState = {
   id: null,
@@ -27,40 +27,32 @@ export const setUserAuthData = (id, email, login, isAuth) => ({
   data: { id, email, login, isAuth },
 });
 
-export const getUserAuthData = () => {
-  return (dispatch) => {
-    authAPI.me().then((data) => {
-      if (data.resultCode === 0) {
-        const { id, email, login } = data.data;
-        dispatch(setUserAuthData(id, email, login, true));
-      }
-    });
-  };
+export const loadUserAuthData = () => async (dispatch) => {
+  const data = await authAPI.me();
+
+  if (data.resultCode === 0) {
+    const { id, email, login } = data.data;
+    dispatch(setUserAuthData(id, email, login, true));
+  }
 };
 
-export const logIn = (email, password, rememberMe) => {
-  return (dispatch) => {
-    return new Promise((res, rej) => {
-      authAPI.login(email, password, rememberMe).then((data) => {
-        if (data.resultCode === 0) {
-          res();
-          dispatch(getUserAuthData());
-        } else {
-          res(data.messages);
-        }
-      });
-    });
-  };
+export const logIn = (email, password, rememberMe) => async (dispatch) => {
+  const data = await authAPI.login(email, password, rememberMe);
+
+  if (data.resultCode === 0) {
+    dispatch(loadUserAuthData());
+    return;
+  }
+
+  return data.messages;
 };
 
-export const logOut = () => {
-  return (dispatch) => {
-    authAPI.logout().then((data) => {
-      if (data.resultCode === 0) {
-        dispatch(setUserAuthData(null, null, null, false));
-      }
-    });
-  };
+export const logOut = () => async (dispatch) => {
+  const data = await authAPI.logout();
+
+  if (data.resultCode === 0) {
+    dispatch(setUserAuthData(null, null, null, false));
+  }
 };
 
 export default authReducer;

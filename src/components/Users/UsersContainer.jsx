@@ -3,20 +3,29 @@ import { connect } from 'react-redux';
 
 import {
   setCurrentPage,
-  getUsers,
+  loadUsers,
   followUser,
   unfollowUser,
 } from '../../redux/users-reducer';
+
+import {
+  selectUsers,
+  selectCurrentPage,
+  selectIsFetching,
+  selectIsFollowing,
+  selectPageSize,
+  selectTotalUsersCount,
+} from '../../redux/selectors/users-selectors';
 
 import Users from './Users';
 
 class UsersContainer extends React.Component {
   componentDidMount() {
-    this.props.getUsers(this.props.currentPage, this.props.pageSize);
+    this.props.loadUsers(this.props.currentPage, this.props.pageSize);
   }
 
   pageChangeHandler = (pageNum) => {
-    this.props.getUsers(pageNum, this.props.pageSize);
+    this.props.loadUsers(pageNum, this.props.pageSize);
   };
 
   render() {
@@ -38,18 +47,18 @@ class UsersContainer extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.usersPage.users,
-    pageSize: state.usersPage.pageSize,
-    totalUsersCount: state.usersPage.totalUsersCount,
-    currentPage: state.usersPage.currentPage,
-    isFetching: state.usersPage.isFetching,
-    isFollowing: state.usersPage.isFollowing,
+    users: selectUsers(state),
+    pageSize: selectPageSize(state),
+    totalUsersCount: selectTotalUsersCount(state),
+    currentPage: selectCurrentPage(state),
+    isFetching: selectIsFetching(state),
+    isFollowing: selectIsFollowing(state),
   };
 };
 
 export default connect(mapStateToProps, {
   setCurrentPage,
-  getUsers,
+  loadUsers,
   followUser,
   unfollowUser,
 })(UsersContainer);

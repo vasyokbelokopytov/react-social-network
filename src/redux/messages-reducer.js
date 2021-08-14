@@ -1,4 +1,5 @@
-const SEND_MESSAGE = 'SEND-MESSAGE';
+import { getStringDate } from '../utilities/helpers/helpers';
+const SEND_MESSAGE = 'social-network/messages/SEND-MESSAGE';
 
 const initialState = {
   contacts: [
@@ -122,21 +123,6 @@ const messagesReducer = (state = initialState, action) => {
         ...state,
         messages: [...state.messages, newMessage],
       };
-
-      function getStringDate() {
-        const date = new Date();
-        const minutes = addZeros(date.getMinutes());
-        const dayTime = date.getHours() < 12 ? 'AM' : 'PM';
-        const hours = addZeros(
-          date.getHours() > 12 ? date.getHours() - 12 : date.getHours()
-        );
-
-        function addZeros(num) {
-          return num < 10 ? `0${num}` : `${num}`;
-        }
-
-        return `${hours}:${minutes} ${dayTime}`;
-      }
 
     default:
       return state;

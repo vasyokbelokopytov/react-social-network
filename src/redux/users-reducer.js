@@ -1,12 +1,12 @@
 import { usersAPI } from '../api/api';
 
-const FOLLOW = 'FOLLOW';
-const UNFOLLOW = 'UNFOLLOW';
-const SET_USERS = 'SET-USERS';
-const SET_CURRENT_PAGE = 'SET-CURRENT-PAGE';
-const SET_TOTAL_USERS_COUNT = 'SET-TOTAL-USERS-COUNT';
-const TOGGLE_LOADER = 'TOGGLE-LOADER';
-const SET_FOLLOWING = 'TOGGLE-FOLLOWING';
+const FOLLOW = 'social-network/users/FOLLOW';
+const UNFOLLOW = 'social-network/users/UNFOLLOW';
+const SET_USERS = 'social-network/users/SET-USERS';
+const SET_CURRENT_PAGE = 'social-network/users/SET-CURRENT-PAGE';
+const SET_TOTAL_USERS_COUNT = 'social-network/users/SET-TOTAL-USERS-COUNT';
+const TOGGLE_LOADER = 'social-network/users/TOGGLE-LOADER';
+const SET_FOLLOWING = 'social-network/users/TOGGLE-FOLLOWING';
 
 const initialState = {
   users: [],
@@ -110,43 +110,38 @@ export const setFollowing = (isFollowing, id) => ({
   id,
 });
 
-export const getUsers = (currentPage = 1, pageSize = 10) => {
-  return (dispatch) => {
-    dispatch(setCurrentPage(currentPage));
+export const loadUsers =
+  (page = 1, pageSize = 10) =>
+  async (dispatch) => {
+    dispatch(setCurrentPage(page));
     dispatch(toggleLoader());
 
-    usersAPI.getUsers(currentPage, pageSize).then((data) => {
-      dispatch(toggleLoader());
-      dispatch(setUsers(data.items));
-      dispatch(setTotalUsersCount(data.totalCount));
-    });
+    const users = await usersAPI.loadUsers(page, pageSize);
+    dispatch(toggleLoader());
+    dispatch(setUsers(users.items));
+    dispatch(setTotalUsersCount(users.totalCount));
   };
+
+export const followUser = (id) => async (dispatch) => {
+  dispatch(setFollowing(true, id));
+
+  const data = await usersAPI.follow(id);
+
+  if (data.resultCode === 0) {
+    dispatch(follow(id));
+    dispatch(setFollowing(false, id));
+  }
 };
 
-export const followUser = (id) => {
-  return (dispatch) => {
-    dispatch(setFollowing(true, id));
+export const unfollowUser = (id) => async (dispatch) => {
+  dispatch(setFollowing(true, id));
 
-    usersAPI.follow(id).then((data) => {
-      if (data.resultCode === 0) {
-        dispatch(follow(id));
-        dispatch(setFollowing(false, id));
-      }
-    });
-  };
-};
+  const data = await usersAPI.unfollow(id);
 
-export const unfollowUser = (id) => {
-  return (dispatch) => {
-    dispatch(setFollowing(true, id));
-
-    usersAPI.unfollow(id).then((data) => {
-      if (data.resultCode === 0) {
-        dispatch(unfollow(id));
-        dispatch(setFollowing(false, id));
-      }
-    });
-  };
+  if (data.resultCode === 0) {
+    dispatch(unfollow(id));
+    dispatch(setFollowing(false, id));
+  }
 };
 
 export default usersReducer;

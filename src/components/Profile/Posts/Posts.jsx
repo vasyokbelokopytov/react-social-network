@@ -3,7 +3,7 @@ import styles from './Posts.module.css';
 
 import Item from './Item/Item';
 
-const Posts = (props) => {
+const Posts = React.memo((props) => {
   return (
     <section className={styles.posts}>
       {props.posts.map((posts) => {
@@ -18,6 +18,6 @@ const Posts = (props) => {
       })}
     </section>
   );
-};
+});
 
 export default Posts;

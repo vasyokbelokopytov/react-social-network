@@ -11,7 +11,6 @@ const Users = (props) => {
   return (
     <section className={styles.users}>
       <h1 className={styles.title}>Search users:</h1>
-      {/* <input className={styles.input} type="text" /> */}
 
       {props.isFetching && <Loader />}
       <div className={styles.usersList}>
