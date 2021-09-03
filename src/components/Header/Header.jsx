@@ -3,24 +3,22 @@ import { Link } from 'react-router-dom';
 
 import styles from './Header.module.css';
 
+import logo from '../../assets/img/logo.png';
 import userImg from '../../assets/img/user.png';
 import logoutImg from '../../assets/img/logout.svg';
 
 const Header = (props) => {
+  debugger;
   return (
     <header className={styles.header}>
-      <img
-        className={styles.logo}
-        src="https://via.placeholder.com/250x70"
-        alt="logo"
-      ></img>
+      <img className={styles.logo} src={logo} alt="logo"></img>
 
       {props.isAuth ? (
         <div className={styles.user}>
           <img
             className={styles.userImg}
             src={
-              props.profile?.photos.large ? props.profile.photos.large : userImg
+              props.profile?.photos.small ? props.profile.photos.small : userImg
             }
             alt="user"
           />

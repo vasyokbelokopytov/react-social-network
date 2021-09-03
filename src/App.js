@@ -27,7 +27,7 @@ class App extends React.Component {
 
   render() {
     if (!this.props.initialized) {
-      return <Loader />;
+      return <Loader className="loader" />;
     }
 
     return (
@@ -54,8 +54,13 @@ const mapStateToProps = (state) => ({
 });
 
 export default compose(
-  connect(mapStateToProps, {
-    initialize,
-  }),
+  connect(
+    mapStateToProps,
+    {
+      initialize,
+    },
+    null,
+    { forwardRef: true }
+  ),
   withRouter
 )(App);

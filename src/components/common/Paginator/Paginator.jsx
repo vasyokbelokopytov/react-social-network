@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import styles from './Paginator.module.css';
 
 const Paginator = (props) => {
-  const [currentPortion, setCurrentPortion] = useState(1);
+  const [currentPortion, setCurrentPortion] = useState(() => {
+    return Math.ceil(props.currentPage / props.portionSize);
+  });
 
   const pagesCount = Math.ceil(props.totalItemsCount / props.pageSize);
 

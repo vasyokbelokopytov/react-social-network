@@ -13,3 +13,11 @@ export const selectUserAuthLogin = (state) => {
 export const selectIsAuth = (state) => {
   return state.auth.isAuth;
 };
+
+export const selectUserAuthProfile = (state) => {
+  return state.auth.profile;
+};
+
+export const selectCaptchaUrl = (state) => {
+  return state.auth.captchaUrl;
+};

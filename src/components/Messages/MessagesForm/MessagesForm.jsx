@@ -3,6 +3,8 @@ import { Field, Form } from 'react-final-form';
 
 import styles from './MessagesForm.module.css';
 
+import sendMessageImg from '../../../assets/img/Navbar/messages.svg';
+
 const MessagesForm = (props) => {
   return (
     <Form onSubmit={props.onSubmit}>
@@ -16,11 +18,7 @@ const MessagesForm = (props) => {
               placeholder="You can write your message here..."
             />
             <button className={styles.submit}>
-              <img
-                className={styles.icon}
-                src="https://via.placeholder.com/27"
-                alt="submit"
-              />
+              <img className={styles.icon} src={sendMessageImg} alt="submit" />
             </button>
           </form>
         );

@@ -24,5 +24,8 @@
 
 .icon {
   display: block;
+  width: 27px;
+  height: 27px;
+
   margin-right: 20px;
 }

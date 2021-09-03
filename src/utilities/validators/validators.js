@@ -15,7 +15,7 @@ export const composeValidators =
 
 export const trim = (validator) => (value) => {
   if (value === undefined) {
-    validator(value);
+    return validator(value);
   }
 
   return validator(value.trim());

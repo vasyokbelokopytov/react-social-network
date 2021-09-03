@@ -8,9 +8,10 @@ import {
   loadUserStatus,
   updateUserStatus,
   addPost,
+  savePhoto,
+  saveUserProfile,
+  setUserProfile,
 } from '../../redux/profile-reducer';
-
-import withAuthRedirect from '../../hoc/withAuthRedirect';
 
 import Profile from './Profile';
 import {
@@ -18,21 +19,41 @@ import {
   selectProfile,
   selectStatus,
 } from '../../redux/selectors/profile-selectors';
+
 import {
   selectIsAuth,
   selectUserAuthId,
+  selectUserAuthProfile,
 } from '../../redux/selectors/auth-selectors';
 
 class ProfileContainer extends React.Component {
-  componentDidMount() {
-    let userId = this.props.match.params.userId ?? this.props.authUserId;
+  loadProfilePage() {
+    let userId = this.props.match.params.userId;
+
+    if (!userId) {
+      this.props.setUserProfile(this.props.authProfile);
+      this.props.loadUserStatus(this.props.authUserId);
+      return;
+    }
 
     this.props.loadUserProfile(userId);
     this.props.loadUserStatus(userId);
   }
 
+  componentDidMount() {
+    this.loadProfilePage();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.userId !== this.props.match.params.userId) {
+      this.loadProfilePage();
+    }
+  }
+
   render() {
-    return <Profile {...this.props} />;
+    return (
+      <Profile {...this.props} isOwner={!this.props.match.params.userId} />
+    );
   }
 }
 
@@ -41,6 +62,7 @@ const mapStateToProps = (state) => {
     isAuth: selectIsAuth(state),
     authUserId: selectUserAuthId(state),
     profile: selectProfile(state),
+    authProfile: selectUserAuthProfile(state),
     status: selectStatus(state),
     posts: selectPosts(state),
   };
@@ -52,7 +74,9 @@ export default compose(
     loadUserStatus,
     updateUserStatus,
     addPost,
+    savePhoto,
+    saveUserProfile,
+    setUserProfile,
   }),
-  withRouter,
-  withAuthRedirect
+  withRouter
 )(ProfileContainer);

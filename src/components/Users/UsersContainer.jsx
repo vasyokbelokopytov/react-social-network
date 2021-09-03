@@ -17,6 +17,8 @@ import {
   selectTotalUsersCount,
 } from '../../redux/selectors/users-selectors';
 
+import { selectIsAuth } from '../../redux/selectors/auth-selectors';
+
 import Users from './Users';
 
 class UsersContainer extends React.Component {
@@ -40,6 +42,7 @@ class UsersContainer extends React.Component {
         isFollowing={this.props.isFollowing}
         followUser={this.props.followUser}
         unfollowUser={this.props.unfollowUser}
+        isAuth={this.props.isAuth}
       />
     );
   }
@@ -47,6 +50,7 @@ class UsersContainer extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    isAuth: selectIsAuth(state),
     users: selectUsers(state),
     pageSize: selectPageSize(state),
     totalUsersCount: selectTotalUsersCount(state),

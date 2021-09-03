@@ -6,13 +6,14 @@ import Paginator from '../common/Paginator/Paginator';
 
 import userImg from '../../assets/img/user.png';
 import Loader from '../common/Loader/Loader';
+import Title from '../common/Title/Title';
 
 const Users = (props) => {
   return (
     <section className={styles.users}>
-      <h1 className={styles.title}>Search users:</h1>
+      <Title>Search users:</Title>
 
-      {props.isFetching && <Loader />}
+      {props.isFetching && <Loader className={styles.loader} />}
       <div className={styles.usersList}>
         {props.users.map((user) => {
           return (
@@ -28,6 +29,7 @@ const Users = (props) => {
               isFollowing={props.isFollowing}
               followUser={props.followUser}
               unfollowUser={props.unfollowUser}
+              isAuth={props.isAuth}
             />
           );
         })}

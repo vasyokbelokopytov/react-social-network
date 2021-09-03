@@ -1,5 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import Title from '../common/Title/Title';
 import styles from './Login.module.css';
 
 import LoginForm from './LoginForm/LoginForm';
@@ -11,8 +12,8 @@ const Login = (props) => {
 
   return (
     <section className={styles.login}>
-      <h1 className={styles.title}>Please, log in to continue</h1>
-      <LoginForm logIn={props.logIn} />
+      <Title>Please, log in to continue</Title>
+      <LoginForm logIn={props.logIn} captchaUrl={props.captchaUrl} />
     </section>
   );
 };

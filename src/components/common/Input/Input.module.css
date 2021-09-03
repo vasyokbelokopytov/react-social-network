@@ -32,6 +32,29 @@
   outline: none;
 }
 
+.textarea {
+  width: inherit;
+  height: 165px;
+
+  font-family: inherit;
+  font-size: inherit;
+
+  border: 1px solid #cdcdcd;
+  border-radius: inherit;
+
+  transition: border 500ms;
+  padding: 1em;
+
+  resize: none;
+  outline: none;
+}
+
+.input:focus,
+.textarea:focus {
+  border: 1px solid #727595;
+  transition: border 500ms;
+}
+
 .title {
   font-family: 'Montserrat', sans-serif;
   font-size: 1.2em;
@@ -41,11 +64,6 @@
   margin-bottom: 5px;
 
   cursor: pointer;
-}
-
-.input:focus {
-  border: 1px solid #727595;
-  transition: border 500ms;
 }
 
 .error {

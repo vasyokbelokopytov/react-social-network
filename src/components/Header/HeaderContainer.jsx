@@ -5,6 +5,7 @@ import { logOut } from '../../redux/auth-reducer';
 import {
   selectIsAuth,
   selectUserAuthLogin,
+  selectUserAuthProfile,
 } from '../../redux/selectors/auth-selectors';
 
 import Header from './Header';
@@ -18,6 +19,7 @@ class HeaderContainer extends React.Component {
 const mapStateToProps = (state) => ({
   isAuth: selectIsAuth(state),
   login: selectUserAuthLogin(state),
+  profile: selectUserAuthProfile(state),
 });
 
 export default connect(mapStateToProps, {

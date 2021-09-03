@@ -1,30 +1,34 @@
 import React from 'react';
 import { Field, Form } from 'react-final-form';
-import {
-  composeValidators,
-  maxLength,
-  required,
-  trim,
-} from '../../../utilities/validators/validators';
-import Textarea from '../../common/Textarea/Textarea';
-import styles from './ProfileForm.module.css';
+import { maxLength, trim } from '../../../utilities/validators/validators';
+import Input from '../../common/Input/Input';
+import Title from '../../common/Title/Title';
+import styles from './PostForm.module.css';
 
-const ProfileForm = (props) => {
+const PostForm = (props) => {
   const maxLength20 = maxLength(20);
   return (
     <Form onSubmit={props.onSubmit}>
       {({ handleSubmit }) => {
         return (
           <form className={styles.form} onSubmit={handleSubmit}>
-            <h1 className={styles.title}>My posts</h1>
+            <Title>My posts</Title>
             <Field
               className={styles.textarea}
-              component={Textarea}
-              validate={composeValidators(required, trim(maxLength20))}
+              validate={trim(maxLength20)}
               format={(value) => ((value, 'post') === undefined ? '' : value)}
               name="post"
               placeholder="You can share your thoughts here..."
-            />
+            >
+              {({ input, meta }) => (
+                <Input
+                  className={styles.textarea}
+                  element="textarea"
+                  input={input}
+                  meta={meta}
+                />
+              )}
+            </Field>
             <button className={styles.submit}>Share</button>
           </form>
         );
@@ -33,4 +37,4 @@ const ProfileForm = (props) => {
   );
 };
 
-export default ProfileForm;
+export default PostForm;

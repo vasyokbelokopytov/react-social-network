@@ -7,6 +7,10 @@
   margin-bottom: 25px;
 }
 
+.captchaWrapper {
+  text-align: center;
+}
+
 .bottom {
   display: flex;
   justify-content: space-between;
@@ -32,6 +36,7 @@
 }
 
 .submitButton {
+  position: relative;
   display: block;
 
   font-size: 16px;
@@ -63,4 +68,13 @@
   text-align: center;
   color: rgb(247, 62, 62);
   letter-spacing: 0.05em;
+}
+
+.loader {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-125%, -50%);
 }

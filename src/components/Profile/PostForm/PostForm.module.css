@@ -3,14 +3,7 @@
   margin-bottom: 30px;
 }
 
-.title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 28px;
-  font-weight: bold;
-}
-
 .textarea {
-  height: 165px;
   margin-bottom: 25px;
 }
 
@@ -29,4 +22,10 @@
   margin: 0 0 0 auto;
 
   cursor: pointer;
+}
+
+.submit:focus,
+.submit:hover {
+  background-color: #7c80a7;
+  transition: background-color 200ms;
 }

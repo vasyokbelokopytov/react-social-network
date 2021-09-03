@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import styles from './InfoItem.module.css';
+import styles from './UserInfoItem.module.css';
 
-const InfoItem = (props) => {
+import Loader from '../../../../common/Loader/Loader';
+import closeImg from '../../../../../assets/img/close.svg';
+
+const UserInfoItem = (props) => {
   const [editMode, setEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [inputValue, setInputValue] = useState(props.content);
 
   useEffect(() => {
@@ -21,9 +25,11 @@ const InfoItem = (props) => {
     setInputValue(value);
   };
 
-  const save = () => {
+  const save = async () => {
+    setIsLoading(true);
+    await props.updateInfoItem(inputValue);
+    setIsLoading(false);
     setEditMode(false);
-    props.updateInfoItem(inputValue);
   };
 
   const close = () => {
@@ -32,13 +38,16 @@ const InfoItem = (props) => {
 
   return (
     <div className={styles.item}>
-      <span
-        className={styles.name}
-        style={props.editable ? { cursor: 'pointer' } : {}}
-        onClick={() => edit()}
-      >
-        {props.name}:{' '}
-      </span>
+      {(props.content || props.isOwner) && (
+        <span
+          className={styles.name}
+          style={props.editable ? { cursor: 'pointer' } : {}}
+          onClick={() => edit()}
+        >
+          {props.name}
+          {': '}
+        </span>
+      )}
 
       <span className={styles.content}>{props.content}</span>
 
@@ -53,13 +62,19 @@ const InfoItem = (props) => {
           <button className={styles.saveButton} onClick={() => save()}>
             Save
           </button>
-          <div className={styles.closeButton} onClick={() => close()}>
-            ✖
-          </div>
+
+          <img
+            className={styles.closeButton}
+            src={closeImg}
+            alt="close"
+            onClick={() => close()}
+          />
+
+          {isLoading && <Loader className={styles.loader} />}
         </div>
       )}
     </div>
   );
 };
 
-export default InfoItem;
+export default UserInfoItem;

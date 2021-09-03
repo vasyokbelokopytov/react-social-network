@@ -23,23 +23,24 @@ const UserItem = (props) => {
       <div className={styles.city}>{props.city}</div>
       <div className={styles.country}>{props.country}</div>
       <div className={styles.status}>{props.status}</div>
-      {props.followed ? (
-        <button
-          className={styles.button}
-          onClick={unfollow}
-          disabled={props.isFollowing.includes(props.id)}
-        >
-          Unfollow
-        </button>
-      ) : (
-        <button
-          className={styles.button}
-          onClick={follow}
-          disabled={props.isFollowing.includes(props.id)}
-        >
-          Follow
-        </button>
-      )}
+      {props.isAuth &&
+        (props.followed ? (
+          <button
+            className={styles.button}
+            onClick={unfollow}
+            disabled={props.isFollowing.includes(props.id)}
+          >
+            Unfollow
+          </button>
+        ) : (
+          <button
+            className={styles.button}
+            onClick={follow}
+            disabled={props.isFollowing.includes(props.id)}
+          >
+            Follow
+          </button>
+        ))}
     </article>
   );
 };

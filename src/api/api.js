@@ -42,6 +42,24 @@ export const profileAPI = {
     const response = await template.put(`profile/status/`, { status });
     return response.data;
   },
+
+  async savePhoto(file) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await template.put(`profile/photo`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  },
+
+  async updateProfile(profile) {
+    const response = await template.put(`profile`, profile);
+    return response.data;
+  },
 };
 
 export const authAPI = {
@@ -50,17 +68,25 @@ export const authAPI = {
     return response.data;
   },
 
-  async login(email, password, rememberMe) {
+  async login(email, password, rememberMe, captcha) {
     const response = await template.post('auth/login/', {
       email,
       password,
       rememberMe,
+      captcha,
     });
     return response.data;
   },
 
   async logout() {
     const response = await template.delete('auth/login/');
+    return response.data;
+  },
+};
+
+export const securityAPI = {
+  async getCaptchaUrl() {
+    const response = await template.get(`/security/get-captcha-url`);
     return response.data;
   },
 };

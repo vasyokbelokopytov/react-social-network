@@ -1,6 +1,7 @@
 .users {
   position: relative;
   width: 65%;
+  min-height: 100%;
 }
 
 .input {
@@ -21,21 +22,15 @@
   outline: none;
 }
 
-.title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 28px;
-  font-weight: bold;
-
-  margin: 0 0 20px;
-}
-
 .usersList {
   margin-bottom: 20px;
 }
 
 .loader {
-  position: fixed;
-  top: 50%;
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  bottom: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
 }

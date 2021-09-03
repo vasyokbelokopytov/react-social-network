@@ -110,3 +110,9 @@
   color: #dddddd;
   cursor: not-allowed;
 }
+
+.button:focus,
+.button:hover {
+  background-color: #7c80a7;
+  transition: background-color 200ms;
+}
