@@ -1,4 +1,5 @@
 import { usersAPI } from '../api/api';
+import { setGlobalError } from './app-reducer';
 
 const FOLLOW = 'social-network/users/FOLLOW';
 const UNFOLLOW = 'social-network/users/UNFOLLOW';
@@ -125,23 +126,33 @@ export const loadUsers =
 export const followUser = (id) => async (dispatch) => {
   dispatch(setFollowing(true, id));
 
-  const data = await usersAPI.follow(id);
+  try {
+    const data = await usersAPI.follow(id);
 
-  if (data.resultCode === 0) {
-    dispatch(follow(id));
-    dispatch(setFollowing(false, id));
+    if (data.resultCode === 0) {
+      dispatch(follow(id));
+    }
+  } catch (e) {
+    console.log(e);
+    dispatch(setGlobalError(e));
   }
+
+  dispatch(setFollowing(false, id));
 };
 
 export const unfollowUser = (id) => async (dispatch) => {
   dispatch(setFollowing(true, id));
 
-  const data = await usersAPI.unfollow(id);
-
-  if (data.resultCode === 0) {
-    dispatch(unfollow(id));
-    dispatch(setFollowing(false, id));
+  try {
+    const data = await usersAPI.unfollow(id);
+    if (data.resultCode === 0) {
+      dispatch(unfollow(id));
+    }
+  } catch (e) {
+    dispatch(setGlobalError(e));
   }
+
+  dispatch(setFollowing(false, id));
 };
 
 export default usersReducer;

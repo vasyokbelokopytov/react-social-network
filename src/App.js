@@ -5,8 +5,11 @@ import { compose } from 'redux';
 
 import './App.css';
 
-import { initialize } from './redux/app-reducer';
-import { selectInitialized } from './redux/selectors/app-selectors';
+import { initialize, setGlobalError } from './redux/app-reducer';
+import {
+  selectGlobalError,
+  selectInitialized,
+} from './redux/selectors/app-selectors';
 
 import HeaderContainer from './components/Header/HeaderContainer';
 import Navbar from './components/Navbar/Navbar';
@@ -20,10 +23,20 @@ import MessagesContainer from './components/Messages/MessagesContainer';
 import LoginContainer from './components/Login/LoginContainer';
 import Loader from './components/common/Loader/Loader';
 import NotFound from './components/NotFound/NotFound';
+import ErrorBox from './components/ErrorBox/ErrorBox';
 
 class App extends React.Component {
+  handlePromiseErrors = (e) => {
+    this.props.setGlobalError(e.reason);
+  };
+
   componentDidMount() {
     this.props.initialize();
+    window.addEventListener('unhandledrejection', this.handlePromiseErrors);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('unhandledrejection', this.handlePromiseErrors);
   }
 
   render() {
@@ -51,6 +64,8 @@ class App extends React.Component {
             <Route path="*" render={() => <NotFound />} />
           </Switch>
         </main>
+
+        {this.props.globalError && <ErrorBox error={this.props.globalError} />}
       </div>
     );
   }
@@ -58,16 +73,13 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => ({
   initialized: selectInitialized(state),
+  globalError: selectGlobalError(state),
 });
 
 export default compose(
-  connect(
-    mapStateToProps,
-    {
-      initialize,
-    },
-    null,
-    { forwardRef: true }
-  ),
+  connect(mapStateToProps, {
+    initialize,
+    setGlobalError,
+  }),
   withRouter
 )(App);
