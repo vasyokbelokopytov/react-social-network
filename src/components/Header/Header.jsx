@@ -8,7 +8,6 @@ import userImg from '../../assets/img/user.png';
 import logoutImg from '../../assets/img/logout.svg';
 
 const Header = (props) => {
-  debugger;
   return (
     <header className={styles.header}>
       <img className={styles.logo} src={logo} alt="logo"></img>

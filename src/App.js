@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, withRouter } from 'react-router-dom';
+import { Route, withRouter, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
@@ -19,6 +19,7 @@ import Settings from './components/Settings/Settings';
 import MessagesContainer from './components/Messages/MessagesContainer';
 import LoginContainer from './components/Login/LoginContainer';
 import Loader from './components/common/Loader/Loader';
+import NotFound from './components/NotFound/NotFound';
 
 class App extends React.Component {
   componentDidMount() {
@@ -35,14 +36,20 @@ class App extends React.Component {
         <HeaderContainer />
         <Navbar />
         <main className="main">
-          <Route exact path="/" render={() => <Main />} />
-          <Route path="/messages" render={() => <MessagesContainer />} />
-          <Route path="/profile/:userId?" render={() => <ProfileContainer />} />
-          <Route path="/users" render={() => <UsersContainer />} />
-          <Route path="/news" render={() => <News />} />
-          <Route path="/music" render={() => <Music />} />
-          <Route path="/settings" render={() => <Settings />} />
-          <Route path="/login" render={() => <LoginContainer />} />
+          <Switch>
+            <Route exact path="/" render={() => <Main />} />
+            <Route path="/messages" render={() => <MessagesContainer />} />
+            <Route
+              path="/profile/:userId?"
+              render={() => <ProfileContainer />}
+            />
+            <Route path="/users" render={() => <UsersContainer />} />
+            <Route path="/news" render={() => <News />} />
+            <Route path="/music" render={() => <Music />} />
+            <Route path="/settings" render={() => <Settings />} />
+            <Route path="/login" render={() => <LoginContainer />} />
+            <Route path="*" render={() => <NotFound />} />
+          </Switch>
         </main>
       </div>
     );

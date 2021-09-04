@@ -38,10 +38,12 @@ const authReducer = (state = initialState, action) => {
   }
 };
 
-export const setUserAuthProfile = (profile) => ({
-  type: SET_USER_AUTH_PROFILE,
-  profile,
-});
+export const setUserAuthProfile = (profile) => {
+  return {
+    type: SET_USER_AUTH_PROFILE,
+    profile,
+  };
+};
 
 export const setUserAuthData = (id, email, login, isAuth) => ({
   type: SET_USER_AUTH_DATA,
@@ -53,21 +55,24 @@ export const setCaptchaUrl = (captchaUrl) => ({
   captchaUrl,
 });
 
+export const loadUserAuthProfile = (id) => async (dispatch) => {
+  const data = await profileAPI.loadProfile(id);
+  dispatch(setUserAuthProfile(data));
+};
+
 export const loadUserAuthData = () => async (dispatch) => {
   const data = await authAPI.me();
 
   if (data.resultCode === 0) {
     const { id, email, login } = data.data;
     dispatch(setUserAuthData(id, email, login, true));
-    const profile = await profileAPI.loadProfile(id);
-    dispatch(setUserAuthProfile(profile));
+    dispatch(loadUserAuthProfile(id));
   }
 };
 
 export const logIn =
   (email, password, rememberMe, captcha) => async (dispatch) => {
     const data = await authAPI.login(email, password, rememberMe, captcha);
-    console.log(email, password, rememberMe, captcha);
 
     if (data.resultCode === 0) {
       dispatch(loadUserAuthData());
@@ -90,6 +95,7 @@ export const logOut = () => async (dispatch) => {
 
   if (data.resultCode === 0) {
     dispatch(setUserAuthData(null, null, null, false));
+    dispatch(setUserAuthProfile(null));
   }
 };
 

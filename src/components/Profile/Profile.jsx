@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
 
 import styles from './Profile.module.css';
 
@@ -14,10 +13,6 @@ const Profile = (props) => {
   const addPost = (data) => {
     props.addPost(data.post);
   };
-
-  if (!props.isAuth && props.isOwner) {
-    return <Redirect to="/login" />;
-  }
 
   return (
     <section className={styles.profile}>

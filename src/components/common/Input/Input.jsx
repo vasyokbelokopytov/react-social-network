@@ -1,4 +1,5 @@
 import React from 'react';
+import cn from 'classnames';
 
 import styles from './Input.module.css';
 
@@ -11,9 +12,7 @@ const Input = ({ className, title, element, input, meta, ...props }) => {
   const hasError = meta.touched && (meta.error || meta.submitError);
 
   return (
-    <label
-      className={className ? `${styles.label} ${className}` : styles.label}
-    >
+    <label className={cn(styles.label, { [className]: className })}>
       {title && <div className={styles.title}>{title}</div>}
       <div className={styles.wrapper}>
         {hasError && (

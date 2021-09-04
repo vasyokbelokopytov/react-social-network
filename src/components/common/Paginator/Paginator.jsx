@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './Paginator.module.css';
+import cn from 'classnames';
 
 const Paginator = (props) => {
   const [currentPortion, setCurrentPortion] = useState(() => {
@@ -27,7 +28,7 @@ const Paginator = (props) => {
     <div className={styles.paginator}>
       {currentPortion > 1 && (
         <button
-          className={`${styles.button} ${styles.prevButton}`}
+          className={cn(styles.button, styles.prevButton)}
           onClick={() => {
             setCurrentPortion(currentPortion - 1);
             props.pageChangeHandler(getLastPortionPage(currentPortion - 1));
@@ -48,9 +49,9 @@ const Paginator = (props) => {
           .map((page) => {
             return (
               <button
-                className={`${styles.button} ${styles.pageButton} ${
-                  page === props.currentPage ? styles.currentPage : ''
-                }`}
+                className={cn(styles.button, styles.pageButton, {
+                  [styles.currentPage]: page === props.currentPage,
+                })}
                 key={page}
                 onClick={() => props.pageChangeHandler(page)}
               >
@@ -62,7 +63,7 @@ const Paginator = (props) => {
 
       {currentPortion < portionsCount ? (
         <button
-          className={`${styles.button} ${styles.nextButton}`}
+          className={cn(styles.button, styles.nextButton)}
           onClick={() => {
             setCurrentPortion(currentPortion + 1);
             props.pageChangeHandler(getFirstPortionPage(currentPortion + 1));

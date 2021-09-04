@@ -25,6 +25,7 @@ import {
   selectUserAuthId,
   selectUserAuthProfile,
 } from '../../redux/selectors/auth-selectors';
+import withOwnerRedirect from '../../hoc/withOwnerRedirect';
 
 class ProfileContainer extends React.Component {
   loadProfilePage() {
@@ -46,6 +47,10 @@ class ProfileContainer extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.match.params.userId !== this.props.match.params.userId) {
+      this.loadProfilePage();
+    }
+
+    if (prevProps.authProfile !== this.props.authProfile) {
       this.loadProfilePage();
     }
   }
@@ -78,5 +83,6 @@ export default compose(
     saveUserProfile,
     setUserProfile,
   }),
-  withRouter
+  withRouter,
+  withOwnerRedirect
 )(ProfileContainer);
