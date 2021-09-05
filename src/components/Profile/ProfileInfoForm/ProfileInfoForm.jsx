@@ -8,8 +8,14 @@ import Loader from '../../common/Loader/Loader';
 import ContactsFormPart from './ContactsFormPart/ContactsFormPart';
 import InformationFormPart from './InformationFormPart/InformationFormPart';
 
+import closeImg from '../../../assets/img/close.svg';
+
 const ProfileInfoForm = ({ profile, saveProfile, setIsEdit }) => {
   const [isLoading, setIsLoading] = useState(false);
+
+  const close = () => {
+    setIsEdit(false);
+  };
 
   const saveInfo = async (formData) => {
     setIsLoading(true);
@@ -37,10 +43,18 @@ const ProfileInfoForm = ({ profile, saveProfile, setIsEdit }) => {
             <Title>Contacts</Title>
             <ContactsFormPart />
 
-            <button className={styles.submitButton}>
-              Save
-              {isLoading && <Loader className={styles.loader} />}
-            </button>
+            <div className={styles.buttonsWrapper}>
+              <img
+                className={styles.closeBtn}
+                src={closeImg}
+                alt="close"
+                onClick={close}
+              />
+              <button className={styles.submitButton}>
+                Save
+                {isLoading && <Loader className={styles.loader} />}
+              </button>
+            </div>
 
             {submitError && (
               <div className={styles.submitError}>{submitError}</div>

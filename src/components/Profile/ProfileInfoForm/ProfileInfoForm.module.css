@@ -3,6 +3,21 @@
   font-family: 'Roboto', sans-serif;
 }
 
+.buttonsWrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.closeBtn {
+  width: 25px;
+  height: 25px;
+
+  margin-right: 20px;
+
+  cursor: pointer;
+}
+
 .submitButton {
   position: relative;
   display: block;
@@ -17,8 +32,6 @@
   padding: 10px 20px;
 
   transition: background-color 200ms;
-
-  margin: 0 0 0 auto;
 
   cursor: pointer;
   outline: none;

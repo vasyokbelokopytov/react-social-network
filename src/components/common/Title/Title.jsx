@@ -5,9 +5,7 @@ import styles from './Title.module.css';
 
 const Title = ({ children, className }) => {
   return (
-    <h1 className={cn(styles.title, { [styles.className]: className })}>
-      {children}
-    </h1>
+    <h1 className={cn(styles.title, { [className]: className })}>{children}</h1>
   );
 };
 

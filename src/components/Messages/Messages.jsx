@@ -4,6 +4,7 @@ import styles from './Messages.module.css';
 import Contact from './Contact/Contact';
 import Message from './Message/Message';
 import MessagesForm from './MessagesForm/MessagesForm';
+import ComingSoon from '../common/ComingSoon/ComingSoon';
 
 const Messages = (props) => {
   let messageElements = props.messages.map((message) => {
@@ -42,6 +43,7 @@ const Messages = (props) => {
         <MessagesForm onSubmit={submitHandler} />
       </section>
       <section className={styles.contacts}>{contactElements}</section>
+      <ComingSoon />
     </section>
   );
 };
