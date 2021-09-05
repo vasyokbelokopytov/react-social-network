@@ -4,11 +4,13 @@ const SET_INITIALIZED = 'social-network/app/SET-INITIALIZED';
 const SET_GLOBAL_ERROR = 'social-network/app/SET-GLOBAL-ERROR';
 
 const initialState = {
-  initialized: false,
-  globalError: null,
+  initialized: false as boolean,
+  globalError: null as null | any,
 };
 
-const appReducer = (state = initialState, action) => {
+type InitialStateType = typeof initialState;
+
+const appReducer = (state = initialState, action: any): InitialStateType => {
   switch (action.type) {
     case SET_INITIALIZED:
       return {
@@ -27,14 +29,27 @@ const appReducer = (state = initialState, action) => {
   }
 };
 
-export const setInitialized = () => ({ type: SET_INITIALIZED });
+type SetInitializedActionType = {
+  type: typeof SET_INITIALIZED;
+};
 
-export const setGlobalError = (globalError) => ({
+type SetGlobalErrorActionType = {
+  type: typeof SET_GLOBAL_ERROR;
+  globalError: Error | null;
+};
+
+export const setInitialized = (): SetInitializedActionType => ({
+  type: SET_INITIALIZED,
+});
+
+export const setGlobalError = (
+  globalError: null | any
+): SetGlobalErrorActionType => ({
   type: SET_GLOBAL_ERROR,
   globalError,
 });
 
-export const initialize = () => async (dispatch) => {
+export const initialize = () => async (dispatch: any) => {
   await Promise.all([dispatch(loadUserAuthData())]);
 
   dispatch(setInitialized());

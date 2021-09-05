@@ -4,7 +4,6 @@ import styles from './ErrorBox.module.css';
 import closeImg from '../../assets/img/close.svg';
 
 const ErrorBox = React.memo((props) => {
-  debugger;
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {

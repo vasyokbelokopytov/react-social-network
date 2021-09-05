@@ -5,15 +5,17 @@ const SET_USER_AUTH_PROFILE = 'social-network/auth/SET-USER-AUTH-PROFILE';
 const SET_CAPTCHA_URL = 'social-network/auth/SET-CAPTCHA-URL';
 
 const initialState = {
-  id: null,
-  email: null,
-  login: null,
-  isAuth: false,
-  profile: null,
-  captchaUrl: null,
+  id: null as null | number,
+  email: null as null | string,
+  login: null as null | string,
+  isAuth: false as boolean,
+  profile: null as null | any,
+  captchaUrl: null as null | string,
 };
 
-const authReducer = (state = initialState, action) => {
+type InitialStateType = typeof initialState;
+
+const authReducer = (state = initialState, action: any): InitialStateType => {
   switch (action.type) {
     case SET_USER_AUTH_DATA:
       return {
@@ -38,29 +40,52 @@ const authReducer = (state = initialState, action) => {
   }
 };
 
-export const setUserAuthProfile = (profile) => {
+type SetUserAuthDataActionType = {
+  type: typeof SET_USER_AUTH_DATA;
+  data: SetUserAuthDataActionDataType;
+};
+
+type SetUserAuthDataActionDataType = {
+  id: number | null;
+  email: string | null;
+  login: string | null;
+  isAuth: boolean;
+};
+
+type SetCaptchaUrlActionType = {
+  type: typeof SET_CAPTCHA_URL;
+  captchaUrl: string;
+};
+
+export const setUserAuthData = (
+  id: number | null,
+  email: string | null,
+  login: string | null,
+  isAuth: boolean
+): SetUserAuthDataActionType => ({
+  type: SET_USER_AUTH_DATA,
+  data: { id, email, login, isAuth },
+});
+
+export const setCaptchaUrl = (captchaUrl: string): SetCaptchaUrlActionType => ({
+  type: SET_CAPTCHA_URL,
+  captchaUrl,
+});
+
+export const setUserAuthProfile = (profile: any) => {
   return {
     type: SET_USER_AUTH_PROFILE,
     profile,
   };
 };
 
-export const setUserAuthData = (id, email, login, isAuth) => ({
-  type: SET_USER_AUTH_DATA,
-  data: { id, email, login, isAuth },
-});
+export const loadUserAuthProfile =
+  (id: number | null) => async (dispatch: any) => {
+    const data = await profileAPI.loadProfile(id);
+    dispatch(setUserAuthProfile(data));
+  };
 
-export const setCaptchaUrl = (captchaUrl) => ({
-  type: SET_CAPTCHA_URL,
-  captchaUrl,
-});
-
-export const loadUserAuthProfile = (id) => async (dispatch) => {
-  const data = await profileAPI.loadProfile(id);
-  dispatch(setUserAuthProfile(data));
-};
-
-export const loadUserAuthData = () => async (dispatch) => {
+export const loadUserAuthData = () => async (dispatch: any) => {
   const data = await authAPI.me();
 
   if (data.resultCode === 0) {
@@ -71,7 +96,8 @@ export const loadUserAuthData = () => async (dispatch) => {
 };
 
 export const logIn =
-  (email, password, rememberMe, captcha) => async (dispatch) => {
+  (email: string, password: string, rememberMe: boolean, captcha: string) =>
+  async (dispatch: any) => {
     const data = await authAPI.login(email, password, rememberMe, captcha);
 
     if (data.resultCode === 0) {
@@ -84,13 +110,13 @@ export const logIn =
     return data.messages;
   };
 
-export const getCaptchaUrl = () => async (dispatch) => {
+export const getCaptchaUrl = () => async (dispatch: any) => {
   const data = await securityAPI.getCaptchaUrl();
   const url = data.url;
   dispatch(setCaptchaUrl(url));
 };
 
-export const logOut = () => async (dispatch) => {
+export const logOut = () => async (dispatch: any) => {
   const data = await authAPI.logout();
 
   if (data.resultCode === 0) {

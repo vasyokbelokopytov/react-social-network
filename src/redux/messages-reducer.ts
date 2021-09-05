@@ -1,6 +1,21 @@
 import { getStringDate } from '../utilities/helpers/helpers';
 const SEND_MESSAGE = 'social-network/messages/SEND-MESSAGE';
 
+type ContactType = {
+  id: number;
+  img: string;
+  name: string;
+  date: string;
+  text: string;
+};
+
+type MessageType = {
+  id: number;
+  sender: string;
+  date: string;
+  text: string;
+};
+
 const initialState = {
   contacts: [
     {
@@ -9,7 +24,6 @@ const initialState = {
       name: 'Tena Deck',
       date: '21:00',
       text: 'Hi, how are you?',
-      photo: null,
     },
     {
       id: 2,
@@ -24,7 +38,6 @@ const initialState = {
       name: 'Jayne Carrara',
       date: '21:00',
       text: 'Hi, how are you?',
-      photo: null,
     },
     {
       id: 4,
@@ -32,7 +45,6 @@ const initialState = {
       name: 'Doug Rosengarten',
       date: '21:00',
       text: 'Hi, how are you?',
-      photo: null,
     },
     {
       id: 5,
@@ -40,7 +52,6 @@ const initialState = {
       name: 'Barney Barone',
       date: '21:00',
       text: 'Hi, how are you?',
-      photo: null,
     },
     {
       id: 6,
@@ -48,7 +59,6 @@ const initialState = {
       name: 'Johnsie Courtemanche',
       date: '21:00',
       text: 'Hi, how are you?',
-      photo: null,
     },
     {
       id: 7,
@@ -56,7 +66,6 @@ const initialState = {
       name: 'Isela Ohler',
       date: '21:00',
       text: 'Hi, how are you?',
-      photo: null,
     },
     {
       id: 8,
@@ -64,7 +73,6 @@ const initialState = {
       name: 'Corinne Schwenk',
       date: '21:00',
       text: 'Hi, how are you?',
-      photo: null,
     },
     {
       id: 9,
@@ -72,7 +80,6 @@ const initialState = {
       name: 'Haley Dillion',
       date: '21:00',
       text: 'Hi, how are you?',
-      photo: null,
     },
     {
       id: 10,
@@ -80,9 +87,8 @@ const initialState = {
       name: 'Sheldon Yoshimura',
       date: '21:00',
       text: 'Hi, how are you?',
-      photo: null,
     },
-  ],
+  ] as Array<ContactType>,
 
   messages: [
     {
@@ -115,10 +121,15 @@ const initialState = {
       date: '22:30',
       text: 'njnj',
     },
-  ],
+  ] as Array<MessageType>,
 };
 
-const messagesReducer = (state = initialState, action) => {
+type InitialStateType = typeof initialState;
+
+const messagesReducer = (
+  state = initialState,
+  action: any
+): InitialStateType => {
   switch (action.type) {
     case SEND_MESSAGE:
       const newMessage = {
@@ -138,6 +149,14 @@ const messagesReducer = (state = initialState, action) => {
   }
 };
 
-export const sendMessage = (message) => ({ type: SEND_MESSAGE, message });
+type SendMessageActionType = {
+  type: typeof SEND_MESSAGE;
+  message: string;
+};
+
+export const sendMessage = (message: string): SendMessageActionType => ({
+  type: SEND_MESSAGE,
+  message,
+});
 
 export default messagesReducer;

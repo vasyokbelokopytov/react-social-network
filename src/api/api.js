@@ -30,7 +30,6 @@ export const usersAPI = {
 export const profileAPI = {
   async loadProfile(id) {
     const response = await template.get(`profile/${id}`);
-    debugger;
     return response.data;
   },
 
