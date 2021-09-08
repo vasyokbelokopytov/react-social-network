@@ -1,7 +1,9 @@
 import { usersAPI } from '../api/api';
-import { setGlobalError } from './app-reducer';
+import { setGlobalError, SetGlobalErrorActionType } from './app-reducer';
 
 import { UserType } from '../types/types';
+import { ThunkAction } from 'redux-thunk';
+import { globalStateType } from './redux-store';
 
 const FOLLOW = 'social-network/users/FOLLOW';
 const UNFOLLOW = 'social-network/users/UNFOLLOW';
@@ -22,7 +24,10 @@ const initialState = {
 
 type InitialState = typeof initialState;
 
-const usersReducer = (state = initialState, action: any): InitialState => {
+const usersReducer = (
+  state = initialState,
+  action: ActionsTypes
+): InitialState => {
   switch (action.type) {
     case FOLLOW:
       return {
@@ -90,6 +95,16 @@ const usersReducer = (state = initialState, action: any): InitialState => {
       return state;
   }
 };
+
+type ActionsTypes =
+  | FollowActionType
+  | UnfollowActionType
+  | SetUsersActionType
+  | SetCurrentPageActionType
+  | SetTotalUsersCountActionType
+  | ToggleLoaderActionType
+  | SetFollowingActionType
+  | SetGlobalErrorActionType;
 
 type FollowActionType = {
   type: typeof FOLLOW;
@@ -161,8 +176,16 @@ export const setFollowing = (
   id,
 });
 
+type ThunkType = ThunkAction<
+  Promise<void>,
+  globalStateType,
+  unknown,
+  ActionsTypes
+>;
+
 export const loadUsers =
-  (page: number, pageSize: number) => async (dispatch: any) => {
+  (page: number, pageSize: number): ThunkType =>
+  async (dispatch) => {
     dispatch(setCurrentPage(page));
     dispatch(toggleLoader());
 
@@ -172,36 +195,39 @@ export const loadUsers =
     dispatch(setTotalUsersCount(users.totalCount));
   };
 
-export const followUser = (id: number) => async (dispatch: any) => {
-  dispatch(setFollowing(true, id));
+export const followUser =
+  (id: number): ThunkType =>
+  async (dispatch) => {
+    dispatch(setFollowing(true, id));
 
-  try {
-    const data = await usersAPI.follow(id);
+    try {
+      const data = await usersAPI.follow(id);
 
-    if (data.resultCode === 0) {
-      dispatch(follow(id));
+      if (data.resultCode === 0) {
+        dispatch(follow(id));
+      }
+    } catch (e) {
+      dispatch(setGlobalError(e));
     }
-  } catch (e) {
-    console.log(typeof e);
-    dispatch(setGlobalError(e));
-  }
 
-  dispatch(setFollowing(false, id));
-};
+    dispatch(setFollowing(false, id));
+  };
 
-export const unfollowUser = (id: number) => async (dispatch: any) => {
-  dispatch(setFollowing(true, id));
+export const unfollowUser =
+  (id: number): ThunkType =>
+  async (dispatch) => {
+    dispatch(setFollowing(true, id));
 
-  try {
-    const data = await usersAPI.unfollow(id);
-    if (data.resultCode === 0) {
-      dispatch(unfollow(id));
+    try {
+      const data = await usersAPI.unfollow(id);
+      if (data.resultCode === 0) {
+        dispatch(unfollow(id));
+      }
+    } catch (e) {
+      dispatch(setGlobalError(e));
     }
-  } catch (e) {
-    dispatch(setGlobalError(e));
-  }
 
-  dispatch(setFollowing(false, id));
-};
+    dispatch(setFollowing(false, id));
+  };
 
 export default usersReducer;

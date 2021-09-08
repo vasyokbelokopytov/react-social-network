@@ -128,7 +128,7 @@ type InitialStateType = typeof initialState;
 
 const messagesReducer = (
   state = initialState,
-  action: any
+  action: ActionsType
 ): InitialStateType => {
   switch (action.type) {
     case SEND_MESSAGE:
@@ -153,6 +153,8 @@ type SendMessageActionType = {
   type: typeof SEND_MESSAGE;
   message: string;
 };
+
+type ActionsType = SendMessageActionType;
 
 export const sendMessage = (message: string): SendMessageActionType => ({
   type: SEND_MESSAGE,

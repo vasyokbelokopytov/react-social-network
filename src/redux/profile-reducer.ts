@@ -2,6 +2,8 @@ import { getStringDate } from '../utilities/helpers/helpers';
 import { profileAPI } from '../api/api';
 
 import { ProfileType, UserPhotosType, PostType } from '../types/types';
+import { ThunkAction } from 'redux-thunk';
+import { globalStateType } from './redux-store';
 
 const ADD_POST = 'social-network/profile/ADD-POST';
 const DELETE_POST = 'social-network/profile/DELETE-POST';
@@ -44,7 +46,7 @@ type InitialStateType = typeof initialState;
 
 const profileReducer = (
   state = initialState,
-  action: any
+  action: ActionsTypes
 ): InitialStateType => {
   switch (action.type) {
     case ADD_POST:
@@ -52,7 +54,7 @@ const profileReducer = (
         id: state.posts.length + 1,
         name: 'Vasiliy Belokopytov',
         date: getStringDate(),
-        text: action.post,
+        text: action.postText,
       };
 
       return {
@@ -122,11 +124,11 @@ export const setUserPhotos = (
 
 type AddPostActionType = {
   type: typeof ADD_POST;
-  post: PostType;
+  postText: string;
 };
-export const addPost = (post: PostType): AddPostActionType => ({
+export const addPost = (postText: string): AddPostActionType => ({
   type: ADD_POST,
-  post,
+  postText,
 });
 
 type DeletePostActionType = {
@@ -138,37 +140,61 @@ export const deletePost = (id: number): DeletePostActionType => ({
   id,
 });
 
-export const loadUserProfile = (id: number) => async (dispatch: any) => {
-  const profile = await profileAPI.loadProfile(id);
-  dispatch(setUserProfile(profile));
-};
+type ActionsTypes =
+  | SetUserProfileActionType
+  | SetUserStatusActionType
+  | SetUserPhotoActionType
+  | AddPostActionType
+  | DeletePostActionType;
 
-export const loadUserStatus = (id: number) => async (dispatch: any) => {
-  const status = await profileAPI.loadStatus(id);
-  dispatch(setUserStatus(status));
-};
+type ThunkType = ThunkAction<void, globalStateType, unknown, ActionsTypes>;
+type FormThunkType = ThunkAction<
+  Promise<Array<string>> | Promise<undefined>,
+  globalStateType,
+  unknown,
+  ActionsTypes
+>;
 
-export const updateUserStatus = (status: string) => async (dispatch: any) => {
-  const data = await profileAPI.updateStatus(status);
+export const loadUserProfile =
+  (id: number): ThunkType =>
+  async (dispatch) => {
+    const profile = await profileAPI.loadProfile(id);
+    dispatch(setUserProfile(profile));
+  };
 
-  if (data.resultCode === 0) {
+export const loadUserStatus =
+  (id: number): ThunkType =>
+  async (dispatch) => {
+    const status = await profileAPI.loadStatus(id);
     dispatch(setUserStatus(status));
-  }
-};
+  };
 
-export const savePhoto = (file: any) => async (dispatch: any) => {
-  const data = await profileAPI.savePhoto(file);
+export const updateUserStatus =
+  (status: string): ThunkType =>
+  async (dispatch) => {
+    const data = await profileAPI.updateStatus(status);
 
-  if (data.resultCode === 0) {
-    dispatch(setUserPhotos(data.data.photos));
-  }
-};
+    if (data.resultCode === 0) {
+      dispatch(setUserStatus(status));
+    }
+  };
+
+export const savePhoto =
+  (file: any): ThunkType =>
+  async (dispatch) => {
+    const data = await profileAPI.savePhoto(file);
+
+    if (data.resultCode === 0) {
+      dispatch(setUserPhotos(data.data.photos));
+    }
+  };
 
 export const saveUserProfile =
-  (profile: ProfileType) => async (dispatch: any, getState: any) => {
+  (profile: ProfileType): FormThunkType =>
+  async (dispatch, getState) => {
     const id = getState().auth.id;
     const data = await profileAPI.updateProfile(profile);
-    if (data.resultCode === 0) {
+    if (data.resultCode === 0 && id !== null) {
       dispatch(loadUserProfile(id));
       return;
     }
