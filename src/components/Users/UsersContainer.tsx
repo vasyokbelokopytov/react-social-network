@@ -1,12 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-  setCurrentPage,
-  loadUsers,
-  followUser,
-  unfollowUser,
-} from '../../redux/users-reducer';
+import { UserType } from '../../types/types';
+import { globalStateType } from '../../redux/redux-store';
+
+import { loadUsers, followUser, unfollowUser } from '../../redux/users-reducer';
 
 import {
   selectUsers,
@@ -21,12 +19,32 @@ import { selectIsAuth } from '../../redux/selectors/auth-selectors';
 
 import Users from './Users';
 
-class UsersContainer extends React.Component {
+type MapStatePropsType = {
+  isAuth: boolean;
+  users: Array<UserType>;
+  pageSize: number;
+  totalUsersCount: number;
+  currentPage: number;
+  isFetching: boolean;
+  isFollowing: Array<number>;
+};
+
+type MapDispatchPropsType = {
+  followUser: (id: number) => void;
+  unfollowUser: (id: number) => void;
+  loadUsers: (pageNum: number, pageSize: number) => void;
+};
+
+type OwnPropsType = {};
+
+type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType;
+
+class UsersContainer extends React.Component<PropsType> {
   componentDidMount() {
     this.props.loadUsers(this.props.currentPage, this.props.pageSize);
   }
 
-  pageChangeHandler = (pageNum) => {
+  pageChangeHandler = (pageNum: number) => {
     this.props.loadUsers(pageNum, this.props.pageSize);
   };
 
@@ -48,7 +66,7 @@ class UsersContainer extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: globalStateType): MapStatePropsType => {
   return {
     isAuth: selectIsAuth(state),
     users: selectUsers(state),
@@ -60,8 +78,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  setCurrentPage,
+export default connect<
+  MapStatePropsType,
+  MapDispatchPropsType,
+  OwnPropsType,
+  globalStateType
+>(mapStateToProps, {
   loadUsers,
   followUser,
   unfollowUser,

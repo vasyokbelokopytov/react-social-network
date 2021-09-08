@@ -1,8 +1,13 @@
+export type UserPhotosType = {
+  small: string | null;
+  large: string | null;
+};
+
 export type UserType = {
   id: number;
   name: string;
   status: string;
-  photos: null;
+  photos: UserPhotosType;
   followed: boolean;
 };
 
@@ -22,11 +27,6 @@ export type UserContactsType = {
   website: string | null;
   youtube: string | null;
   mainLink: string | null;
-};
-
-export type UserPhotosType = {
-  small: string | null;
-  large: string | null;
 };
 
 export type ProfileType = {

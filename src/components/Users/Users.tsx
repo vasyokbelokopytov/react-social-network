@@ -7,8 +7,22 @@ import Paginator from '../common/Paginator/Paginator';
 import userImg from '../../assets/img/user.png';
 import Loader from '../common/Loader/Loader';
 import Title from '../common/Title/Title';
+import { UserType } from '../../types/types';
 
-const Users = (props) => {
+type PropsType = {
+  isAuth: boolean;
+  isFollowing: Array<number>;
+  isFetching: boolean;
+  users: Array<UserType>;
+  totalUsersCount: number;
+  pageSize: number;
+  currentPage: number;
+  pageChangeHandler: (lastPortionPage: number) => void;
+  followUser: (id: number) => void;
+  unfollowUser: (id: number) => void;
+};
+
+const Users: React.FC<PropsType> = (props) => {
   return (
     <section className={styles.users}>
       <Title>Search users:</Title>
@@ -37,7 +51,6 @@ const Users = (props) => {
 
       <div className={styles.paginator}>
         <Paginator
-          className={styles.paginator}
           totalItemsCount={props.totalUsersCount}
           pageSize={props.pageSize}
           currentPage={props.currentPage}

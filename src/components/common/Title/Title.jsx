@@ -3,9 +3,11 @@ import cn from 'classnames';
 
 import styles from './Title.module.css';
 
-const Title = ({ children, className }) => {
+const Title = (props) => {
   return (
-    <h1 className={cn(styles.title, { [className]: className })}>{children}</h1>
+    <h1 className={cn(styles.title, { [props.className]: props.className })}>
+      {props.children}
+    </h1>
   );
 };
 
