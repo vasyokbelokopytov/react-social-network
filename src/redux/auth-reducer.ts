@@ -1,5 +1,11 @@
 import { ThunkAction } from 'redux-thunk';
-import { authAPI, profileAPI, securityAPI } from '../api/api';
+import {
+  authAPI,
+  CaptchaResultCodes,
+  profileAPI,
+  ResultCodes,
+  securityAPI,
+} from '../api/api';
 import { ProfileType } from '../types/types';
 import { globalStateType } from './redux-store';
 
@@ -95,14 +101,14 @@ type ActionsTypes =
 
 type ThunkType = ThunkAction<void, globalStateType, unknown, ActionsTypes>;
 type FormThunkType = ThunkAction<
-  Promise<Array<string>> | Promise<undefined>,
+  Promise<Array<string> | undefined>,
   globalStateType,
   unknown,
   ActionsTypes
 >;
 
 export const loadUserAuthProfile =
-  (id: number | null): ThunkType =>
+  (id: number): ThunkType =>
   async (dispatch) => {
     const data = await profileAPI.loadProfile(id);
     dispatch(setUserAuthProfile(data));
@@ -111,7 +117,7 @@ export const loadUserAuthProfile =
 export const loadUserAuthData = (): ThunkType => async (dispatch) => {
   const data = await authAPI.me();
 
-  if (data.resultCode === 0) {
+  if (data.resultCode === ResultCodes.success) {
     const { id, email, login } = data.data;
     dispatch(setUserAuthData(id, email, login, true));
     dispatch(loadUserAuthProfile(id));
@@ -128,10 +134,10 @@ export const logIn =
   async (dispatch) => {
     const data = await authAPI.login(email, password, rememberMe, captcha);
 
-    if (data.resultCode === 0) {
+    if (data.resultCode === ResultCodes.success) {
       dispatch(loadUserAuthData());
       return;
-    } else if (data.resultCode === 10) {
+    } else if (data.resultCode === CaptchaResultCodes.captchaIsRequired) {
       dispatch(getCaptchaUrl());
     }
 
@@ -147,7 +153,7 @@ export const getCaptchaUrl = (): ThunkType => async (dispatch) => {
 export const logOut = (): ThunkType => async (dispatch) => {
   const data = await authAPI.logout();
 
-  if (data.resultCode === 0) {
+  if (data.resultCode === ResultCodes.success) {
     dispatch(setUserAuthData(null, null, null, false));
     dispatch(setUserAuthProfile(null));
   }

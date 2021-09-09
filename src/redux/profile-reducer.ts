@@ -1,5 +1,5 @@
 import { getStringDate } from '../utilities/helpers/helpers';
-import { profileAPI } from '../api/api';
+import { profileAPI, ResultCodes } from '../api/api';
 
 import { ProfileType, UserPhotosType, PostType } from '../types/types';
 import { ThunkAction } from 'redux-thunk';
@@ -13,7 +13,7 @@ const SET_USER_PHOTOS = 'social-network/profile/SET-USER-PHOTOS';
 
 const initialState = {
   profile: null as null | ProfileType,
-  status: '',
+  status: null as null | string,
   posts: [
     {
       id: 1,
@@ -104,9 +104,11 @@ export const setUserProfile = (
 
 type SetUserStatusActionType = {
   type: typeof SET_USER_STATUS;
-  status: string;
+  status: string | null;
 };
-export const setUserStatus = (status: string): SetUserStatusActionType => ({
+export const setUserStatus = (
+  status: string | null
+): SetUserStatusActionType => ({
   type: SET_USER_STATUS,
   status,
 });
@@ -149,7 +151,7 @@ type ActionsTypes =
 
 type ThunkType = ThunkAction<void, globalStateType, unknown, ActionsTypes>;
 type FormThunkType = ThunkAction<
-  Promise<Array<string>> | Promise<undefined>,
+  Promise<Array<string> | undefined>,
   globalStateType,
   unknown,
   ActionsTypes
@@ -174,7 +176,7 @@ export const updateUserStatus =
   async (dispatch) => {
     const data = await profileAPI.updateStatus(status);
 
-    if (data.resultCode === 0) {
+    if (data.resultCode === ResultCodes.success) {
       dispatch(setUserStatus(status));
     }
   };
@@ -184,7 +186,7 @@ export const savePhoto =
   async (dispatch) => {
     const data = await profileAPI.savePhoto(file);
 
-    if (data.resultCode === 0) {
+    if (data.resultCode === ResultCodes.success) {
       dispatch(setUserPhotos(data.data.photos));
     }
   };
@@ -194,7 +196,7 @@ export const saveUserProfile =
   async (dispatch, getState) => {
     const id = getState().auth.id;
     const data = await profileAPI.updateProfile(profile);
-    if (data.resultCode === 0 && id !== null) {
+    if (data.resultCode === ResultCodes.success && id !== null) {
       dispatch(loadUserProfile(id));
       return;
     }

@@ -1,4 +1,4 @@
-import { usersAPI } from '../api/api';
+import { ResultCodes, usersAPI } from '../api/api';
 import { setGlobalError, SetGlobalErrorActionType } from './app-reducer';
 
 import { UserType } from '../types/types';
@@ -203,7 +203,7 @@ export const followUser =
     try {
       const data = await usersAPI.follow(id);
 
-      if (data.resultCode === 0) {
+      if (data.resultCode === ResultCodes.success) {
         dispatch(follow(id));
       }
     } catch (e) {
@@ -220,7 +220,7 @@ export const unfollowUser =
 
     try {
       const data = await usersAPI.unfollow(id);
-      if (data.resultCode === 0) {
+      if (data.resultCode === ResultCodes.success) {
         dispatch(unfollow(id));
       }
     } catch (e) {
