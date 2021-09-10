@@ -5,7 +5,18 @@ import styles from './Login.module.css';
 
 import LoginForm from './LoginForm/LoginForm';
 
-const Login = (props) => {
+type PropsType = {
+  isAuth: boolean;
+  captchaUrl: string | null;
+  logIn: (
+    email: string,
+    password: string,
+    rememberMe: boolean,
+    captcha: string | null
+  ) => Promise<Array<string> | undefined>;
+};
+
+const Login: React.FC<PropsType> = (props) => {
   if (props.isAuth) {
     return <Redirect to="/profile" />;
   }

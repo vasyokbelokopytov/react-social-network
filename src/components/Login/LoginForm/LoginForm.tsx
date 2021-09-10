@@ -9,15 +9,32 @@ import Loader from '../../common/Loader/Loader';
 
 import { required } from '../../../utilities/validators/validators';
 
-const LoginForm = (props) => {
+type PropsType = {
+  logIn: (
+    email: string,
+    password: string,
+    rememberMe: boolean,
+    captcha: string | null
+  ) => Promise<Array<string> | undefined>;
+  captchaUrl: string | null;
+};
+
+type FormDataType = {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+  captcha: string;
+};
+
+const LoginForm: React.FC<PropsType> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
-  const logIn = async (data) => {
+  const logIn = async (formData: FormDataType) => {
     setIsLoading(true);
     const messages = await props.logIn(
-      data.email,
-      data.password,
-      data.rememberMe,
-      data.captcha
+      formData.email,
+      formData.password,
+      formData.rememberMe,
+      formData.captcha
     );
     setIsLoading(false);
     return messages ? { [FORM_ERROR]: messages[0] } : undefined;
@@ -28,22 +45,22 @@ const LoginForm = (props) => {
       {({ handleSubmit, submitError }) => {
         return (
           <form className={styles.form} onSubmit={handleSubmit}>
-            <Field name="email" validate={required}>
-              {(props) => (
-                <Input className={styles.field} title="Email" {...props} />
-              )}
-            </Field>
+            <Field<string>
+              component={Input}
+              validate={required}
+              name="email"
+              className={styles.field}
+              title="Email"
+            />
 
-            <Field name="password" validate={required}>
-              {(props) => (
-                <Input
-                  className={styles.field}
-                  type="password"
-                  title="Password"
-                  {...props}
-                />
-              )}
-            </Field>
+            <Field<string>
+              component={Input}
+              validate={required}
+              name="password"
+              className={styles.field}
+              title="Password"
+              type="password"
+            />
 
             {props.captchaUrl && (
               <div className={styles.captchaWrapper}>
@@ -53,23 +70,24 @@ const LoginForm = (props) => {
                   alt="captcha"
                 />
 
-                <Field name="captcha" validate={required}>
-                  {(props) => <Input className={styles.field} {...props} />}
-                </Field>
+                <Field<string>
+                  component={Input}
+                  name="captcha"
+                  validate={required}
+                  className={styles.field}
+                />
               </div>
             )}
 
             <div className={styles.bottom}>
               <div className={styles.checkboxWrapper}>
-                <Field name="rememberMe" type="checkbox">
-                  {(props) => (
-                    <Checkbox
-                      id="rememberMe"
-                      className={styles.checkbox}
-                      {...props}
-                    />
-                  )}
-                </Field>
+                <Field<boolean>
+                  component={Checkbox}
+                  id="rememberMe"
+                  className={styles.checkbox}
+                  name="rememberMe"
+                  type="checkbox"
+                />
 
                 <label className={styles.checkboxLabel} htmlFor="rememberMe">
                   Remember me
