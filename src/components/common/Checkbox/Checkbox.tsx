@@ -1,8 +1,21 @@
 import React, { useState } from 'react';
 import styles from './Checkbox.module.css';
 import checkmark from '../../../assets/img/check.svg';
+import { FieldRenderProps } from 'react-final-form';
 
-const Checkbox = ({ className, input, meta, ...props }) => {
+type FieldProps = FieldRenderProps<boolean, any>;
+
+type OwnProps = {
+  className?: string;
+};
+
+type PropsType = FieldProps & OwnProps;
+
+const Checkbox: React.FC<PropsType> = ({
+  className,
+  input: { value, ...input },
+  ...rest
+}: PropsType) => {
   const [isFocused, setIsFocused] = useState(false);
 
   const newCheckboxStyles = {
@@ -10,7 +23,11 @@ const Checkbox = ({ className, input, meta, ...props }) => {
     border: isFocused ? '1px solid #727595' : '',
   };
 
-  const checkmarkStyles = {
+  type CheckmarkStylesType = {
+    visibility: 'visible' | 'hidden';
+  };
+
+  const checkmarkStyles: CheckmarkStylesType = {
     visibility: input.checked ? 'visible' : 'hidden',
   };
 
@@ -31,7 +48,7 @@ const Checkbox = ({ className, input, meta, ...props }) => {
           className={styles.oldCheckbox}
           type="checkbox"
           {...input}
-          {...props}
+          {...rest}
           onFocus={onFocusHandler}
           onBlur={onBlurHandler}
         />
