@@ -1,25 +1,25 @@
-import { globalStateType } from '../redux-store';
+import { GlobalStateType } from '../redux-store';
 
-export const selectUsers = (state: globalStateType) => {
+export const selectUsers = (state: GlobalStateType) => {
   return state.usersPage.users;
 };
 
-export const selectPageSize = (state: globalStateType) => {
+export const selectPageSize = (state: GlobalStateType) => {
   return state.usersPage.pageSize;
 };
 
-export const selectTotalUsersCount = (state: globalStateType) => {
+export const selectTotalUsersCount = (state: GlobalStateType) => {
   return state.usersPage.totalUsersCount;
 };
 
-export const selectCurrentPage = (state: globalStateType) => {
+export const selectCurrentPage = (state: GlobalStateType) => {
   return state.usersPage.currentPage;
 };
 
-export const selectIsFetching = (state: globalStateType) => {
+export const selectIsFetching = (state: GlobalStateType) => {
   return state.usersPage.isFetching;
 };
 
-export const selectIsFollowing = (state: globalStateType) => {
+export const selectIsFollowing = (state: GlobalStateType) => {
   return state.usersPage.isFollowing;
 };

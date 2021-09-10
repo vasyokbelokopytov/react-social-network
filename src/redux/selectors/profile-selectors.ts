@@ -1,13 +1,13 @@
-import { globalStateType } from '../redux-store';
+import { GlobalStateType } from '../redux-store';
 
-export const selectProfile = (state: globalStateType) => {
+export const selectProfile = (state: GlobalStateType) => {
   return state.profilePage.profile;
 };
 
-export const selectStatus = (state: globalStateType) => {
+export const selectStatus = (state: GlobalStateType) => {
   return state.profilePage.status;
 };
 
-export const selectPosts = (state: globalStateType) => {
+export const selectPosts = (state: GlobalStateType) => {
   return state.profilePage.posts;
 };
