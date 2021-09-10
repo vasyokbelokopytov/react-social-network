@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { UserType } from '../../types/types';
-import { globalStateType } from '../../redux/redux-store';
+import { GlobalStateType } from '../../redux/redux-store';
 
 import { loadUsers, followUser, unfollowUser } from '../../redux/users-reducer';
 
@@ -66,7 +66,7 @@ class UsersContainer extends React.Component<PropsType> {
   }
 }
 
-const mapStateToProps = (state: globalStateType): MapStatePropsType => {
+const mapStateToProps = (state: GlobalStateType): MapStatePropsType => {
   return {
     isAuth: selectIsAuth(state),
     users: selectUsers(state),
@@ -82,7 +82,7 @@ export default connect<
   MapStatePropsType,
   MapDispatchPropsType,
   OwnPropsType,
-  globalStateType
+  GlobalStateType
 >(mapStateToProps, {
   loadUsers,
   followUser,
