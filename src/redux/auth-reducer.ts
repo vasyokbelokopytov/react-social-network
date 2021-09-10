@@ -7,7 +7,7 @@ import {
   securityAPI,
 } from '../api/api';
 import { ProfileType } from '../types/types';
-import { globalStateType } from './redux-store';
+import { GlobalStateType } from './redux-store';
 
 const SET_USER_AUTH_DATA = 'social-network/auth/SET-USER-AUTH-DATA';
 const SET_USER_AUTH_PROFILE = 'social-network/auth/SET-USER-AUTH-PROFILE';
@@ -99,10 +99,10 @@ type ActionsTypes =
   | SetCaptchaUrlActionType
   | SetUserAuthProfileActionType;
 
-type ThunkType = ThunkAction<void, globalStateType, unknown, ActionsTypes>;
-type FormThunkType = ThunkAction<
+type ThunkType = ThunkAction<void, GlobalStateType, unknown, ActionsTypes>;
+export type FormThunkType = ThunkAction<
   Promise<Array<string> | undefined>,
-  globalStateType,
+  GlobalStateType,
   unknown,
   ActionsTypes
 >;
@@ -129,7 +129,7 @@ export const logIn =
     email: string,
     password: string,
     rememberMe: boolean,
-    captcha: string
+    captcha: string | null
   ): FormThunkType =>
   async (dispatch) => {
     const data = await authAPI.login(email, password, rememberMe, captcha);

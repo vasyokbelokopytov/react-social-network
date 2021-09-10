@@ -3,7 +3,7 @@ import { setGlobalError, SetGlobalErrorActionType } from './app-reducer';
 
 import { UserType } from '../types/types';
 import { ThunkAction } from 'redux-thunk';
-import { globalStateType } from './redux-store';
+import { GlobalStateType } from './redux-store';
 
 const FOLLOW = 'social-network/users/FOLLOW';
 const UNFOLLOW = 'social-network/users/UNFOLLOW';
@@ -178,7 +178,7 @@ export const setFollowing = (
 
 type ThunkType = ThunkAction<
   Promise<void>,
-  globalStateType,
+  GlobalStateType,
   unknown,
   ActionsTypes
 >;

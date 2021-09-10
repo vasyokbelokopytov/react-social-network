@@ -1,6 +1,6 @@
 import { ThunkAction } from 'redux-thunk';
 import { loadUserAuthData } from './auth-reducer';
-import { globalStateType } from './redux-store';
+import { GlobalStateType } from './redux-store';
 
 const SET_INITIALIZED = 'social-network/app/SET-INITIALIZED';
 const SET_GLOBAL_ERROR = 'social-network/app/SET-GLOBAL-ERROR';
@@ -54,7 +54,7 @@ export const setGlobalError = (
 
 type ActionsTypes = SetInitializedActionType | SetGlobalErrorActionType;
 
-type ThunkType = ThunkAction<void, globalStateType, unknown, ActionsTypes>;
+type ThunkType = ThunkAction<void, GlobalStateType, unknown, ActionsTypes>;
 
 export const initialize = (): ThunkType => async (dispatch) => {
   await Promise.all([dispatch(loadUserAuthData())]);

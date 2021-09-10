@@ -3,7 +3,7 @@ import { profileAPI, ResultCodes } from '../api/api';
 
 import { ProfileType, UserPhotosType, PostType } from '../types/types';
 import { ThunkAction } from 'redux-thunk';
-import { globalStateType } from './redux-store';
+import { GlobalStateType } from './redux-store';
 
 const ADD_POST = 'social-network/profile/ADD-POST';
 const DELETE_POST = 'social-network/profile/DELETE-POST';
@@ -149,10 +149,10 @@ type ActionsTypes =
   | AddPostActionType
   | DeletePostActionType;
 
-type ThunkType = ThunkAction<void, globalStateType, unknown, ActionsTypes>;
+type ThunkType = ThunkAction<void, GlobalStateType, unknown, ActionsTypes>;
 type FormThunkType = ThunkAction<
   Promise<Array<string> | undefined>,
-  globalStateType,
+  GlobalStateType,
   unknown,
   ActionsTypes
 >;
