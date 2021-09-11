@@ -2,9 +2,7 @@ import { ResultCodes } from '../api/api';
 import usersAPI from '../api/users-api';
 import { actions as appActions } from './app-reducer';
 
-import { ActionTypes, UserType } from '../types/types';
-import { ThunkAction } from 'redux-thunk';
-import { GlobalStateType } from './redux-store';
+import { ActionTypes, ThunkType, UserType } from '../types/types';
 
 const initialState = {
   users: [] as Array<UserType>,
@@ -22,7 +20,7 @@ const usersReducer = (
   action: ActionTypes<typeof actions>
 ): InitialState => {
   switch (action.type) {
-    case 'FOLLOW':
+    case 'social-network/app/FOLLOW':
       return {
         ...state,
         users: state.users.map((user) => {
@@ -37,7 +35,7 @@ const usersReducer = (
         }),
       };
 
-    case 'UNFOLLOW':
+    case 'social-network/app/UNFOLLOW':
       return {
         ...state,
         users: state.users.map((user) => {
@@ -52,31 +50,31 @@ const usersReducer = (
         }),
       };
 
-    case 'SET_USERS':
+    case 'social-network/app/SET_USERS':
       return {
         ...state,
         users: action.users,
       };
 
-    case 'SET_CURRENT_PAGE':
+    case 'social-network/app/SET_CURRENT_PAGE':
       return {
         ...state,
         currentPage: action.currentPage,
       };
 
-    case 'SET_TOTAL_USERS_COUNT':
+    case 'social-network/app/SET_TOTAL_USERS_COUNT':
       return {
         ...state,
         totalUsersCount: action.totalUsersCount,
       };
 
-    case 'TOGGLE_LOADER':
+    case 'social-network/app/TOGGLE_LOADER':
       return {
         ...state,
         isFetching: !state.isFetching,
       };
 
-    case 'SET_FOLLOWING':
+    case 'social-network/app/SET_FOLLOWING':
       return {
         ...state,
         isFollowing: action.isFollowing
@@ -92,42 +90,42 @@ const usersReducer = (
 export const actions = {
   follow: (userId: number) =>
     ({
-      type: 'FOLLOW',
+      type: 'social-network/app/FOLLOW',
       userId,
     } as const),
 
   unfollow: (userId: number) =>
     ({
-      type: 'UNFOLLOW',
+      type: 'social-network/app/UNFOLLOW',
       userId,
     } as const),
 
   setUsers: (users: Array<UserType>) =>
     ({
-      type: 'SET_USERS',
+      type: 'social-network/app/SET_USERS',
       users,
     } as const),
 
   setCurrentPage: (currentPage: number) =>
     ({
-      type: 'SET_CURRENT_PAGE',
+      type: 'social-network/app/SET_CURRENT_PAGE',
       currentPage,
     } as const),
 
   setTotalUsersCount: (totalUsersCount: number) =>
     ({
-      type: 'SET_TOTAL_USERS_COUNT',
+      type: 'social-network/app/SET_TOTAL_USERS_COUNT',
       totalUsersCount,
     } as const),
 
   toggleLoader: () =>
     ({
-      type: 'TOGGLE_LOADER',
+      type: 'social-network/app/TOGGLE_LOADER',
     } as const),
 
   setFollowing: (isFollowing: boolean, id: number) =>
     ({
-      type: 'SET_FOLLOWING',
+      type: 'social-network/app/SET_FOLLOWING',
       isFollowing,
       id,
     } as const),
@@ -135,15 +133,8 @@ export const actions = {
   setGlobalError: appActions.setGlobalError,
 };
 
-type ThunkType = ThunkAction<
-  Promise<void>,
-  GlobalStateType,
-  unknown,
-  ActionTypes<typeof actions>
->;
-
 export const loadUsers =
-  (page: number, pageSize: number): ThunkType =>
+  (page: number, pageSize: number): ThunkType<typeof actions> =>
   async (dispatch) => {
     dispatch(actions.setCurrentPage(page));
     dispatch(actions.toggleLoader());
@@ -155,7 +146,7 @@ export const loadUsers =
   };
 
 export const followUser =
-  (id: number): ThunkType =>
+  (id: number): ThunkType<typeof actions> =>
   async (dispatch) => {
     dispatch(actions.setFollowing(true, id));
 
@@ -166,14 +157,16 @@ export const followUser =
         dispatch(actions.follow(id));
       }
     } catch (e) {
-      dispatch(appActions.setGlobalError(e));
+      if (e instanceof Error) {
+        dispatch(appActions.setGlobalError(e));
+      }
     }
 
     dispatch(actions.setFollowing(false, id));
   };
 
 export const unfollowUser =
-  (id: number): ThunkType =>
+  (id: number): ThunkType<typeof actions> =>
   async (dispatch) => {
     dispatch(actions.setFollowing(true, id));
 
@@ -183,7 +176,9 @@ export const unfollowUser =
         dispatch(actions.unfollow(id));
       }
     } catch (e) {
-      dispatch(appActions.setGlobalError(e));
+      if (e instanceof Error) {
+        dispatch(appActions.setGlobalError(e));
+      }
     }
 
     dispatch(actions.setFollowing(false, id));

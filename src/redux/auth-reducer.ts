@@ -1,11 +1,14 @@
-import { ThunkAction } from 'redux-thunk';
 import { CaptchaResultCodes, ResultCodes } from '../api/api';
 import { authAPI } from '../api/auth-api';
 import { profileAPI } from '../api/profile-api';
 import { securityAPI } from '../api/security-api';
 
-import { ActionTypes, ProfileType } from '../types/types';
-import { GlobalStateType } from './redux-store';
+import {
+  ActionTypes,
+  FormReturnType,
+  ProfileType,
+  ThunkType,
+} from '../types/types';
 
 const initialState = {
   id: null as null | number,
@@ -23,19 +26,19 @@ const authReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case 'SET_USER_AUTH_DATA':
+    case 'social-network/app/SET_USER_AUTH_DATA':
       return {
         ...state,
         ...action.data,
       };
 
-    case 'SET_USER_AUTH_PROFILE':
+    case 'social-network/app/SET_USER_AUTH_PROFILE':
       return {
         ...state,
         profile: action.profile,
       };
 
-    case 'SET_CAPTCHA_URL':
+    case 'social-network/app/SET_CAPTCHA_URL':
       return {
         ...state,
         captchaUrl: action.captchaUrl,
@@ -54,54 +57,41 @@ export const actions = {
     isAuth: boolean
   ) =>
     ({
-      type: 'SET_USER_AUTH_DATA',
+      type: 'social-network/app/SET_USER_AUTH_DATA',
       data: { id, email, login, isAuth },
     } as const),
 
   setCaptchaUrl: (captchaUrl: string) =>
     ({
-      type: 'SET_CAPTCHA_URL',
+      type: 'social-network/app/SET_CAPTCHA_URL',
       captchaUrl,
     } as const),
 
   setUserAuthProfile: (profile: ProfileType | null) => {
     return {
-      type: 'SET_USER_AUTH_PROFILE',
+      type: 'social-network/app/SET_USER_AUTH_PROFILE',
       profile,
     } as const;
   },
 };
 
-type ThunkType = ThunkAction<
-  void,
-  GlobalStateType,
-  unknown,
-  ActionTypes<typeof actions>
->;
-
-export type FormThunkType = ThunkAction<
-  Promise<Array<string> | undefined>,
-  GlobalStateType,
-  unknown,
-  ActionTypes<typeof actions>
->;
-
 export const loadUserAuthProfile =
-  (id: number): ThunkType =>
+  (id: number): ThunkType<typeof actions> =>
   async (dispatch) => {
     const data = await profileAPI.loadProfile(id);
     dispatch(actions.setUserAuthProfile(data));
   };
 
-export const loadUserAuthData = (): ThunkType => async (dispatch) => {
-  const data = await authAPI.me();
+export const loadUserAuthData =
+  (): ThunkType<typeof actions> => async (dispatch) => {
+    const data = await authAPI.me();
 
-  if (data.resultCode === ResultCodes.success) {
-    const { id, email, login } = data.data;
-    dispatch(actions.setUserAuthData(id, email, login, true));
-    dispatch(loadUserAuthProfile(id));
-  }
-};
+    if (data.resultCode === ResultCodes.success) {
+      const { id, email, login } = data.data;
+      dispatch(actions.setUserAuthData(id, email, login, true));
+      dispatch(loadUserAuthProfile(id));
+    }
+  };
 
 export const logIn =
   (
@@ -109,7 +99,7 @@ export const logIn =
     password: string,
     rememberMe: boolean,
     captcha: string | null
-  ): FormThunkType =>
+  ): ThunkType<typeof actions, FormReturnType> =>
   async (dispatch) => {
     const data = await authAPI.login(email, password, rememberMe, captcha);
 
@@ -123,13 +113,14 @@ export const logIn =
     return data.messages;
   };
 
-export const getCaptchaUrl = (): ThunkType => async (dispatch) => {
-  const data = await securityAPI.getCaptchaUrl();
-  const url = data.url;
-  dispatch(actions.setCaptchaUrl(url));
-};
+export const getCaptchaUrl =
+  (): ThunkType<typeof actions> => async (dispatch) => {
+    const data = await securityAPI.getCaptchaUrl();
+    const url = data.url;
+    dispatch(actions.setCaptchaUrl(url));
+  };
 
-export const logOut = (): ThunkType => async (dispatch) => {
+export const logOut = (): ThunkType<typeof actions> => async (dispatch) => {
   const data = await authAPI.logout();
 
   if (data.resultCode === ResultCodes.success) {

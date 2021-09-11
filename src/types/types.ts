@@ -1,7 +1,23 @@
-export type ActionTypes<T extends { [key: string]: (...args: any[]) => any }> =
-  ReturnType<
-    T extends { [key: string]: infer ActionCreator } ? ActionCreator : never
-  >;
+import { Action } from 'redux';
+import { ThunkAction } from 'redux-thunk';
+import { GlobalStateType } from '../redux/redux-store';
+
+type ActionCreatorsType = {
+  [key: string]: (...args: any[]) => Action;
+};
+
+export type ActionTypes<T extends ActionCreatorsType> = ReturnType<
+  T extends { [key: string]: infer ActionCreator } ? ActionCreator : never
+>;
+
+export type ThunkType<A extends ActionCreatorsType, R = void> = ThunkAction<
+  R,
+  GlobalStateType,
+  unknown,
+  ActionTypes<A>
+>;
+
+export type FormReturnType = Promise<Array<string> | undefined>;
 
 export type UserPhotosType = {
   small: string | null;

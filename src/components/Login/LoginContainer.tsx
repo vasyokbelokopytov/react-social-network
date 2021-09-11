@@ -1,11 +1,12 @@
 import { connect } from 'react-redux';
 
-import { FormThunkType, logIn } from '../../redux/auth-reducer';
+import { logIn, actions } from '../../redux/auth-reducer';
 import { GlobalStateType } from '../../redux/redux-store';
 import {
   selectCaptchaUrl,
   selectIsAuth,
 } from '../../redux/selectors/auth-selectors';
+import { FormReturnType, ThunkType } from '../../types/types';
 
 import Login from './Login';
 
@@ -20,7 +21,7 @@ type MapDispatchPropsType = {
     password: string,
     rememberMe: boolean,
     captcha: string | null
-  ) => FormThunkType;
+  ) => ThunkType<typeof actions, FormReturnType>;
 };
 
 type OwnPropsType = {};

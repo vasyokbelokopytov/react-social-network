@@ -131,7 +131,7 @@ const messagesReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case 'SEND_MESSAGE':
+    case 'social-network/app/SEND_MESSAGE':
       const newMessage = {
         id: state.messages.length + 1,
         sender: 'self',
@@ -152,7 +152,7 @@ const messagesReducer = (
 export const actions = {
   sendMessage: (message: string) =>
     ({
-      type: 'SEND_MESSAGE',
+      type: 'social-network/app/SEND_MESSAGE',
       message,
     } as const),
 };

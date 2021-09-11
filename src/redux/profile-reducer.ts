@@ -6,9 +6,10 @@ import {
   UserPhotosType,
   PostType,
   ActionTypes,
+  ThunkType,
+  FormReturnType,
 } from '../types/types';
-import { ThunkAction } from 'redux-thunk';
-import { GlobalStateType } from './redux-store';
+
 import { profileAPI } from '../api/profile-api';
 
 const initialState = {
@@ -49,7 +50,7 @@ const profileReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case 'ADD_POST':
+    case 'social-network/app/ADD_POST':
       const newPost = {
         id: state.posts.length + 1,
         name: 'Vasiliy Belokopytov',
@@ -62,25 +63,25 @@ const profileReducer = (
         posts: [...state.posts, newPost],
       };
 
-    case 'DELETE_POST':
+    case 'social-network/app/DELETE_POST':
       return {
         ...state,
         posts: state.posts.filter((post) => post.id !== action.id),
       };
 
-    case 'SET_USER_PROFILE':
+    case 'social-network/app/SET_USER_PROFILE':
       return {
         ...state,
         profile: action.profile,
       };
 
-    case 'SET_USER_STATUS':
+    case 'social-network/app/SET_USER_STATUS':
       return {
         ...state,
         status: action.status,
       };
 
-    case 'SET_USER_PHOTOS':
+    case 'social-network/app/SET_USER_PHOTOS':
       return {
         ...state,
         profile: { ...state.profile, photos: action.photos } as ProfileType,
@@ -94,65 +95,51 @@ const profileReducer = (
 export const actions = {
   setUserProfile: (profile: ProfileType) =>
     ({
-      type: 'SET_USER_PROFILE',
+      type: 'social-network/app/SET_USER_PROFILE',
       profile,
     } as const),
 
   setUserStatus: (status: string | null) =>
     ({
-      type: 'SET_USER_STATUS',
+      type: 'social-network/app/SET_USER_STATUS',
       status,
     } as const),
 
   setUserPhotos: (photos: UserPhotosType) =>
     ({
-      type: 'SET_USER_PHOTOS',
+      type: 'social-network/app/SET_USER_PHOTOS',
       photos,
     } as const),
 
   addPost: (postText: string) =>
     ({
-      type: 'ADD_POST',
+      type: 'social-network/app/ADD_POST',
       postText,
     } as const),
 
   deletePost: (id: number) =>
     ({
-      type: 'DELETE_POST',
+      type: 'social-network/app/DELETE_POST',
       id,
     } as const),
 };
 
-type ThunkType = ThunkAction<
-  void,
-  GlobalStateType,
-  unknown,
-  ActionTypes<typeof actions>
->;
-
-type FormThunkType = ThunkAction<
-  Promise<Array<string> | undefined>,
-  GlobalStateType,
-  unknown,
-  ActionTypes<typeof actions>
->;
-
 export const loadUserProfile =
-  (id: number): ThunkType =>
+  (id: number): ThunkType<typeof actions> =>
   async (dispatch) => {
     const profile = await profileAPI.loadProfile(id);
     dispatch(actions.setUserProfile(profile));
   };
 
 export const loadUserStatus =
-  (id: number): ThunkType =>
+  (id: number): ThunkType<typeof actions> =>
   async (dispatch) => {
     const status = await profileAPI.loadStatus(id);
     dispatch(actions.setUserStatus(status));
   };
 
 export const updateUserStatus =
-  (status: string): ThunkType =>
+  (status: string): ThunkType<typeof actions> =>
   async (dispatch) => {
     const data = await profileAPI.updateStatus(status);
 
@@ -162,7 +149,7 @@ export const updateUserStatus =
   };
 
 export const savePhoto =
-  (file: any): ThunkType =>
+  (file: File): ThunkType<typeof actions> =>
   async (dispatch) => {
     const data = await profileAPI.savePhoto(file);
 
@@ -172,10 +159,12 @@ export const savePhoto =
   };
 
 export const saveUserProfile =
-  (profile: ProfileType): FormThunkType =>
+  (profile: ProfileType): ThunkType<typeof actions, FormReturnType> =>
   async (dispatch, getState) => {
     const id = getState().auth.id;
+
     const data = await profileAPI.updateProfile(profile);
+
     if (data.resultCode === ResultCodes.success && id !== null) {
       dispatch(loadUserProfile(id));
       return;

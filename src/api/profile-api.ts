@@ -30,7 +30,7 @@ export const profileAPI = {
     return response.data;
   },
 
-  async savePhoto(file: any) {
+  async savePhoto(file: File) {
     const formData = new FormData();
     formData.append('image', file);
 
