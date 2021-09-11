@@ -9,18 +9,36 @@ import ContactsFormPart from './ContactsFormPart/ContactsFormPart';
 import InformationFormPart from './InformationFormPart/InformationFormPart';
 
 import closeImg from '../../../assets/img/close.svg';
+import { ProfileType, UserContactsType } from '../../../types/types';
 
-const ProfileInfoForm = ({ profile, saveProfile, setIsEdit }) => {
+type PropsType = {
+  profile: ProfileType;
+  saveProfile: (profile: FormDataType) => Promise<Array<string> | undefined>;
+  setIsEdit: (isEdit: boolean) => void;
+};
+
+type FormDataType = {
+  fullName: string;
+  lookingForAJob: boolean;
+  lookingForAJobDescription: null | string;
+  aboutMe: null | string;
+  contacts: UserContactsType;
+};
+
+const ProfileInfoForm: React.FC<PropsType> = ({
+  profile,
+  saveProfile,
+  setIsEdit,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const close = () => {
     setIsEdit(false);
   };
 
-  const saveInfo = async (formData) => {
+  const saveInfo = async (formData: FormDataType) => {
     setIsLoading(true);
 
-    await saveProfile(formData);
     const messages = await saveProfile(formData);
 
     setIsLoading(false);

@@ -1,9 +1,7 @@
 import { ThunkAction } from 'redux-thunk';
+import { ActionTypes } from '../types/types';
 import { loadUserAuthData } from './auth-reducer';
 import { GlobalStateType } from './redux-store';
-
-const SET_INITIALIZED = 'social-network/app/SET-INITIALIZED';
-const SET_GLOBAL_ERROR = 'social-network/app/SET-GLOBAL-ERROR';
 
 const initialState = {
   initialized: false as boolean,
@@ -14,16 +12,16 @@ type InitialStateType = typeof initialState;
 
 const appReducer = (
   state = initialState,
-  action: ActionsTypes
+  action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case SET_INITIALIZED:
+    case 'SET_INITIALIZED':
       return {
         ...state,
         initialized: true,
       };
 
-    case SET_GLOBAL_ERROR:
+    case 'SET_GLOBAL_ERROR':
       return {
         ...state,
         globalError: action.globalError,
@@ -34,32 +32,30 @@ const appReducer = (
   }
 };
 
-type SetInitializedActionType = {
-  type: typeof SET_INITIALIZED;
+export const actions = {
+  setInitialized: () =>
+    ({
+      type: 'SET_INITIALIZED',
+    } as const),
+
+  setGlobalError: (globalError: null | any) =>
+    ({
+      type: 'SET_GLOBAL_ERROR',
+      globalError,
+    } as const),
 };
-export const setInitialized = (): SetInitializedActionType => ({
-  type: SET_INITIALIZED,
-});
 
-export type SetGlobalErrorActionType = {
-  type: typeof SET_GLOBAL_ERROR;
-  globalError: Error | null;
-};
-export const setGlobalError = (
-  globalError: null | any
-): SetGlobalErrorActionType => ({
-  type: SET_GLOBAL_ERROR,
-  globalError,
-});
-
-type ActionsTypes = SetInitializedActionType | SetGlobalErrorActionType;
-
-type ThunkType = ThunkAction<void, GlobalStateType, unknown, ActionsTypes>;
+type ThunkType = ThunkAction<
+  void,
+  GlobalStateType,
+  unknown,
+  ActionTypes<typeof actions>
+>;
 
 export const initialize = (): ThunkType => async (dispatch) => {
   await Promise.all([dispatch(loadUserAuthData())]);
 
-  dispatch(setInitialized());
+  dispatch(actions.setInitialized());
 };
 
 export default appReducer;

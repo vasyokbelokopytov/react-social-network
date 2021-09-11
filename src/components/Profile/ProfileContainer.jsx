@@ -4,13 +4,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import {
+  actions as profileActions,
   loadUserProfile,
   loadUserStatus,
   updateUserStatus,
-  addPost,
   savePhoto,
   saveUserProfile,
-  setUserProfile,
 } from '../../redux/profile-reducer';
 
 import Profile from './Profile';
@@ -78,10 +77,10 @@ export default compose(
     loadUserProfile,
     loadUserStatus,
     updateUserStatus,
-    addPost,
+    addPost: profileActions.addPost,
     savePhoto,
     saveUserProfile,
-    setUserProfile,
+    setUserProfile: profileActions.setUserProfile,
   }),
   withRouter,
   withOwnerRedirect

@@ -1,3 +1,8 @@
+export type ActionTypes<T extends { [key: string]: (...args: any[]) => any }> =
+  ReturnType<
+    T extends { [key: string]: infer ActionCreator } ? ActionCreator : never
+  >;
+
 export type UserPhotosType = {
   small: string | null;
   large: string | null;

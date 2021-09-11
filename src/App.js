@@ -5,7 +5,7 @@ import { compose } from 'redux';
 
 import './App.css';
 
-import { initialize, setGlobalError } from './redux/app-reducer';
+import { initialize, actions as appActions } from './redux/app-reducer';
 import {
   selectGlobalError,
   selectInitialized,
@@ -79,7 +79,7 @@ const mapStateToProps = (state) => ({
 export default compose(
   connect(mapStateToProps, {
     initialize,
-    setGlobalError,
+    setGlobalError: appActions.setGlobalError,
   }),
   withRouter
 )(App);

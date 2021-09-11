@@ -1,17 +1,9 @@
 import { ResultCodes, usersAPI } from '../api/api';
-import { setGlobalError, SetGlobalErrorActionType } from './app-reducer';
+import { actions as appActions } from './app-reducer';
 
-import { UserType } from '../types/types';
+import { ActionTypes, UserType } from '../types/types';
 import { ThunkAction } from 'redux-thunk';
 import { GlobalStateType } from './redux-store';
-
-const FOLLOW = 'social-network/users/FOLLOW';
-const UNFOLLOW = 'social-network/users/UNFOLLOW';
-const SET_USERS = 'social-network/users/SET-USERS';
-const SET_CURRENT_PAGE = 'social-network/users/SET-CURRENT-PAGE';
-const SET_TOTAL_USERS_COUNT = 'social-network/users/SET-TOTAL-USERS-COUNT';
-const TOGGLE_LOADER = 'social-network/users/TOGGLE-LOADER';
-const SET_FOLLOWING = 'social-network/users/TOGGLE-FOLLOWING';
 
 const initialState = {
   users: [] as Array<UserType>,
@@ -26,10 +18,10 @@ type InitialState = typeof initialState;
 
 const usersReducer = (
   state = initialState,
-  action: ActionsTypes
+  action: ActionTypes<typeof actions>
 ): InitialState => {
   switch (action.type) {
-    case FOLLOW:
+    case 'FOLLOW':
       return {
         ...state,
         users: state.users.map((user) => {
@@ -44,7 +36,7 @@ const usersReducer = (
         }),
       };
 
-    case UNFOLLOW:
+    case 'UNFOLLOW':
       return {
         ...state,
         users: state.users.map((user) => {
@@ -59,31 +51,31 @@ const usersReducer = (
         }),
       };
 
-    case SET_USERS:
+    case 'SET_USERS':
       return {
         ...state,
         users: action.users,
       };
 
-    case SET_CURRENT_PAGE:
+    case 'SET_CURRENT_PAGE':
       return {
         ...state,
         currentPage: action.currentPage,
       };
 
-    case SET_TOTAL_USERS_COUNT:
+    case 'SET_TOTAL_USERS_COUNT':
       return {
         ...state,
         totalUsersCount: action.totalUsersCount,
       };
 
-    case TOGGLE_LOADER:
+    case 'TOGGLE_LOADER':
       return {
         ...state,
         isFetching: !state.isFetching,
       };
 
-    case SET_FOLLOWING:
+    case 'SET_FOLLOWING':
       return {
         ...state,
         isFollowing: action.isFollowing
@@ -96,138 +88,104 @@ const usersReducer = (
   }
 };
 
-type ActionsTypes =
-  | FollowActionType
-  | UnfollowActionType
-  | SetUsersActionType
-  | SetCurrentPageActionType
-  | SetTotalUsersCountActionType
-  | ToggleLoaderActionType
-  | SetFollowingActionType
-  | SetGlobalErrorActionType;
+export const actions = {
+  follow: (userId: number) =>
+    ({
+      type: 'FOLLOW',
+      userId,
+    } as const),
 
-type FollowActionType = {
-  type: typeof FOLLOW;
-  userId: number;
-};
-export const follow = (userId: number): FollowActionType => ({
-  type: FOLLOW,
-  userId,
-});
+  unfollow: (userId: number) =>
+    ({
+      type: 'UNFOLLOW',
+      userId,
+    } as const),
 
-type UnfollowActionType = {
-  type: typeof UNFOLLOW;
-  userId: number;
-};
-export const unfollow = (userId: number): UnfollowActionType => ({
-  type: UNFOLLOW,
-  userId,
-});
+  setUsers: (users: Array<UserType>) =>
+    ({
+      type: 'SET_USERS',
+      users,
+    } as const),
 
-type SetUsersActionType = {
-  type: typeof SET_USERS;
-  users: Array<UserType>;
-};
-export const setUsers = (users: Array<UserType>): SetUsersActionType => ({
-  type: SET_USERS,
-  users,
-});
+  setCurrentPage: (currentPage: number) =>
+    ({
+      type: 'SET_CURRENT_PAGE',
+      currentPage,
+    } as const),
 
-type SetCurrentPageActionType = {
-  type: typeof SET_CURRENT_PAGE;
-  currentPage: number;
-};
-export const setCurrentPage = (
-  currentPage: number
-): SetCurrentPageActionType => ({
-  type: SET_CURRENT_PAGE,
-  currentPage,
-});
+  setTotalUsersCount: (totalUsersCount: number) =>
+    ({
+      type: 'SET_TOTAL_USERS_COUNT',
+      totalUsersCount,
+    } as const),
 
-type SetTotalUsersCountActionType = {
-  type: typeof SET_TOTAL_USERS_COUNT;
-  totalUsersCount: number;
-};
-export const setTotalUsersCount = (
-  totalUsersCount: number
-): SetTotalUsersCountActionType => ({
-  type: SET_TOTAL_USERS_COUNT,
-  totalUsersCount,
-});
+  toggleLoader: () =>
+    ({
+      type: 'TOGGLE_LOADER',
+    } as const),
 
-type ToggleLoaderActionType = {
-  type: typeof TOGGLE_LOADER;
-};
-export const toggleLoader = (): ToggleLoaderActionType => ({
-  type: TOGGLE_LOADER,
-});
+  setFollowing: (isFollowing: boolean, id: number) =>
+    ({
+      type: 'SET_FOLLOWING',
+      isFollowing,
+      id,
+    } as const),
 
-type SetFollowingActionType = {
-  type: typeof SET_FOLLOWING;
-  isFollowing: boolean;
-  id: number;
+  setGlobalError: appActions.setGlobalError,
 };
-export const setFollowing = (
-  isFollowing: boolean,
-  id: number
-): SetFollowingActionType => ({
-  type: SET_FOLLOWING,
-  isFollowing,
-  id,
-});
 
 type ThunkType = ThunkAction<
   Promise<void>,
   GlobalStateType,
   unknown,
-  ActionsTypes
+  ActionTypes<typeof actions>
 >;
 
 export const loadUsers =
   (page: number, pageSize: number): ThunkType =>
   async (dispatch) => {
-    dispatch(setCurrentPage(page));
-    dispatch(toggleLoader());
+    dispatch(actions.setCurrentPage(page));
+    dispatch(actions.toggleLoader());
 
     const users = await usersAPI.loadUsers(page, pageSize);
-    dispatch(toggleLoader());
-    dispatch(setUsers(users.items));
-    dispatch(setTotalUsersCount(users.totalCount));
+    dispatch(actions.toggleLoader());
+    dispatch(actions.setUsers(users.items));
+    dispatch(actions.setTotalUsersCount(users.totalCount));
   };
 
 export const followUser =
   (id: number): ThunkType =>
   async (dispatch) => {
-    dispatch(setFollowing(true, id));
+    dispatch(actions.setFollowing(true, id));
 
     try {
       const data = await usersAPI.follow(id);
 
       if (data.resultCode === ResultCodes.success) {
-        dispatch(follow(id));
+        dispatch(actions.follow(id));
       }
     } catch (e) {
-      dispatch(setGlobalError(e));
+      dispatch(appActions.setGlobalError(e));
     }
 
-    dispatch(setFollowing(false, id));
+    dispatch(actions.setFollowing(false, id));
   };
 
 export const unfollowUser =
   (id: number): ThunkType =>
   async (dispatch) => {
-    dispatch(setFollowing(true, id));
+    dispatch(actions.setFollowing(true, id));
 
     try {
       const data = await usersAPI.unfollow(id);
       if (data.resultCode === ResultCodes.success) {
-        dispatch(unfollow(id));
+        dispatch(actions.unfollow(id));
       }
     } catch (e) {
-      dispatch(setGlobalError(e));
+      dispatch(appActions.setGlobalError(e));
     }
 
-    dispatch(setFollowing(false, id));
+    dispatch(actions.setFollowing(false, id));
   };
 
 export default usersReducer;

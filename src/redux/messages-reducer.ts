@@ -1,5 +1,5 @@
+import { ActionTypes } from '../types/types';
 import { getStringDate } from '../utilities/helpers/helpers';
-const SEND_MESSAGE = 'social-network/messages/SEND-MESSAGE';
 
 type ContactType = {
   id: number;
@@ -128,10 +128,10 @@ type InitialStateType = typeof initialState;
 
 const messagesReducer = (
   state = initialState,
-  action: ActionsType
+  action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case SEND_MESSAGE:
+    case 'SEND_MESSAGE':
       const newMessage = {
         id: state.messages.length + 1,
         sender: 'self',
@@ -149,16 +149,12 @@ const messagesReducer = (
   }
 };
 
-type SendMessageActionType = {
-  type: typeof SEND_MESSAGE;
-  message: string;
+export const actions = {
+  sendMessage: (message: string) =>
+    ({
+      type: 'SEND_MESSAGE',
+      message,
+    } as const),
 };
-
-type ActionsType = SendMessageActionType;
-
-export const sendMessage = (message: string): SendMessageActionType => ({
-  type: SEND_MESSAGE,
-  message,
-});
 
 export default messagesReducer;
