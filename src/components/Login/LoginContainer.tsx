@@ -9,7 +9,7 @@ import {
 
 import Login from './Login';
 
-type mapStatePropsType = {
+type MapStatePropsType = {
   isAuth: boolean;
   captchaUrl: string | null;
 };
@@ -25,15 +25,15 @@ type MapDispatchPropsType = {
 
 type OwnPropsType = {};
 
-export type PropsType = mapStatePropsType & MapDispatchPropsType & OwnPropsType;
+export type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType;
 
-const mapStateToProps = (state: GlobalStateType): mapStatePropsType => ({
+const mapStateToProps = (state: GlobalStateType): MapStatePropsType => ({
   isAuth: selectIsAuth(state),
   captchaUrl: selectCaptchaUrl(state),
 });
 
 export default connect<
-  mapStatePropsType,
+  MapStatePropsType,
   MapDispatchPropsType,
   OwnPropsType,
   GlobalStateType

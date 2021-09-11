@@ -1,4 +1,5 @@
-import { ResultCodes, usersAPI } from '../api/api';
+import { ResultCodes } from '../api/api';
+import usersAPI from '../api/users-api';
 import { actions as appActions } from './app-reducer';
 
 import { ActionTypes, UserType } from '../types/types';

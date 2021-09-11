@@ -1,11 +1,9 @@
 import { ThunkAction } from 'redux-thunk';
-import {
-  authAPI,
-  CaptchaResultCodes,
-  profileAPI,
-  ResultCodes,
-  securityAPI,
-} from '../api/api';
+import { CaptchaResultCodes, ResultCodes } from '../api/api';
+import { authAPI } from '../api/auth-api';
+import { profileAPI } from '../api/profile-api';
+import { securityAPI } from '../api/security-api';
+
 import { ActionTypes, ProfileType } from '../types/types';
 import { GlobalStateType } from './redux-store';
 

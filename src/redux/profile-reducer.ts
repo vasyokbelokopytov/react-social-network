@@ -1,5 +1,5 @@
 import { getStringDate } from '../utilities/helpers/helpers';
-import { profileAPI, ResultCodes } from '../api/api';
+import { ResultCodes } from '../api/api';
 
 import {
   ProfileType,
@@ -9,6 +9,7 @@ import {
 } from '../types/types';
 import { ThunkAction } from 'redux-thunk';
 import { GlobalStateType } from './redux-store';
+import { profileAPI } from '../api/profile-api';
 
 const initialState = {
   profile: null as null | ProfileType,
