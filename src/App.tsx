@@ -1,11 +1,13 @@
 import React from 'react';
-import { Route, withRouter, Switch } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { Route, Switch } from 'react-router-dom';
+import { connect, ConnectedProps } from 'react-redux';
+
+import { GlobalStateType } from './redux/redux-store';
 
 import './App.css';
 
 import { initialize, actions as appActions } from './redux/app-reducer';
+
 import {
   selectGlobalError,
   selectInitialized,
@@ -24,7 +26,6 @@ import LoginContainer from './components/Login/LoginContainer';
 import Loader from './components/common/Loader/Loader';
 import NotFound from './components/NotFound/NotFound';
 import ErrorBox from './components/ErrorBox/ErrorBox';
-import { GlobalStateType } from './redux/redux-store';
 
 class App extends React.Component<PropsType> {
   handlePromiseErrors = (e: PromiseRejectionEvent) => {
@@ -72,34 +73,18 @@ class App extends React.Component<PropsType> {
   }
 }
 
-type MapStateToPropsType = {
-  initialized: boolean;
-  globalError: Error | null;
-};
-
-type MapDispatchToPropsType = {
-  initialize: () => void;
-  setGlobalError: (globalError: Error | null) => void;
-};
-
-type OwnPropsType = {};
-
-type PropsType = MapStateToPropsType & MapDispatchToPropsType & OwnPropsType;
-
-const mapStateToProps = (state: GlobalStateType): MapStateToPropsType => ({
+const mapStateToProps = (state: GlobalStateType) => ({
   initialized: selectInitialized(state),
   globalError: selectGlobalError(state),
 });
 
-export default compose(
-  connect<
-    MapStateToPropsType,
-    MapDispatchToPropsType,
-    OwnPropsType,
-    GlobalStateType
-  >(mapStateToProps, {
-    initialize,
-    setGlobalError: appActions.setGlobalError,
-  }),
-  withRouter
-)(App);
+const connector = connect(mapStateToProps, {
+  initialize,
+  setGlobalError: appActions.setGlobalError,
+});
+
+type MappedPropsType = ConnectedProps<typeof connector>;
+type OwnPropsType = {};
+export type PropsType = MappedPropsType & OwnPropsType;
+
+export default connector(App);
