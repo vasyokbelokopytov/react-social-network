@@ -19,7 +19,7 @@ export const authAPI = {
   async login(
     email: string,
     password: string,
-    rememberMe = false,
+    rememberMe: boolean,
     captcha: null | string = null
   ) {
     const response = await template.post<
