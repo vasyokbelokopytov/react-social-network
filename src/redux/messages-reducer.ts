@@ -1,20 +1,5 @@
-import { ActionTypes } from '../types/types';
+import { ActionTypes, ContactType, MessageType } from '../types/types';
 import { getStringDate } from '../utilities/helpers/helpers';
-
-type ContactType = {
-  id: number;
-  img: string;
-  name: string;
-  date: string;
-  text: string;
-};
-
-type MessageType = {
-  id: number;
-  sender: string;
-  date: string;
-  text: string;
-};
 
 const initialState = {
   contacts: [
@@ -132,7 +117,7 @@ const messagesReducer = (
 ): InitialStateType => {
   switch (action.type) {
     case 'social-network/app/SEND_MESSAGE':
-      const newMessage = {
+      const newMessage: MessageType = {
         id: state.messages.length + 1,
         sender: 'self',
         date: getStringDate(),

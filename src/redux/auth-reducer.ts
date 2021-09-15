@@ -98,7 +98,7 @@ export const logIn =
     email: string,
     password: string,
     rememberMe: boolean,
-    captcha: string | null
+    captcha?: string
   ): ThunkType<typeof actions, FormReturnType> =>
   async (dispatch) => {
     const data = await authAPI.login(email, password, rememberMe, captcha);

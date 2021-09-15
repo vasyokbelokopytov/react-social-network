@@ -10,7 +10,7 @@ const initialState = {
   totalUsersCount: 0,
   currentPage: 1,
   isFetching: false,
-  isFollowing: [] as Array<number>, // Array of users' IDs
+  followedUsers: [] as Array<number>, // Array of users' IDs
 };
 
 type InitialState = typeof initialState;
@@ -77,9 +77,9 @@ const usersReducer = (
     case 'social-network/app/SET_FOLLOWING':
       return {
         ...state,
-        isFollowing: action.isFollowing
-          ? [...state.isFollowing, action.id]
-          : state.isFollowing.filter((id) => id !== action.id),
+        followedUsers: action.isFollowing
+          ? [...state.followedUsers, action.id]
+          : state.followedUsers.filter((id) => id !== action.id),
       };
 
     default:
