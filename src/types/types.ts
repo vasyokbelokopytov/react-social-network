@@ -53,8 +53,26 @@ export type UserContactsType = {
 export type ProfileType = {
   userId: number;
   lookingForAJob: boolean;
-  lookingForAJobDescription: string;
+  lookingForAJobDescription: string | null;
   fullName: string;
   contacts: UserContactsType;
   photos: UserPhotosType;
+  aboutMe: string | null;
+};
+
+// Rename
+
+export type MessageType = {
+  id: number;
+  sender: 'foreign' | 'self';
+  date: string;
+  text: string;
+};
+
+export type ContactType = {
+  id: number;
+  img: string;
+  name: string;
+  date: string;
+  text: string;
 };
