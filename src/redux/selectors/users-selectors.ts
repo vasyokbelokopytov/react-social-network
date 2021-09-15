@@ -20,6 +20,6 @@ export const selectIsFetching = (state: GlobalStateType) => {
   return state.usersPage.isFetching;
 };
 
-export const selectIsFollowing = (state: GlobalStateType) => {
-  return state.usersPage.isFollowing;
+export const selectFollowedUsers = (state: GlobalStateType) => {
+  return state.usersPage.followedUsers;
 };
