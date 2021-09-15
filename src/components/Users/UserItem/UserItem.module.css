@@ -7,10 +7,10 @@
   width: 100%;
   display: grid;
   grid-template-areas:
-    'img name city'
-    'img status country'
-    'button status country';
-  grid-template-columns: fit-content(10%) fit-content(75%) 1fr;
+    'img name'
+    'img status'
+    'button status';
+  grid-template-columns: 1fr 9fr;
   grid-template-rows: 20px 1fr;
   grid-row-gap: 10px;
   grid-column-gap: 30px;
@@ -53,26 +53,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.country,
-.city {
-  align-self: baseline;
-  justify-self: flex-end;
-
-  font-family: 'Roboto', sans-serif;
-  font-size: 16px;
-  letter-spacing: 0.1em;
-
-  color: #949494;
-}
-
-.country {
-  grid-area: country;
-}
-
-.city {
-  grid-area: city;
 }
 
 .status {

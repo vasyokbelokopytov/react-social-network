@@ -5,15 +5,18 @@ import styles from './Login.module.css';
 
 import LoginForm from './LoginForm/LoginForm';
 
+import { FormReturnType } from '../../types/types';
+
 type PropsType = {
   isAuth: boolean;
   captchaUrl: string | null;
+
   logIn: (
     email: string,
     password: string,
     rememberMe: boolean,
-    captcha: string | null
-  ) => Promise<Array<string> | undefined>;
+    captcha?: string
+  ) => FormReturnType;
 };
 
 const Login: React.FC<PropsType> = (props) => {

@@ -1,7 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
-
-import { UserType } from '../../types/types';
+import { connect, ConnectedProps } from 'react-redux';
 import { GlobalStateType } from '../../redux/redux-store';
 
 import { loadUsers, followUser, unfollowUser } from '../../redux/users-reducer';
@@ -10,7 +8,7 @@ import {
   selectUsers,
   selectCurrentPage,
   selectIsFetching,
-  selectIsFollowing,
+  selectFollowedUsers,
   selectPageSize,
   selectTotalUsersCount,
 } from '../../redux/selectors/users-selectors';
@@ -18,26 +16,6 @@ import {
 import { selectIsAuth } from '../../redux/selectors/auth-selectors';
 
 import Users from './Users';
-
-type MapStatePropsType = {
-  isAuth: boolean;
-  users: Array<UserType>;
-  pageSize: number;
-  totalUsersCount: number;
-  currentPage: number;
-  isFetching: boolean;
-  isFollowing: Array<number>;
-};
-
-type MapDispatchPropsType = {
-  followUser: (id: number) => void;
-  unfollowUser: (id: number) => void;
-  loadUsers: (pageNum: number, pageSize: number) => void;
-};
-
-type OwnPropsType = {};
-
-type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType;
 
 class UsersContainer extends React.Component<PropsType> {
   componentDidMount() {
@@ -57,7 +35,7 @@ class UsersContainer extends React.Component<PropsType> {
         currentPage={this.props.currentPage}
         isFetching={this.props.isFetching}
         pageChangeHandler={this.pageChangeHandler}
-        isFollowing={this.props.isFollowing}
+        followedUsers={this.props.followedUsers}
         followUser={this.props.followUser}
         unfollowUser={this.props.unfollowUser}
         isAuth={this.props.isAuth}
@@ -66,7 +44,7 @@ class UsersContainer extends React.Component<PropsType> {
   }
 }
 
-const mapStateToProps = (state: GlobalStateType): MapStatePropsType => {
+const mapStateToProps = (state: GlobalStateType) => {
   return {
     isAuth: selectIsAuth(state),
     users: selectUsers(state),
@@ -74,17 +52,18 @@ const mapStateToProps = (state: GlobalStateType): MapStatePropsType => {
     totalUsersCount: selectTotalUsersCount(state),
     currentPage: selectCurrentPage(state),
     isFetching: selectIsFetching(state),
-    isFollowing: selectIsFollowing(state),
+    followedUsers: selectFollowedUsers(state),
   };
 };
 
-export default connect<
-  MapStatePropsType,
-  MapDispatchPropsType,
-  OwnPropsType,
-  GlobalStateType
->(mapStateToProps, {
+const connector = connect(mapStateToProps, {
   loadUsers,
   followUser,
   unfollowUser,
-})(UsersContainer);
+});
+
+type MappedPropsType = ConnectedProps<typeof connector>;
+type OwnPropsType = {};
+export type PropsType = MappedPropsType & OwnPropsType;
+
+export default connector(UsersContainer);

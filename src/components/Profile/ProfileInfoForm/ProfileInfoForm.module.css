@@ -5,8 +5,10 @@
 
 .buttonsWrapper {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+
+  padding-left: 20px;
 }
 
 .closeBtn {

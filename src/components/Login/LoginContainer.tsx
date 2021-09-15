@@ -1,43 +1,24 @@
-import { connect } from 'react-redux';
-
-import { logIn, actions } from '../../redux/auth-reducer';
+import { connect, ConnectedProps } from 'react-redux';
 import { GlobalStateType } from '../../redux/redux-store';
+
+import { logIn } from '../../redux/auth-reducer';
+
 import {
   selectCaptchaUrl,
   selectIsAuth,
 } from '../../redux/selectors/auth-selectors';
-import { FormReturnType, ThunkType } from '../../types/types';
 
 import Login from './Login';
 
-type MapStatePropsType = {
-  isAuth: boolean;
-  captchaUrl: string | null;
-};
-
-type MapDispatchPropsType = {
-  logIn: (
-    email: string,
-    password: string,
-    rememberMe: boolean,
-    captcha: string | null
-  ) => ThunkType<typeof actions, FormReturnType>;
-};
-
-type OwnPropsType = {};
-
-export type PropsType = MapStatePropsType & MapDispatchPropsType & OwnPropsType;
-
-const mapStateToProps = (state: GlobalStateType): MapStatePropsType => ({
+const mapStateToProps = (state: GlobalStateType) => ({
   isAuth: selectIsAuth(state),
   captchaUrl: selectCaptchaUrl(state),
 });
 
-export default connect<
-  MapStatePropsType,
-  MapDispatchPropsType,
-  OwnPropsType,
-  GlobalStateType
->(mapStateToProps, {
-  logIn,
-})(Login);
+const connector = connect(mapStateToProps, { logIn });
+
+type MappedPropsType = ConnectedProps<typeof connector>;
+type OwnPropsType = {};
+export type PropsType = MappedPropsType & OwnPropsType;
+
+export default connector(Login);

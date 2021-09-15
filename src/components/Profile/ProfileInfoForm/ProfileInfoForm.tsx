@@ -13,11 +13,11 @@ import { ProfileType, UserContactsType } from '../../../types/types';
 
 type PropsType = {
   profile: ProfileType;
-  saveProfile: (profile: FormDataType) => Promise<Array<string> | undefined>;
+  saveProfile: (profile: ProfileType) => Promise<Array<string> | undefined>;
   setIsEdit: (isEdit: boolean) => void;
 };
 
-type FormDataType = {
+export type FormDataType = {
   fullName: string;
   lookingForAJob: boolean;
   lookingForAJobDescription: null | string;
@@ -37,9 +37,13 @@ const ProfileInfoForm: React.FC<PropsType> = ({
   };
 
   const saveInfo = async (formData: FormDataType) => {
+    const newProfile = {
+      ...profile,
+      ...formData,
+    };
     setIsLoading(true);
 
-    const messages = await saveProfile(formData);
+    const messages = await saveProfile(newProfile);
 
     setIsLoading(false);
 

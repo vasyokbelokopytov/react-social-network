@@ -8,22 +8,24 @@ import Input from '../../common/Input/Input';
 import Loader from '../../common/Loader/Loader';
 
 import { required } from '../../../utilities/validators/validators';
+import { FormReturnType } from '../../../types/types';
 
 type PropsType = {
+  captchaUrl: string | null;
+
   logIn: (
     email: string,
     password: string,
     rememberMe: boolean,
-    captcha: string | null
-  ) => Promise<Array<string> | undefined>;
-  captchaUrl: string | null;
+    captcha?: string
+  ) => FormReturnType;
 };
 
 type FormDataType = {
   email: string;
   password: string;
   rememberMe: boolean;
-  captcha: string;
+  captcha?: string;
 };
 
 const LoginForm: React.FC<PropsType> = (props) => {
@@ -82,6 +84,7 @@ const LoginForm: React.FC<PropsType> = (props) => {
             <div className={styles.bottom}>
               <div className={styles.checkboxWrapper}>
                 <Field<boolean>
+                  initialValue={false}
                   component={Checkbox}
                   id="rememberMe"
                   className={styles.checkbox}
