@@ -17,7 +17,6 @@ type RouterParamsType = {
 type RouterPropsType = RouteComponentProps<RouterParamsType>;
 
 function withOwnerRedirect<P>(Component: React.ComponentType<P>) {
-  debugger;
   const containerComponent: React.FC<MapStateToPropsType & RouterPropsType> = (
     props
   ) => {

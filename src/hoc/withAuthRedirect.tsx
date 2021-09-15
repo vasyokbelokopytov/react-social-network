@@ -9,12 +9,9 @@ type MapStateToPropsType = {
 };
 
 function withAuthRedirect<P>(Component: React.ComponentType<P>) {
-  const containerComponent: React.FC<MapStateToPropsType> = ({
-    isAuth,
-    ...props
-  }) => {
-    if (!isAuth) return <Redirect to="login" />;
-    return <Component {...(props as P)} />;
+  const containerComponent: React.FC<MapStateToPropsType> = (props) => {
+    if (!props.isAuth) return <Redirect to="login" />;
+    return <Component {...(props as unknown as P)} />;
   };
 
   const mapStateToProps = (state: GlobalStateType): MapStateToPropsType => ({
