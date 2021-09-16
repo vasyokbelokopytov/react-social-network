@@ -12,6 +12,12 @@ import {
 
 import { profileAPI } from '../api/profile-api';
 
+const ADD_POST = 'social-network/app/ADD_POST';
+const DELETE_POST = 'social-network/app/DELETE_POST';
+const SET_USER_PROFILE = 'social-network/app/SET_USER_PROFILE';
+const SET_USER_STATUS = 'social-network/app/SET_USER_STATUS';
+const SET_USER_PHOTOS = 'social-network/app/SET_USER_PHOTOS';
+
 const initialState = {
   profile: null as null | ProfileType,
   status: null as null | string,
@@ -50,7 +56,7 @@ const profileReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case 'social-network/app/ADD_POST':
+    case ADD_POST:
       const newPost = {
         id: state.posts.length + 1,
         name: 'Vasiliy Belokopytov',
@@ -63,25 +69,25 @@ const profileReducer = (
         posts: [...state.posts, newPost],
       };
 
-    case 'social-network/app/DELETE_POST':
+    case DELETE_POST:
       return {
         ...state,
         posts: state.posts.filter((post) => post.id !== action.id),
       };
 
-    case 'social-network/app/SET_USER_PROFILE':
+    case SET_USER_PROFILE:
       return {
         ...state,
         profile: action.profile,
       };
 
-    case 'social-network/app/SET_USER_STATUS':
+    case SET_USER_STATUS:
       return {
         ...state,
         status: action.status,
       };
 
-    case 'social-network/app/SET_USER_PHOTOS':
+    case SET_USER_PHOTOS:
       return {
         ...state,
         profile: { ...state.profile, photos: action.photos } as ProfileType,
@@ -95,31 +101,31 @@ const profileReducer = (
 export const actions = {
   setUserProfile: (profile: ProfileType) =>
     ({
-      type: 'social-network/app/SET_USER_PROFILE',
+      type: SET_USER_PROFILE,
       profile,
     } as const),
 
   setUserStatus: (status: string | null) =>
     ({
-      type: 'social-network/app/SET_USER_STATUS',
+      type: SET_USER_STATUS,
       status,
     } as const),
 
   setUserPhotos: (photos: UserPhotosType) =>
     ({
-      type: 'social-network/app/SET_USER_PHOTOS',
+      type: SET_USER_PHOTOS,
       photos,
     } as const),
 
   addPost: (postText: string) =>
     ({
-      type: 'social-network/app/ADD_POST',
+      type: ADD_POST,
       postText,
     } as const),
 
   deletePost: (id: number) =>
     ({
-      type: 'social-network/app/DELETE_POST',
+      type: DELETE_POST,
       id,
     } as const),
 };

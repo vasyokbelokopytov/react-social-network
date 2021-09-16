@@ -4,6 +4,14 @@ import { actions as appActions } from './app-reducer';
 
 import { ActionTypes, ThunkType, UserType } from '../types/types';
 
+const FOLLOW = 'social-network/app/FOLLOW';
+const UNFOLLOW = 'social-network/app/UNFOLLOW';
+const SET_USERS = 'social-network/app/SET_USERS';
+const SET_CURRENT_PAGE = 'social-network/app/SET_CURRENT_PAGE';
+const SET_TOTAL_USERS_COUNT = 'social-network/app/SET_TOTAL_USERS_COUNT';
+const TOGGLE_LOADER = 'social-network/app/TOGGLE_LOADER';
+const SET_FOLLOWING = 'social-network/app/SET_FOLLOWING';
+
 const initialState = {
   users: [] as Array<UserType>,
   pageSize: 10,
@@ -13,14 +21,14 @@ const initialState = {
   followedUsers: [] as Array<number>, // Array of users' IDs
 };
 
-type InitialState = typeof initialState;
+export type InitialState = typeof initialState;
 
 const usersReducer = (
   state = initialState,
   action: ActionTypes<typeof actions>
 ): InitialState => {
   switch (action.type) {
-    case 'social-network/app/FOLLOW':
+    case FOLLOW:
       return {
         ...state,
         users: state.users.map((user) => {
@@ -35,7 +43,7 @@ const usersReducer = (
         }),
       };
 
-    case 'social-network/app/UNFOLLOW':
+    case UNFOLLOW:
       return {
         ...state,
         users: state.users.map((user) => {
@@ -50,31 +58,31 @@ const usersReducer = (
         }),
       };
 
-    case 'social-network/app/SET_USERS':
+    case SET_USERS:
       return {
         ...state,
         users: action.users,
       };
 
-    case 'social-network/app/SET_CURRENT_PAGE':
+    case SET_CURRENT_PAGE:
       return {
         ...state,
         currentPage: action.currentPage,
       };
 
-    case 'social-network/app/SET_TOTAL_USERS_COUNT':
+    case SET_TOTAL_USERS_COUNT:
       return {
         ...state,
         totalUsersCount: action.totalUsersCount,
       };
 
-    case 'social-network/app/TOGGLE_LOADER':
+    case TOGGLE_LOADER:
       return {
         ...state,
         isFetching: !state.isFetching,
       };
 
-    case 'social-network/app/SET_FOLLOWING':
+    case SET_FOLLOWING:
       return {
         ...state,
         followedUsers: action.isFollowing
@@ -90,42 +98,42 @@ const usersReducer = (
 export const actions = {
   follow: (userId: number) =>
     ({
-      type: 'social-network/app/FOLLOW',
+      type: FOLLOW,
       userId,
     } as const),
 
   unfollow: (userId: number) =>
     ({
-      type: 'social-network/app/UNFOLLOW',
+      type: UNFOLLOW,
       userId,
     } as const),
 
   setUsers: (users: Array<UserType>) =>
     ({
-      type: 'social-network/app/SET_USERS',
+      type: SET_USERS,
       users,
     } as const),
 
   setCurrentPage: (currentPage: number) =>
     ({
-      type: 'social-network/app/SET_CURRENT_PAGE',
+      type: SET_CURRENT_PAGE,
       currentPage,
     } as const),
 
   setTotalUsersCount: (totalUsersCount: number) =>
     ({
-      type: 'social-network/app/SET_TOTAL_USERS_COUNT',
+      type: SET_TOTAL_USERS_COUNT,
       totalUsersCount,
     } as const),
 
   toggleLoader: () =>
     ({
-      type: 'social-network/app/TOGGLE_LOADER',
+      type: TOGGLE_LOADER,
     } as const),
 
   setFollowing: (isFollowing: boolean, id: number) =>
     ({
-      type: 'social-network/app/SET_FOLLOWING',
+      type: SET_FOLLOWING,
       isFollowing,
       id,
     } as const),

@@ -10,6 +10,10 @@ import {
   ThunkType,
 } from '../types/types';
 
+const SET_USER_AUTH_DATA = 'social-network/app/SET_USER_AUTH_DATA';
+const SET_USER_AUTH_PROFILE = 'social-network/app/SET_USER_AUTH_PROFILE';
+const SET_CAPTCHA_URL = 'social-network/app/SET_CAPTCHA_URL';
+
 const initialState = {
   id: null as null | number,
   email: null as null | string,
@@ -26,19 +30,19 @@ const authReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case 'social-network/app/SET_USER_AUTH_DATA':
+    case SET_USER_AUTH_DATA:
       return {
         ...state,
         ...action.data,
       };
 
-    case 'social-network/app/SET_USER_AUTH_PROFILE':
+    case SET_USER_AUTH_PROFILE:
       return {
         ...state,
         profile: action.profile,
       };
 
-    case 'social-network/app/SET_CAPTCHA_URL':
+    case SET_CAPTCHA_URL:
       return {
         ...state,
         captchaUrl: action.captchaUrl,
@@ -57,19 +61,19 @@ export const actions = {
     isAuth: boolean
   ) =>
     ({
-      type: 'social-network/app/SET_USER_AUTH_DATA',
+      type: SET_USER_AUTH_DATA,
       data: { id, email, login, isAuth },
     } as const),
 
   setCaptchaUrl: (captchaUrl: string) =>
     ({
-      type: 'social-network/app/SET_CAPTCHA_URL',
+      type: SET_CAPTCHA_URL,
       captchaUrl,
     } as const),
 
   setUserAuthProfile: (profile: ProfileType | null) => {
     return {
-      type: 'social-network/app/SET_USER_AUTH_PROFILE',
+      type: SET_USER_AUTH_PROFILE,
       profile,
     } as const;
   },

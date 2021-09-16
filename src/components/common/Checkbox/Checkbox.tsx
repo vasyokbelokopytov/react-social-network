@@ -16,7 +16,7 @@ const Checkbox: React.FC<PropsType> = ({
   input: { value, ...input },
   ...rest
 }: PropsType) => {
-  const [isFocused, setIsFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const newCheckboxStyles = {
     backgroundColor: input.checked ? '#b9eff6' : 'inherit',

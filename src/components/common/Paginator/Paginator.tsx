@@ -11,7 +11,7 @@ type PropsType = {
 };
 
 const Paginator: React.FC<PropsType> = (props) => {
-  const [currentPortion, setCurrentPortion] = useState(() => {
+  const [currentPortion, setCurrentPortion] = useState<number>(() => {
     return Math.ceil(props.currentPage / props.portionSize);
   });
 

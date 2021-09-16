@@ -29,7 +29,7 @@ type FormDataType = {
 };
 
 const LoginForm: React.FC<PropsType> = (props) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const logIn = async (formData: FormDataType) => {
     setIsLoading(true);
     const messages = await props.logIn(

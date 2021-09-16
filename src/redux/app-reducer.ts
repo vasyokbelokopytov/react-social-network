@@ -1,6 +1,9 @@
 import { ActionTypes, ThunkType } from '../types/types';
 import { loadUserAuthData } from './auth-reducer';
 
+const SET_INITIALIZED = 'social-network/app/SET_INITIALIZED';
+const SET_GLOBAL_ERROR = 'social-network/app/SET_GLOBAL_ERROR';
+
 const initialState = {
   initialized: false as boolean,
   globalError: null as null | Error,
@@ -13,13 +16,13 @@ const appReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case 'social-network/app/SET_INITIALIZED':
+    case SET_INITIALIZED:
       return {
         ...state,
         initialized: true,
       };
 
-    case 'social-network/app/SET_GLOBAL_ERROR':
+    case SET_GLOBAL_ERROR:
       return {
         ...state,
         globalError: action.globalError,
@@ -33,12 +36,12 @@ const appReducer = (
 export const actions = {
   setInitialized: () =>
     ({
-      type: 'social-network/app/SET_INITIALIZED',
+      type: SET_INITIALIZED,
     } as const),
 
   setGlobalError: (globalError: null | Error) =>
     ({
-      type: 'social-network/app/SET_GLOBAL_ERROR',
+      type: SET_GLOBAL_ERROR,
       globalError,
     } as const),
 };

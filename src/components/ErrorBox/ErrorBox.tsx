@@ -8,7 +8,7 @@ type PropsType = {
 };
 
 const ErrorBox: React.FC<PropsType> = React.memo((props) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
 
   useEffect(() => {
     setIsVisible(true);

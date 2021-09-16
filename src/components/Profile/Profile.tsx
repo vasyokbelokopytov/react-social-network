@@ -28,7 +28,7 @@ type PropsType = {
 };
 
 const Profile: React.FC<PropsType> = (props) => {
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
   return (
     <section className={styles.profile}>

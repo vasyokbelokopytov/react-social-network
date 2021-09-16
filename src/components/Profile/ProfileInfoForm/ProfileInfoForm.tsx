@@ -30,7 +30,7 @@ const ProfileInfoForm: React.FC<PropsType> = ({
   saveProfile,
   setIsEdit,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const close = () => {
     setIsEdit(false);

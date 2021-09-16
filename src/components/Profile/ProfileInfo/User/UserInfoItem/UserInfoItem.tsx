@@ -13,9 +13,9 @@ type PropsType = {
 };
 
 const UserInfoItem: React.FC<PropsType> = (props) => {
-  const [editMode, setEditMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [inputValue, setInputValue] = useState(props.content);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState<string>(props.content);
 
   useEffect(() => {
     setInputValue(props.content);
