@@ -45,6 +45,12 @@
   transition: background-color 200ms;
 }
 
+.submitButton:disabled {
+  background-color: #737480;
+  color: #dddddd;
+  cursor: not-allowed;
+}
+
 .loader {
   width: 40px;
   height: 40px;

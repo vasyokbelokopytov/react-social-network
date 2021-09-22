@@ -13,7 +13,7 @@ import { FormReturnType } from '../../../types/types';
 type PropsType = {
   captchaUrl: string | null;
 
-  logIn: (
+  submitHandler: (
     email: string,
     password: string,
     rememberMe: boolean,
@@ -30,21 +30,24 @@ type FormDataType = {
 
 const LoginForm: React.FC<PropsType> = (props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const logIn = async (formData: FormDataType) => {
+  const submitHandler = async (formData: FormDataType) => {
     setIsLoading(true);
-    const messages = await props.logIn(
+
+    const messages = await props.submitHandler(
       formData.email,
       formData.password,
       formData.rememberMe,
       formData.captcha
     );
+
     setIsLoading(false);
+
     return messages ? { [FORM_ERROR]: messages[0] } : undefined;
   };
 
   return (
-    <Form onSubmit={logIn}>
-      {({ handleSubmit, submitError }) => {
+    <Form onSubmit={submitHandler}>
+      {({ handleSubmit, submitError, submitting }) => {
         return (
           <form className={styles.form} onSubmit={handleSubmit}>
             <Field<string>
@@ -97,7 +100,7 @@ const LoginForm: React.FC<PropsType> = (props) => {
                 </label>
               </div>
 
-              <button className={styles.submitButton}>
+              <button className={styles.submitButton} disabled={submitting}>
                 Log In
                 {isLoading && <Loader className={styles.loader} />}
               </button>

@@ -29,3 +29,9 @@
   background-color: #7c80a7;
   transition: background-color 200ms;
 }
+
+.submit:disabled {
+  background-color: #737480;
+  color: #dddddd;
+  cursor: not-allowed;
+}

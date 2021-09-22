@@ -1,5 +1,5 @@
 import { Action } from 'redux';
-import { ThunkAction } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { GlobalStateType } from '../redux/redux-store';
 
 type ActionCreatorsType = {
@@ -12,6 +12,12 @@ export type ActionTypes<T extends ActionCreatorsType> = ReturnType<
 
 export type ThunkType<A extends ActionCreatorsType, R = void> = ThunkAction<
   R,
+  GlobalStateType,
+  unknown,
+  ActionTypes<A>
+>;
+
+export type ThunkDispatchType<A extends ActionCreatorsType> = ThunkDispatch<
   GlobalStateType,
   unknown,
   ActionTypes<A>
@@ -58,6 +64,11 @@ export type ProfileType = {
   contacts: UserContactsType;
   photos: UserPhotosType;
   aboutMe: string | null;
+};
+
+export type FilterType = {
+  term: string;
+  friend: null | boolean;
 };
 
 // Rename

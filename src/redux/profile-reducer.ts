@@ -12,11 +12,11 @@ import {
 
 import { profileAPI } from '../api/profile-api';
 
-const ADD_POST = 'social-network/app/ADD_POST';
-const DELETE_POST = 'social-network/app/DELETE_POST';
-const SET_USER_PROFILE = 'social-network/app/SET_USER_PROFILE';
-const SET_USER_STATUS = 'social-network/app/SET_USER_STATUS';
-const SET_USER_PHOTOS = 'social-network/app/SET_USER_PHOTOS';
+const ADD_POST = 'social-network/profile/ADD_POST';
+const DELETE_POST = 'social-network/profile/DELETE_POST';
+const SET_USER_PROFILE = 'social-network/profile/SET_USER_PROFILE';
+const SET_USER_STATUS = 'social-network/profile/SET_USER_STATUS';
+const SET_USER_PHOTOS = 'social-network/profile/SET_USER_PHOTOS';
 
 const initialState = {
   profile: null as null | ProfileType,
@@ -130,53 +130,55 @@ export const actions = {
     } as const),
 };
 
-export const loadUserProfile =
-  (id: number): ThunkType<typeof actions> =>
-  async (dispatch) => {
-    const profile = await profileAPI.loadProfile(id);
-    dispatch(actions.setUserProfile(profile));
-  };
+export const thunks = {
+  loadUserProfile:
+    (id: number): ThunkType<typeof actions> =>
+    async (dispatch) => {
+      const profile = await profileAPI.loadProfile(id);
+      dispatch(actions.setUserProfile(profile));
+    },
 
-export const loadUserStatus =
-  (id: number): ThunkType<typeof actions> =>
-  async (dispatch) => {
-    const status = await profileAPI.loadStatus(id);
-    dispatch(actions.setUserStatus(status));
-  };
-
-export const updateUserStatus =
-  (status: string): ThunkType<typeof actions> =>
-  async (dispatch) => {
-    const data = await profileAPI.updateStatus(status);
-
-    if (data.resultCode === ResultCodes.success) {
+  loadUserStatus:
+    (id: number): ThunkType<typeof actions> =>
+    async (dispatch) => {
+      const status = await profileAPI.loadStatus(id);
       dispatch(actions.setUserStatus(status));
-    }
-  };
+    },
 
-export const savePhoto =
-  (file: File): ThunkType<typeof actions> =>
-  async (dispatch) => {
-    const data = await profileAPI.savePhoto(file);
+  updateUserStatus:
+    (status: string): ThunkType<typeof actions> =>
+    async (dispatch) => {
+      const data = await profileAPI.updateStatus(status);
 
-    if (data.resultCode === ResultCodes.success) {
-      dispatch(actions.setUserPhotos(data.data.photos));
-    }
-  };
+      if (data.resultCode === ResultCodes.success) {
+        dispatch(actions.setUserStatus(status));
+      }
+    },
 
-export const saveUserProfile =
-  (profile: ProfileType): ThunkType<typeof actions, FormReturnType> =>
-  async (dispatch, getState) => {
-    const id = getState().auth.id;
+  savePhoto:
+    (file: File): ThunkType<typeof actions> =>
+    async (dispatch) => {
+      const data = await profileAPI.savePhoto(file);
 
-    const data = await profileAPI.updateProfile(profile);
+      if (data.resultCode === ResultCodes.success) {
+        dispatch(actions.setUserPhotos(data.data.photos));
+      }
+    },
 
-    if (data.resultCode === ResultCodes.success && id !== null) {
-      dispatch(loadUserProfile(id));
-      return;
-    }
+  saveUserProfile:
+    (profile: ProfileType): ThunkType<typeof actions, FormReturnType> =>
+    async (dispatch, getState) => {
+      const id = getState().auth.id;
 
-    return data.messages;
-  };
+      const data = await profileAPI.updateProfile(profile);
+
+      if (data.resultCode === ResultCodes.success && id !== null) {
+        dispatch(thunks.loadUserProfile(id));
+        return;
+      }
+
+      return data.messages;
+    },
+};
 
 export default profileReducer;

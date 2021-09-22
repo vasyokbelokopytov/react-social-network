@@ -56,7 +56,7 @@ const ProfileInfoForm: React.FC<PropsType> = ({
 
   return (
     <Form onSubmit={saveInfo} initialValues={profile}>
-      {({ handleSubmit, submitError }) => {
+      {({ handleSubmit, submitError, submitting }) => {
         return (
           <form className={styles.form} onSubmit={handleSubmit}>
             <Title>Information</Title>
@@ -72,7 +72,7 @@ const ProfileInfoForm: React.FC<PropsType> = ({
                 alt="close"
                 onClick={close}
               />
-              <button className={styles.submitButton}>
+              <button className={styles.submitButton} disabled={submitting}>
                 Save
                 {isLoading && <Loader className={styles.loader} />}
               </button>

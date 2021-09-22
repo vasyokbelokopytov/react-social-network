@@ -10,9 +10,9 @@ import {
   ThunkType,
 } from '../types/types';
 
-const SET_USER_AUTH_DATA = 'social-network/app/SET_USER_AUTH_DATA';
-const SET_USER_AUTH_PROFILE = 'social-network/app/SET_USER_AUTH_PROFILE';
-const SET_CAPTCHA_URL = 'social-network/app/SET_CAPTCHA_URL';
+const SET_USER_AUTH_DATA = 'social-network/auth/SET_USER_AUTH_DATA';
+const SET_USER_AUTH_PROFILE = 'social-network/auth/SET_USER_AUTH_PROFILE';
+const SET_CAPTCHA_URL = 'social-network/auth/SET_CAPTCHA_URL';
 
 const initialState = {
   id: null as null | number,

@@ -21,27 +21,23 @@ const PostForm: React.FC<PropsType> = (props) => {
   const maxLength20 = maxLength(20);
   return (
     <Form onSubmit={submitHandler}>
-      {({ handleSubmit }) => {
+      {({ handleSubmit, submitting }) => {
         return (
           <form className={styles.form} onSubmit={handleSubmit}>
             <Title>My posts</Title>
             <Field<string>
+              component={Input}
+              element="textarea"
               className={styles.textarea}
               validate={trim(maxLength20)}
               format={(value) => (value === undefined ? '' : value)}
               name="post"
               placeholder="You can share your thoughts here..."
-            >
-              {({ input, meta }) => (
-                <Input
-                  className={styles.textarea}
-                  element="textarea"
-                  input={input}
-                  meta={meta}
-                />
-              )}
-            </Field>
-            <button className={styles.submit}>Share</button>
+            />
+
+            <button className={styles.submit} disabled={submitting}>
+              Share
+            </button>
           </form>
         );
       }}

@@ -1,7 +1,7 @@
 import { ActionTypes, ContactType, MessageType } from '../types/types';
 import { getStringDate } from '../utilities/helpers/helpers';
 
-const SEND_MESSAGE = 'social-network/app/SEND_MESSAGE';
+const SEND_MESSAGE = 'social-network/messages/SEND_MESSAGE';
 
 const initialState = {
   contacts: [

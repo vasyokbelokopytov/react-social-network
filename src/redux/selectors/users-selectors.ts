@@ -23,3 +23,7 @@ export const selectIsFetching = (state: GlobalStateType) => {
 export const selectFollowedUsers = (state: GlobalStateType) => {
   return state.usersPage.followedUsers;
 };
+
+export const selectFilter = (state: GlobalStateType) => {
+  return state.usersPage.filter;
+};

@@ -60,6 +60,12 @@
   transition: background-color 200ms;
 }
 
+.submitButton:disabled {
+  background-color: #737480;
+  color: #dddddd;
+  cursor: not-allowed;
+}
+
 .submitError {
   font-family: 'Montserrat', sans-serif;
   font-size: 20px;

@@ -4,24 +4,30 @@ import { actions as appActions } from './app-reducer';
 
 import { ActionTypes, ThunkType, UserType } from '../types/types';
 
-const FOLLOW = 'social-network/app/FOLLOW';
-const UNFOLLOW = 'social-network/app/UNFOLLOW';
-const SET_USERS = 'social-network/app/SET_USERS';
-const SET_CURRENT_PAGE = 'social-network/app/SET_CURRENT_PAGE';
-const SET_TOTAL_USERS_COUNT = 'social-network/app/SET_TOTAL_USERS_COUNT';
-const TOGGLE_LOADER = 'social-network/app/TOGGLE_LOADER';
-const SET_FOLLOWING = 'social-network/app/SET_FOLLOWING';
+const FOLLOW = 'social-network/users/FOLLOW';
+const UNFOLLOW = 'social-network/users/UNFOLLOW';
+const SET_USERS = 'social-network/users/SET_USERS';
+const SET_CURRENT_PAGE = 'social-network/users/SET_CURRENT_PAGE';
+const SET_FILTER = 'social-network/users/SET_FILTERS';
+const SET_TOTAL_USERS_COUNT = 'social-network/users/SET_TOTAL_USERS_COUNT';
+const TOGGLE_LOADER = 'social-network/users/TOGGLE_LOADER';
+const SET_FOLLOWING = 'social-network/users/SET_FOLLOWING';
 
 const initialState = {
   users: [] as Array<UserType>,
   pageSize: 10,
   totalUsersCount: 0,
   currentPage: 1,
+  filter: {
+    term: '',
+    friend: null as null | boolean,
+  },
   isFetching: false,
   followedUsers: [] as Array<number>, // Array of users' IDs
 };
 
 export type InitialState = typeof initialState;
+export type FilterType = typeof initialState.filter;
 
 const usersReducer = (
   state = initialState,
@@ -76,6 +82,12 @@ const usersReducer = (
         totalUsersCount: action.totalUsersCount,
       };
 
+    case SET_FILTER:
+      return {
+        ...state,
+        filter: action.filter,
+      };
+
     case TOGGLE_LOADER:
       return {
         ...state,
@@ -120,6 +132,12 @@ export const actions = {
       currentPage,
     } as const),
 
+  setFilter: (filter: FilterType) =>
+    ({
+      type: SET_FILTER,
+      filter,
+    } as const),
+
   setTotalUsersCount: (totalUsersCount: number) =>
     ({
       type: SET_TOTAL_USERS_COUNT,
@@ -141,55 +159,60 @@ export const actions = {
   setGlobalError: appActions.setGlobalError,
 };
 
-export const loadUsers =
-  (page: number, pageSize: number): ThunkType<typeof actions> =>
-  async (dispatch) => {
-    dispatch(actions.setCurrentPage(page));
-    dispatch(actions.toggleLoader());
+export const thunks = {
+  loadUsers:
+    (
+      page: number,
+      pageSize: number,
+      filter: FilterType
+    ): ThunkType<typeof actions> =>
+    async (dispatch) => {
+      dispatch(actions.toggleLoader());
 
-    const users = await usersAPI.loadUsers(page, pageSize);
-    dispatch(actions.toggleLoader());
-    dispatch(actions.setUsers(users.items));
-    dispatch(actions.setTotalUsersCount(users.totalCount));
-  };
+      const users = await usersAPI.loadUsers(page, pageSize, filter);
+      dispatch(actions.toggleLoader());
+      dispatch(actions.setUsers(users.items));
+      dispatch(actions.setTotalUsersCount(users.totalCount));
+    },
 
-export const followUser =
-  (id: number): ThunkType<typeof actions> =>
-  async (dispatch) => {
-    dispatch(actions.setFollowing(true, id));
+  followUser:
+    (id: number): ThunkType<typeof actions> =>
+    async (dispatch) => {
+      dispatch(actions.setFollowing(true, id));
 
-    try {
-      const data = await usersAPI.follow(id);
+      try {
+        const data = await usersAPI.follow(id);
 
-      if (data.resultCode === ResultCodes.success) {
-        dispatch(actions.follow(id));
+        if (data.resultCode === ResultCodes.success) {
+          dispatch(actions.follow(id));
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          dispatch(appActions.setGlobalError(e));
+        }
       }
-    } catch (e) {
-      if (e instanceof Error) {
-        dispatch(appActions.setGlobalError(e));
+
+      dispatch(actions.setFollowing(false, id));
+    },
+
+  unfollowUser:
+    (id: number): ThunkType<typeof actions> =>
+    async (dispatch) => {
+      dispatch(actions.setFollowing(true, id));
+
+      try {
+        const data = await usersAPI.unfollow(id);
+        if (data.resultCode === ResultCodes.success) {
+          dispatch(actions.unfollow(id));
+        }
+      } catch (e) {
+        if (e instanceof Error) {
+          dispatch(appActions.setGlobalError(e));
+        }
       }
-    }
 
-    dispatch(actions.setFollowing(false, id));
-  };
-
-export const unfollowUser =
-  (id: number): ThunkType<typeof actions> =>
-  async (dispatch) => {
-    dispatch(actions.setFollowing(true, id));
-
-    try {
-      const data = await usersAPI.unfollow(id);
-      if (data.resultCode === ResultCodes.success) {
-        dispatch(actions.unfollow(id));
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        dispatch(appActions.setGlobalError(e));
-      }
-    }
-
-    dispatch(actions.setFollowing(false, id));
-  };
+      dispatch(actions.setFollowing(false, id));
+    },
+};
 
 export default usersReducer;

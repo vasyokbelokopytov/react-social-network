@@ -16,13 +16,13 @@ import {
 import HeaderContainer from './components/Header/HeaderContainer';
 import Navbar from './components/Navbar/Navbar';
 import Main from './components/Main/Main';
-import ProfileContainer from './components/Profile/ProfileContainer';
-import UsersContainer from './components/Users/UsersContainer';
+import { ProfilePage } from './components/Profile/ProfilePage';
+import { UsersPage } from './components/Users/UsersPage';
 import News from './components/News/News';
 import Music from './components/Music/Music';
 import Settings from './components/Settings/Settings';
 import MessagesContainer from './components/Messages/MessagesContainer';
-import LoginContainer from './components/Login/LoginContainer';
+import { LoginPage } from './components/Login/LoginPage';
 import Loader from './components/common/Loader/Loader';
 import NotFound from './components/NotFound/NotFound';
 import ErrorBox from './components/ErrorBox/ErrorBox';
@@ -54,15 +54,12 @@ class App extends React.Component<PropsType> {
           <Switch>
             <Route exact path="/" render={() => <Main />} />
             <Route path="/messages" render={() => <MessagesContainer />} />
-            <Route
-              path="/profile/:userId?"
-              render={() => <ProfileContainer />}
-            />
-            <Route path="/users" render={() => <UsersContainer />} />
+            <Route path="/profile/:userId?" render={() => <ProfilePage />} />
+            <Route path="/users" render={() => <UsersPage />} />
             <Route path="/news" render={() => <News />} />
             <Route path="/music" render={() => <Music />} />
             <Route path="/settings" render={() => <Settings />} />
-            <Route path="/login" render={() => <LoginContainer />} />
+            <Route path="/login" render={() => <LoginPage />} />
             <Route path="*" render={() => <NotFound />} />
           </Switch>
         </main>
