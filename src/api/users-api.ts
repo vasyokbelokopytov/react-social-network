@@ -1,9 +1,8 @@
 import { template, ResponseType, ResponseItemsType } from './api';
-import { UserType } from '../types/types';
-import { FilterType } from '../redux/users-reducer';
+import { UserType, FilterType } from '../types/types';
 
 const usersAPI = {
-  async loadUsers(currentPage: number, pageSize: number, filter: FilterType) {
+  async fetchUsers(currentPage: number, pageSize: number, filter: FilterType) {
     const { term, friend } = filter;
     const response = await template.get<ResponseItemsType<UserType>>(
       `users?page=${currentPage}&count=${pageSize}${

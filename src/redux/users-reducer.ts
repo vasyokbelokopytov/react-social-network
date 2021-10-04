@@ -1,105 +1,133 @@
 import { ResultCodes } from '../api/api';
 import usersAPI from '../api/users-api';
-import { actions as appActions } from './app-reducer';
 
-import { ActionTypes, ThunkType, UserType } from '../types/types';
+import { ActionTypes, ThunkType, UserType, FilterType } from '../types/types';
 
-const FOLLOW = 'social-network/users/FOLLOW';
-const UNFOLLOW = 'social-network/users/UNFOLLOW';
-const SET_USERS = 'social-network/users/SET_USERS';
-const SET_CURRENT_PAGE = 'social-network/users/SET_CURRENT_PAGE';
-const SET_FILTER = 'social-network/users/SET_FILTERS';
-const SET_TOTAL_USERS_COUNT = 'social-network/users/SET_TOTAL_USERS_COUNT';
-const TOGGLE_LOADER = 'social-network/users/TOGGLE_LOADER';
-const SET_FOLLOWING = 'social-network/users/SET_FOLLOWING';
+const USER_SUBSCRIBING_REQUEST = 'users/USER_SUBSCRIBING_REQUEST';
+const USER_SUBSCRIBING_SUCCEED = 'users/USER_SUBSCRIBING_SUCCEED';
+const USER_SUBSCRIBING_FAILED = 'users/USER_SUBSCRIBING_FAILED';
+const USERS_IN_FOLLOWING_PROCESS_CHANGED =
+  'users/USERS_IN_FOLLOWING_PROCESS_CHANGED';
+
+const USERS_FETCH_REQUESTED = 'users/USERS_FETCH_REQUESTED';
+const USERS_FETCH_SUCCEED = 'users/USERS_FETCH_SUCCEED';
+const USERS_FETCH_FAILED = 'users/USERS_FETCH_FAILED';
+const IS_FETCHING_CHANGED = 'users/IS_FETCHING_CHANGED';
+const TOTAL_USERS_COUNT_CHANGED = 'users/TOTAL_USERS_COUNT_CHANGED';
+
+const CURRENT_PAGE_CHANGED = 'users/CURRENT_PAGE_CHANGED';
+const PAGE_SIZE_CHANGED = 'users/PAGE_SIZE_CHANGED';
+
+const FILTER_CHANGED = 'users/FILTER_CHANGED';
 
 const initialState = {
   users: [] as Array<UserType>,
   pageSize: 10,
+  pageSizeOptions: [10, 20, 50, 100],
   totalUsersCount: 0,
   currentPage: 1,
+  fetchingError: null as null | Error,
+  isFetching: false,
+
   filter: {
     term: '',
     friend: null as null | boolean,
   },
-  isFetching: false,
-  followedUsers: [] as Array<number>, // Array of users' IDs
+
+  followingError: null as null | Error,
+  usersInFollowingProcess: [] as Array<number>, // Array of users' IDs
 };
 
 export type InitialState = typeof initialState;
-export type FilterType = typeof initialState.filter;
 
 const usersReducer = (
   state = initialState,
   action: ActionTypes<typeof actions>
 ): InitialState => {
   switch (action.type) {
-    case FOLLOW:
+    case USER_SUBSCRIBING_REQUEST:
+      return {
+        ...state,
+        usersInFollowingProcess: [
+          ...state.usersInFollowingProcess,
+          action.payload,
+        ],
+        followingError: null,
+      };
+
+    case USER_SUBSCRIBING_SUCCEED:
       return {
         ...state,
         users: state.users.map((user) => {
-          if (user.id === action.userId) {
+          if (user.id === action.payload.userId) {
             return {
               ...user,
-              followed: true,
+              followed: action.payload.type === 'follow' ? true : false,
             };
           }
 
           return user;
         }),
+
+        usersInFollowingProcess: state.usersInFollowingProcess.filter(
+          (id) => id !== action.payload.userId
+        ),
+        followingError: null,
       };
 
-    case UNFOLLOW:
+    case USER_SUBSCRIBING_FAILED:
       return {
         ...state,
-        users: state.users.map((user) => {
-          if (user.id === action.userId) {
-            return {
-              ...user,
-              followed: false,
-            };
-          }
 
-          return user;
-        }),
+        usersInFollowingProcess: state.usersInFollowingProcess.filter(
+          (id) => id !== action.payload
+        ),
+        followingError: action.error,
       };
 
-    case SET_USERS:
+    case USERS_FETCH_REQUESTED:
       return {
         ...state,
-        users: action.users,
+        isFetching: true,
+        fetchingError: null,
       };
 
-    case SET_CURRENT_PAGE:
+    case USERS_FETCH_SUCCEED:
       return {
         ...state,
-        currentPage: action.currentPage,
+        users: action.payload,
+        isFetching: false,
+        fetchingError: null,
       };
 
-    case SET_TOTAL_USERS_COUNT:
+    case USERS_FETCH_FAILED:
       return {
         ...state,
-        totalUsersCount: action.totalUsersCount,
+        fetchingError: action.error,
       };
 
-    case SET_FILTER:
+    case CURRENT_PAGE_CHANGED:
       return {
         ...state,
-        filter: action.filter,
+        currentPage: action.payload,
       };
 
-    case TOGGLE_LOADER:
+    case PAGE_SIZE_CHANGED:
       return {
         ...state,
-        isFetching: !state.isFetching,
+        pageSize: action.payload,
       };
 
-    case SET_FOLLOWING:
+    case TOTAL_USERS_COUNT_CHANGED:
       return {
         ...state,
-        followedUsers: action.isFollowing
-          ? [...state.followedUsers, action.id]
-          : state.followedUsers.filter((id) => id !== action.id),
+        totalUsersCount: action.payload,
+      };
+
+    case FILTER_CHANGED:
+      return {
+        ...state,
+        filter: action.payload,
       };
 
     default:
@@ -108,111 +136,130 @@ const usersReducer = (
 };
 
 export const actions = {
-  follow: (userId: number) =>
+  userSubscribingRequest: (userId: number) =>
     ({
-      type: FOLLOW,
-      userId,
+      type: USER_SUBSCRIBING_REQUEST,
+      payload: userId,
     } as const),
 
-  unfollow: (userId: number) =>
+  userSubscribingSucceed: (userId: number, type: 'follow' | 'unfollow') =>
     ({
-      type: UNFOLLOW,
-      userId,
+      type: USER_SUBSCRIBING_SUCCEED,
+      payload: { userId, type },
     } as const),
 
-  setUsers: (users: Array<UserType>) =>
+  userSubscribingFailed: (userId: number, error: Error) =>
     ({
-      type: SET_USERS,
-      users,
+      type: USER_SUBSCRIBING_FAILED,
+      payload: userId,
+      error: error,
     } as const),
 
-  setCurrentPage: (currentPage: number) =>
+  usersFetchRequested: () =>
     ({
-      type: SET_CURRENT_PAGE,
-      currentPage,
+      type: USERS_FETCH_REQUESTED,
     } as const),
 
-  setFilter: (filter: FilterType) =>
+  usersFetchSucceed: (users: Array<UserType>) =>
     ({
-      type: SET_FILTER,
-      filter,
+      type: USERS_FETCH_SUCCEED,
+      payload: users,
     } as const),
 
-  setTotalUsersCount: (totalUsersCount: number) =>
+  usersFetchFailed: (error: Error) =>
     ({
-      type: SET_TOTAL_USERS_COUNT,
-      totalUsersCount,
+      type: USERS_FETCH_FAILED,
+      error: error,
     } as const),
 
-  toggleLoader: () =>
+  currentPageChanged: (currentPage: number) =>
     ({
-      type: TOGGLE_LOADER,
+      type: CURRENT_PAGE_CHANGED,
+      payload: currentPage,
     } as const),
 
-  setFollowing: (isFollowing: boolean, id: number) =>
+  pageSizeChanged: (size: number) =>
     ({
-      type: SET_FOLLOWING,
-      isFollowing,
-      id,
+      type: PAGE_SIZE_CHANGED,
+      payload: size,
     } as const),
 
-  setGlobalError: appActions.setGlobalError,
+  filterChanged: (filter: FilterType) =>
+    ({
+      type: FILTER_CHANGED,
+      payload: filter,
+    } as const),
+
+  totalUsersCountChanged: (totalUsersCount: number) =>
+    ({
+      type: TOTAL_USERS_COUNT_CHANGED,
+      payload: totalUsersCount,
+    } as const),
+
+  isFetchingChanged: (isFetching: boolean) =>
+    ({
+      type: IS_FETCHING_CHANGED,
+      payload: isFetching,
+    } as const),
+
+  usersInFollowingProcessChanged: (isProcessing: boolean, id: number) =>
+    ({
+      type: USERS_IN_FOLLOWING_PROCESS_CHANGED,
+      payload: {
+        isProcessing,
+        id,
+      },
+    } as const),
 };
 
-export const thunks = {
-  loadUsers:
-    (
-      page: number,
-      pageSize: number,
-      filter: FilterType
-    ): ThunkType<typeof actions> =>
-    async (dispatch) => {
-      dispatch(actions.toggleLoader());
+export const fetchUsers =
+  (
+    page: number,
+    pageSize: number,
+    filter: FilterType
+  ): ThunkType<typeof actions> =>
+  async (dispatch) => {
+    dispatch(actions.usersFetchRequested());
 
-      const users = await usersAPI.loadUsers(page, pageSize, filter);
-      dispatch(actions.toggleLoader());
-      dispatch(actions.setUsers(users.items));
-      dispatch(actions.setTotalUsersCount(users.totalCount));
-    },
+    try {
+      const users = await usersAPI.fetchUsers(page, pageSize, filter);
+      dispatch(actions.usersFetchSucceed(users.items));
+      dispatch(actions.totalUsersCountChanged(users.totalCount));
+    } catch (e) {
+      dispatch(actions.usersFetchFailed(e as Error));
+    }
+  };
 
-  followUser:
-    (id: number): ThunkType<typeof actions> =>
-    async (dispatch) => {
-      dispatch(actions.setFollowing(true, id));
+export const followUser =
+  (id: number): ThunkType<typeof actions> =>
+  async (dispatch) => {
+    dispatch(actions.userSubscribingRequest(id));
 
-      try {
-        const data = await usersAPI.follow(id);
+    try {
+      const data = await usersAPI.follow(id);
 
-        if (data.resultCode === ResultCodes.success) {
-          dispatch(actions.follow(id));
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          dispatch(appActions.setGlobalError(e));
-        }
+      if (data.resultCode === ResultCodes.success) {
+        dispatch(actions.userSubscribingSucceed(id, 'follow'));
       }
+    } catch (e) {
+      dispatch(actions.userSubscribingFailed(id, e as Error));
+    }
+  };
 
-      dispatch(actions.setFollowing(false, id));
-    },
+export const unfollowUser =
+  (id: number): ThunkType<typeof actions> =>
+  async (dispatch) => {
+    dispatch(actions.userSubscribingRequest(id));
 
-  unfollowUser:
-    (id: number): ThunkType<typeof actions> =>
-    async (dispatch) => {
-      dispatch(actions.setFollowing(true, id));
+    try {
+      const data = await usersAPI.unfollow(id);
 
-      try {
-        const data = await usersAPI.unfollow(id);
-        if (data.resultCode === ResultCodes.success) {
-          dispatch(actions.unfollow(id));
-        }
-      } catch (e) {
-        if (e instanceof Error) {
-          dispatch(appActions.setGlobalError(e));
-        }
+      if (data.resultCode === ResultCodes.success) {
+        dispatch(actions.userSubscribingSucceed(id, 'unfollow'));
       }
-
-      dispatch(actions.setFollowing(false, id));
-    },
-};
+    } catch (e) {
+      dispatch(actions.userSubscribingFailed(id, e as Error));
+    }
+  };
 
 export default usersReducer;

@@ -8,6 +8,10 @@ export const selectPageSize = (state: GlobalStateType) => {
   return state.usersPage.pageSize;
 };
 
+export const selectPageSizeOptions = (state: GlobalStateType) => {
+  return state.usersPage.pageSizeOptions;
+};
+
 export const selectTotalUsersCount = (state: GlobalStateType) => {
   return state.usersPage.totalUsersCount;
 };
@@ -20,8 +24,16 @@ export const selectIsFetching = (state: GlobalStateType) => {
   return state.usersPage.isFetching;
 };
 
-export const selectFollowedUsers = (state: GlobalStateType) => {
-  return state.usersPage.followedUsers;
+export const selectFetchingError = (state: GlobalStateType) => {
+  return state.usersPage.fetchingError;
+};
+
+export const selectUsersInFollowingProcess = (state: GlobalStateType) => {
+  return state.usersPage.usersInFollowingProcess;
+};
+
+export const selectFollowingError = (state: GlobalStateType) => {
+  return state.usersPage.followingError;
 };
 
 export const selectFilter = (state: GlobalStateType) => {

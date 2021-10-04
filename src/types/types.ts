@@ -1,13 +1,13 @@
-import { Action } from 'redux';
+import { Action, ActionCreator } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { GlobalStateType } from '../redux/redux-store';
 
 type ActionCreatorsType = {
-  [key: string]: (...args: any[]) => Action;
+  [key: string]: ActionCreator<Action>;
 };
 
 export type ActionTypes<T extends ActionCreatorsType> = ReturnType<
-  T extends { [key: string]: infer ActionCreator } ? ActionCreator : never
+  T extends { [key: string]: infer AC } ? AC : never
 >;
 
 export type ThunkType<A extends ActionCreatorsType, R = void> = ThunkAction<
@@ -17,11 +17,7 @@ export type ThunkType<A extends ActionCreatorsType, R = void> = ThunkAction<
   ActionTypes<A>
 >;
 
-export type ThunkDispatchType<A extends ActionCreatorsType> = ThunkDispatch<
-  GlobalStateType,
-  unknown,
-  ActionTypes<A>
->;
+export type ThunkDispatchType = ThunkDispatch<GlobalStateType, unknown, Action>;
 
 export type FormReturnType = Promise<Array<string> | undefined>;
 
@@ -69,6 +65,13 @@ export type ProfileType = {
 export type FilterType = {
   term: string;
   friend: null | boolean;
+};
+
+export type ChatMessageType = {
+  message: string;
+  photo: string;
+  userId: number;
+  userName: string;
 };
 
 // Rename

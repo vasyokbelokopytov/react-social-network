@@ -1,67 +1,87 @@
 import React from 'react';
 import { Field, Form } from 'react-final-form';
 import { useSelector } from 'react-redux';
-import { selectFilter } from '../../../redux/selectors/users-selectors';
-import { FilterType } from '../../../types/types';
-import Input from '../../common/Input/Input';
+import {
+  selectFilter,
+  selectIsFetching,
+} from '../../../redux/selectors/users-selectors';
 
-import styles from './UsersSearchForm.module.css';
+import { Input, Select, Space } from 'antd';
+import { Button } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+
+import { FilterType } from '../../../types/types';
+
+type FriendValueType = 'null' | 'true' | 'false';
+
+type OptionsType<value> = Array<{
+  value: value;
+  label: string;
+}>;
 
 type FormType = {
   term: string;
-  friend: null | boolean;
+  friend: FriendValueType;
 };
 
 type PropsType = {
-  filterChangeHandler: (filter: FilterType) => void;
+  onSubmit: (filter: FilterType) => void;
 };
 
-const UsersSearchForm: React.FC<PropsType> = (props) => {
+export const UsersSearchForm: React.FC<PropsType> = (props) => {
   const filter = useSelector(selectFilter);
+  const isFetching = useSelector(selectIsFetching);
 
-  const normalizeFilterValues = (
-    value: 'null' | 'true' | 'false' | boolean | null
-  ) => {
-    switch (value) {
-      case 'null':
-        return null;
-      case 'true':
-        return true;
-      case 'false':
-        return false;
-      default:
-        return value;
-    }
-  };
+  const friendOptions: OptionsType<FriendValueType> = [
+    { value: 'null', label: 'All' },
+    { value: 'true', label: 'Only followed' },
+    { value: 'false', label: 'Only unfollowed' },
+  ];
 
-  const submitHandler = (filter: FormType) => {
-    props.filterChangeHandler(filter);
+  const submitHandler = async (filter: FormType) => {
+    const normalizedFilter = {
+      ...filter,
+      friend: JSON.parse(filter.friend),
+    };
+
+    props.onSubmit(normalizedFilter);
   };
 
   return (
     <Form
       onSubmit={submitHandler}
-      initialValues={{ term: filter.term, friend: filter.friend }}
+      initialValues={{ term: filter.term, friend: String(filter.friend) }}
     >
-      {({ handleSubmit, submitting }) => (
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <Field<string> name="term" component={Input} />
-          <Field<null | boolean | string>
-            name="friend"
-            component="select"
-            parse={normalizeFilterValues}
-          >
-            <option value="null">All</option>
-            <option value="true">Only followed</option>
-            <option value="false">Only unfollowed</option>
-          </Field>
-          <button type="submit" disabled={submitting}>
-            Submit
-          </button>
+      {({ handleSubmit }) => (
+        <form onSubmit={handleSubmit}>
+          <Space direction="vertical" style={{ width: '100%' }} size="middle">
+            <Field<string> name="term">
+              {({ input }) => <Input {...input} />}
+            </Field>
+
+            <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+              <Field<FriendValueType> name="friend" options={friendOptions}>
+                {({ input }) => (
+                  <Select
+                    {...input}
+                    options={friendOptions}
+                    style={{ width: 145 }}
+                  />
+                )}
+              </Field>
+
+              <Button
+                type="primary"
+                icon={<SearchOutlined />}
+                disabled={isFetching}
+                htmlType="submit"
+              >
+                Search
+              </Button>
+            </Space>
+          </Space>
         </form>
       )}
     </Form>
   );
 };
-
-export default UsersSearchForm;

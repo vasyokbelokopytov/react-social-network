@@ -1,62 +1,84 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+
+import { List, Avatar, Skeleton, Button } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+
 import { UserType } from '../../../types/types';
-
-import userImg from '../../../assets/img/user.png';
-
-import styles from './UserItem.module.css';
 
 type PropsType = {
   user: UserType;
-  followedUsers: Array<number>;
+  usersInFollowingProcess: Array<number>;
   followUser: (id: number) => void;
   unfollowUser: (id: number) => void;
   isAuth: boolean;
+  isFetching: boolean;
 };
 
-const UserItem: React.FC<PropsType> = (props) => {
-  const follow = () => {
-    props.followUser(props.user.id);
-  };
+export const UserItem: React.FC<PropsType> = React.memo(
+  ({
+    user,
+    isAuth,
+    isFetching,
+    usersInFollowingProcess,
+    followUser,
+    unfollowUser,
+  }) => {
+    const follow = () => {
+      followUser(user.id);
+    };
 
-  const unfollow = () => {
-    props.unfollowUser(props.user.id);
-  };
+    const unfollow = () => {
+      unfollowUser(user.id);
+    };
 
-  return (
-    <article className={styles.item}>
-      <img
-        className={styles.img}
-        src={props.user.photos.small ? props.user.photos.small : userImg}
-        alt="user"
-      />
-      <div className={styles.name}>
-        <Link className={styles.link} to={`/profile/${props.user.id}`}>
-          {props.user.name}
-        </Link>
-      </div>
+    if (isFetching) {
+      return (
+        <List.Item actions={[<Skeleton.Button active />]}>
+          <List.Item.Meta
+            avatar={<Skeleton.Avatar active />}
+            title={
+              <Skeleton
+                active
+                paragraph={false}
+                title={{ style: { margin: 4 } }}
+              />
+            }
+          />
+        </List.Item>
+      );
+    }
 
-      <div className={styles.status}>{props.user.status}</div>
-      {props.isAuth &&
-        (props.user.followed ? (
-          <button
-            className={styles.button}
-            onClick={unfollow}
-            disabled={props.followedUsers.includes(props.user.id)}
-          >
-            Unfollow
-          </button>
-        ) : (
-          <button
-            className={styles.button}
-            onClick={follow}
-            disabled={props.followedUsers.includes(props.user.id)}
-          >
-            Follow
-          </button>
-        ))}
-    </article>
-  );
-};
-
-export default UserItem;
+    return (
+      <List.Item
+        actions={[
+          isAuth && user.followed ? (
+            <Button
+              type="link"
+              style={{ width: 100 }}
+              onClick={unfollow}
+              disabled={usersInFollowingProcess.includes(user.id)}
+            >
+              Unfollow
+            </Button>
+          ) : (
+            <Button
+              type="link"
+              style={{ width: 100 }}
+              onClick={follow}
+              disabled={usersInFollowingProcess.includes(user.id)}
+            >
+              Follow
+            </Button>
+          ),
+        ]}
+      >
+        <List.Item.Meta
+          avatar={<Avatar src={user.photos.small} icon={<UserOutlined />} />}
+          title={<Link to={`/profile/${user.id}`}>{user.name}</Link>}
+          description={user.status}
+        />
+      </List.Item>
+    );
+  }
+);
