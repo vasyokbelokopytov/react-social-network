@@ -1,28 +1,52 @@
 import React from 'react';
-import styles from './Navbar.module.css';
+import { Link, useLocation } from 'react-router-dom';
 
-import Link from './Link/Link';
+import { Layout, Menu } from 'antd';
+import {
+  HomeOutlined,
+  MessageOutlined,
+  UserOutlined,
+  SearchOutlined,
+  BellOutlined,
+  CustomerServiceOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
 
-import mainImg from '../../assets/img/Navbar/main.svg';
-import messagesImg from '../../assets/img/Navbar/messages.svg';
-import profileImg from '../../assets/img/Navbar/profile.svg';
-import usersImg from '../../assets/img/Navbar/users.svg';
-import newsImg from '../../assets/img/Navbar/news.svg';
-import musicImg from '../../assets/img/Navbar/music.svg';
-import settingsImg from '../../assets/img/Navbar/settings.svg';
+const { Sider } = Layout;
 
-const Navbar: React.FC = () => {
+export const Navbar: React.FC = () => {
+  const location = useLocation();
+  const base = location.pathname.split('/').slice(0, 2).join('/');
+
   return (
-    <nav className={styles.nav}>
-      <Link title="Main" exact path="/" img={mainImg} />
-      <Link title="Messages" path="/messages" img={messagesImg} />
-      <Link title="Profile" path="/profile" img={profileImg} />
-      <Link title="Users" path="/users" img={usersImg} />
-      <Link title="News" path="/news" img={newsImg} />
-      <Link title="Music" path="/music" img={musicImg} />
-      <Link title="Settings" path="/settings" img={settingsImg} />
-    </nav>
+    <Sider width={200}>
+      <Menu
+        mode="inline"
+        style={{ height: '100%', borderRight: 0 }}
+        selectedKeys={[base]}
+      >
+        <Menu.Item key="/" icon={<HomeOutlined />}>
+          <Link to="/">Main</Link>
+        </Menu.Item>
+        <Menu.Item key="/chat" icon={<MessageOutlined />}>
+          <Link to="/chat">Chat</Link>
+        </Menu.Item>
+        <Menu.Item key="/profile" icon={<UserOutlined />}>
+          <Link to="/profile">Profile</Link>
+        </Menu.Item>
+        <Menu.Item key="/users" icon={<SearchOutlined />}>
+          <Link to="/users">Users</Link>
+        </Menu.Item>
+        <Menu.Item key="/news" icon={<BellOutlined />}>
+          <Link to="/news">News</Link>
+        </Menu.Item>
+        <Menu.Item key="/music" icon={<CustomerServiceOutlined />}>
+          <Link to="/music">Music</Link>
+        </Menu.Item>
+        <Menu.Item key="/settings" icon={<SettingOutlined />}>
+          <Link to="/settings">Settings</Link>
+        </Menu.Item>
+      </Menu>
+    </Sider>
   );
 };
-
-export default Navbar;

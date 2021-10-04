@@ -37,7 +37,7 @@ const Profile: React.FC = () => {
   const status = useSelector(selectStatus);
   const posts = useSelector(selectPosts);
 
-  const dispatch = useDispatch<ThunkDispatchType<typeof profileActions>>();
+  const dispatch = useDispatch<ThunkDispatchType>();
 
   const loadUserProfile = useCallback(
     (id: number) => dispatch(profileThunks.loadUserProfile(id)),

@@ -213,11 +213,7 @@ export const actions = {
 };
 
 export const fetchUsers =
-  (
-    page: number,
-    pageSize: number,
-    filter: FilterType
-  ): ThunkType<typeof actions> =>
+  (page: number, pageSize: number, filter: FilterType): ThunkType =>
   async (dispatch) => {
     dispatch(actions.usersFetchRequested());
 
@@ -231,7 +227,7 @@ export const fetchUsers =
   };
 
 export const followUser =
-  (id: number): ThunkType<typeof actions> =>
+  (id: number): ThunkType =>
   async (dispatch) => {
     dispatch(actions.userSubscribingRequest(id));
 
@@ -247,7 +243,7 @@ export const followUser =
   };
 
 export const unfollowUser =
-  (id: number): ThunkType<typeof actions> =>
+  (id: number): ThunkType =>
   async (dispatch) => {
     dispatch(actions.userSubscribingRequest(id));
 

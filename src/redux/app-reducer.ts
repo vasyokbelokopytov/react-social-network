@@ -1,5 +1,5 @@
 import { ActionTypes, ThunkType } from '../types/types';
-import { loadUserAuthData } from './auth-reducer';
+import { thunks as authThunks } from './auth-reducer';
 
 const SET_INITIALIZED = 'social-network/app/SET_INITIALIZED';
 const SET_GLOBAL_ERROR = 'social-network/app/SET_GLOBAL_ERROR';
@@ -46,8 +46,8 @@ export const actions = {
     } as const),
 };
 
-export const initialize = (): ThunkType<typeof actions> => async (dispatch) => {
-  await Promise.all([dispatch(loadUserAuthData())]);
+export const initialize = (): ThunkType => async (dispatch) => {
+  await Promise.all([dispatch(authThunks.loadUserAuthData())]);
 
   dispatch(actions.setInitialized());
 };

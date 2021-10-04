@@ -6,6 +6,7 @@ import profileReducer from './profile-reducer';
 import usersReducer from './users-reducer';
 import authReducer from './auth-reducer';
 import appReducer from './app-reducer';
+import chatReducer from './chat-reducer';
 
 const rootReducer = combineReducers({
   messagesPage: messagesReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   usersPage: usersReducer,
   auth: authReducer,
   app: appReducer,
+  chat: chatReducer,
 });
 
 type RootReducerType = typeof rootReducer;

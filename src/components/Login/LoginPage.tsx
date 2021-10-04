@@ -7,7 +7,10 @@ import LoginForm from './LoginForm/LoginForm';
 
 import { ThunkDispatchType } from '../../types/types';
 import { useDispatch, useSelector } from 'react-redux';
-import { actions as authActions, logIn } from '../../redux/auth-reducer';
+import {
+  actions as authActions,
+  thunks as authThunks,
+} from '../../redux/auth-reducer';
 import {
   selectCaptchaUrl,
   selectIsAuth,
@@ -16,7 +19,7 @@ import {
 type PropsType = {};
 
 export const LoginPage: React.FC<PropsType> = () => {
-  const dispatch = useDispatch<ThunkDispatchType<typeof authActions>>();
+  const dispatch = useDispatch<ThunkDispatchType>();
 
   const isAuth = useSelector(selectIsAuth);
   const captchaUrl = useSelector(selectCaptchaUrl);
@@ -31,7 +34,7 @@ export const LoginPage: React.FC<PropsType> = () => {
     rememberMe: boolean,
     captcha?: string
   ) => {
-    return dispatch(logIn(email, password, rememberMe, captcha));
+    return dispatch(authThunks.logIn(email, password, rememberMe, captcha));
   };
 
   return (

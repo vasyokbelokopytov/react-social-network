@@ -79,58 +79,58 @@ export const actions = {
   },
 };
 
-export const loadUserAuthProfile =
-  (id: number): ThunkType<typeof actions> =>
-  async (dispatch) => {
-    const data = await profileAPI.loadProfile(id);
-    dispatch(actions.setUserAuthProfile(data));
-  };
+export const thunks = {
+  loadUserAuthProfile:
+    (id: number): ThunkType =>
+    async (dispatch) => {
+      const data = await profileAPI.loadProfile(id);
+      dispatch(actions.setUserAuthProfile(data));
+    },
 
-export const loadUserAuthData =
-  (): ThunkType<typeof actions> => async (dispatch) => {
+  loadUserAuthData: (): ThunkType => async (dispatch) => {
     const data = await authAPI.me();
 
     if (data.resultCode === ResultCodes.success) {
       const { id, email, login } = data.data;
       dispatch(actions.setUserAuthData(id, email, login, true));
-      dispatch(loadUserAuthProfile(id));
+      dispatch(thunks.loadUserAuthProfile(id));
     }
-  };
+  },
 
-export const logIn =
-  (
-    email: string,
-    password: string,
-    rememberMe: boolean,
-    captcha?: string
-  ): ThunkType<typeof actions, FormReturnType> =>
-  async (dispatch) => {
-    const data = await authAPI.login(email, password, rememberMe, captcha);
+  logIn:
+    (
+      email: string,
+      password: string,
+      rememberMe: boolean,
+      captcha?: string
+    ): ThunkType<FormReturnType> =>
+    async (dispatch) => {
+      const data = await authAPI.login(email, password, rememberMe, captcha);
 
-    if (data.resultCode === ResultCodes.success) {
-      dispatch(loadUserAuthData());
-      return;
-    } else if (data.resultCode === CaptchaResultCodes.captchaIsRequired) {
-      dispatch(getCaptchaUrl());
-    }
+      if (data.resultCode === ResultCodes.success) {
+        dispatch(thunks.loadUserAuthData());
+        return;
+      } else if (data.resultCode === CaptchaResultCodes.captchaIsRequired) {
+        dispatch(thunks.getCaptchaUrl());
+      }
 
-    return data.messages;
-  };
+      return data.messages;
+    },
 
-export const getCaptchaUrl =
-  (): ThunkType<typeof actions> => async (dispatch) => {
+  getCaptchaUrl: (): ThunkType => async (dispatch) => {
     const data = await securityAPI.getCaptchaUrl();
     const url = data.url;
     dispatch(actions.setCaptchaUrl(url));
-  };
+  },
 
-export const logOut = (): ThunkType<typeof actions> => async (dispatch) => {
-  const data = await authAPI.logout();
+  logOut: (): ThunkType => async (dispatch) => {
+    const data = await authAPI.logout();
 
-  if (data.resultCode === ResultCodes.success) {
-    dispatch(actions.setUserAuthData(null, null, null, false));
-    dispatch(actions.setUserAuthProfile(null));
-  }
+    if (data.resultCode === ResultCodes.success) {
+      dispatch(actions.setUserAuthData(null, null, null, false));
+      dispatch(actions.setUserAuthProfile(null));
+    }
+  },
 };
 
 export default authReducer;

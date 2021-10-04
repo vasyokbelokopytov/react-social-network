@@ -132,21 +132,21 @@ export const actions = {
 
 export const thunks = {
   loadUserProfile:
-    (id: number): ThunkType<typeof actions> =>
+    (id: number): ThunkType =>
     async (dispatch) => {
       const profile = await profileAPI.loadProfile(id);
       dispatch(actions.setUserProfile(profile));
     },
 
   loadUserStatus:
-    (id: number): ThunkType<typeof actions> =>
+    (id: number): ThunkType =>
     async (dispatch) => {
       const status = await profileAPI.loadStatus(id);
       dispatch(actions.setUserStatus(status));
     },
 
   updateUserStatus:
-    (status: string): ThunkType<typeof actions> =>
+    (status: string): ThunkType =>
     async (dispatch) => {
       const data = await profileAPI.updateStatus(status);
 
@@ -156,7 +156,7 @@ export const thunks = {
     },
 
   savePhoto:
-    (file: File): ThunkType<typeof actions> =>
+    (file: File): ThunkType =>
     async (dispatch) => {
       const data = await profileAPI.savePhoto(file);
 
@@ -166,7 +166,7 @@ export const thunks = {
     },
 
   saveUserProfile:
-    (profile: ProfileType): ThunkType<typeof actions, FormReturnType> =>
+    (profile: ProfileType): ThunkType<FormReturnType> =>
     async (dispatch, getState) => {
       const id = getState().auth.id;
 

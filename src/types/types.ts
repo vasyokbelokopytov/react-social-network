@@ -10,11 +10,11 @@ export type ActionTypes<T extends ActionCreatorsType> = ReturnType<
   T extends { [key: string]: infer AC } ? AC : never
 >;
 
-export type ThunkType<A extends ActionCreatorsType, R = void> = ThunkAction<
+export type ThunkType<R = void> = ThunkAction<
   R,
   GlobalStateType,
   unknown,
-  ActionTypes<A>
+  Action
 >;
 
 export type ThunkDispatchType = ThunkDispatch<GlobalStateType, unknown, Action>;

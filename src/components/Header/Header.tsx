@@ -1,51 +1,68 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectIsAuth,
+  selectUserAuthLogin,
+  selectUserAuthProfile,
+} from '../../redux/selectors/auth-selectors';
+import { thunks as authThunks } from '../../redux/auth-reducer';
+
+import { Layout, Avatar, Button, Space } from 'antd';
+import { UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
+import Text from 'antd/lib/typography/Text';
+
 import styles from './Header.module.css';
 
 import logo from '../../assets/img/logo.png';
-import userImg from '../../assets/img/user.png';
-import logoutImg from '../../assets/img/logout.svg';
 
-import { ProfileType } from '../../types/types';
+const { Header: AntHeader } = Layout;
 
-type PropsType = {
-  isAuth: boolean;
-  login: string | null;
-  profile: ProfileType | null;
+type PropsType = {};
 
-  logOut: () => void;
-};
+export const Header: React.FC<PropsType> = () => {
+  const isAuth = useSelector(selectIsAuth);
+  const login = useSelector(selectUserAuthLogin);
+  const profile = useSelector(selectUserAuthProfile);
 
-const Header: React.FC<PropsType> = (props) => {
+  const dispatch = useDispatch();
+
+  const logOut = () => {
+    dispatch(authThunks.logOut());
+  };
+
   return (
-    <header className={styles.header}>
+    <AntHeader className={styles.header}>
       <img className={styles.logo} src={logo} alt="logo"></img>
 
-      {props.isAuth ? (
-        <div className={styles.user}>
-          <img
-            className={styles.userImg}
-            src={
-              props.profile?.photos.small ? props.profile.photos.small : userImg
-            }
-            alt="user"
+      {isAuth ? (
+        <Space align="center">
+          <Avatar
+            className={styles.avatar}
+            size={40}
+            icon={<UserOutlined />}
+            src={profile?.photos.small}
           />
-          <div className={styles.login}>{props.login}</div>
-          <img
-            className={styles.logoutIcon}
-            src={logoutImg}
-            alt="logout"
-            onClick={props.logOut}
+          <Text className={styles.login}>{login}</Text>
+          <Button
+            className={styles.logOut}
+            type="link"
+            shape="circle"
+            icon={<LogoutOutlined style={{ fontSize: '24px' }} />}
+            onClick={logOut}
           />
-        </div>
+        </Space>
       ) : (
-        <Link className={styles.loginButton} to="/login">
-          Log In
+        <Link to="/login">
+          <Button
+            className={styles.logIn}
+            type="link"
+            shape="circle"
+            icon={<LoginOutlined style={{ fontSize: '24px' }} />}
+          ></Button>
         </Link>
       )}
-    </header>
+    </AntHeader>
   );
 };
-
-export default Header;
