@@ -1,0 +1,14 @@
+.form {
+  position: relative;
+  padding: 10px 0 0;
+}
+
+.textarea {
+  padding: 0.8em 45px 0.8em 0.8em;
+}
+
+.send {
+  position: absolute;
+  bottom: 0.4rem;
+  right: 0.4rem;
+}
