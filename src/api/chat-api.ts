@@ -26,7 +26,7 @@ const primaryConnectionCheck = () => {
     }
 
     if (localTimer) clearTimeout(localTimer);
-  }, 3000);
+  }, 5000);
 
   timer = localTimer;
 };

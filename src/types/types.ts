@@ -69,7 +69,7 @@ export type FilterType = {
 
 export type ChatMessageType = {
   message: string;
-  photo: string;
+  photo: string | null;
   userId: number;
   userName: string;
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { selectUserAuthId } from '../../../redux/selectors/auth-selectors';
 import {
@@ -14,7 +14,7 @@ import { Button, List, Result, message } from 'antd';
 import styles from './ChatMessages.module.css';
 
 import { ChatMessage } from './ChatMessage/ChatMessage';
-import { chatAPI } from '../../../api/chat-api';
+import { reconnect } from '../../../redux/chat-reducer';
 
 type PropsType = {};
 
@@ -27,6 +27,7 @@ export const ChatMessages: React.FC<PropsType> = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [isAutoscroll, setIsAutoscroll] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isAutoscroll) {
@@ -66,8 +67,8 @@ export const ChatMessages: React.FC<PropsType> = () => {
     }
   };
 
-  const reconnect = () => {
-    chatAPI.createConnection();
+  const clickHandler = () => {
+    dispatch(reconnect());
   };
 
   return (
@@ -77,7 +78,11 @@ export const ChatMessages: React.FC<PropsType> = () => {
           status="warning"
           title="There are some problems with your connection."
           extra={
-            <Button type="primary" onClick={reconnect} loading={isConnecting}>
+            <Button
+              type="primary"
+              onClick={clickHandler}
+              loading={isConnecting}
+            >
               {isConnecting ? 'Loading' : 'Reconnect'}
             </Button>
           }

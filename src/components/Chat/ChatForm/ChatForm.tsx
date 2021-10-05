@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Input, Button } from 'antd';
@@ -6,11 +6,11 @@ import { SendOutlined } from '@ant-design/icons';
 
 import styles from './ChatForm.module.css';
 
-import { sendMessage } from '../../../redux/chat-reducer';
+import { sendMessage, sendPendingMessage } from '../../../redux/chat-reducer';
 
 import {
-  selectIsConnecting,
   selectIsConnectingError,
+  selectPendingMessages,
 } from '../../../redux/selectors/chat-selectors';
 
 const { TextArea } = Input;
@@ -19,16 +19,21 @@ type PropsType = {};
 
 export const ChatForm: React.FC<PropsType> = () => {
   const [value, setValue] = useState('');
-  const isConnecting = useSelector(selectIsConnecting);
-  const IsConnectingError = useSelector(selectIsConnectingError);
 
-  const inputChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (!IsConnectingError) {
-      setValue(e.target.value);
-    }
-  };
+  const IsConnectingError = useSelector(selectIsConnectingError);
+  const pendingMessages = useSelector(selectPendingMessages);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!IsConnectingError && pendingMessages.length) {
+      dispatch(sendPendingMessage(pendingMessages[0]));
+    }
+  }, [dispatch, IsConnectingError, pendingMessages]);
+
+  const inputChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setValue(e.target.value);
+  };
 
   const send = (message: string) => {
     if (!IsConnectingError) {
@@ -47,6 +52,7 @@ export const ChatForm: React.FC<PropsType> = () => {
   return (
     <form className={styles.form}>
       <TextArea
+        disabled={IsConnectingError}
         className={styles.textarea}
         placeholder="Type your message..."
         autoSize={{ minRows: 1, maxRows: 6 }}
@@ -55,7 +61,7 @@ export const ChatForm: React.FC<PropsType> = () => {
         onKeyDown={keyPressHandler}
       />
       <Button
-        disabled={isConnecting}
+        disabled={IsConnectingError}
         className={styles.send}
         shape="circle"
         icon={<SendOutlined />}

@@ -19,3 +19,7 @@ export const selectIsConnectingError = (state: GlobalStateType) => {
 export const selectIsConnecting = (state: GlobalStateType) => {
   return state.chat.isConnecting;
 };
+
+export const selectPendingMessages = (state: GlobalStateType) => {
+  return state.chat.pendingMessages;
+};
