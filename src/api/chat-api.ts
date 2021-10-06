@@ -37,7 +37,13 @@ let subscribers: EventSubscribersType = {
 };
 
 const openConnectionHandler = () => {
-  subscribers['status-changed'].forEach((s) => s('opened'));
+  const interval = setInterval(() => {
+    if (ws && ws.readyState === 1) {
+      subscribers['status-changed'].forEach((s) => s('opened'));
+      clearInterval(interval);
+    }
+  }, 100);
+
   console.log('connection opened');
 };
 

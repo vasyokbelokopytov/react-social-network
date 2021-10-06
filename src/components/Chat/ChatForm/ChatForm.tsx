@@ -37,7 +37,7 @@ export const ChatForm: React.FC<PropsType> = () => {
 
   const send = (message: string) => {
     if (!IsConnectingError) {
-      dispatch(sendMessage(message));
+      if (message.trim() !== '') dispatch(sendMessage(message));
       setValue('');
     }
   };

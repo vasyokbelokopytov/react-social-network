@@ -3,6 +3,7 @@ import { Dispatch } from 'redux';
 import {
   chatAPI,
   MessagesRecievedSubscriberType,
+  StatusChangedSubscriberType,
   StatusType,
 } from '../api/chat-api';
 import { ActionTypes, ChatMessageType, ThunkType } from '../types/types';
@@ -32,15 +33,6 @@ const chatReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    // case MESSAGES_RECIEVED:
-    //   return {
-    //     ...state,
-    //     messages: [
-    //       ...state.messages,
-    //       ...action.payload.map((m) => ({ ...m, id: v1() })),
-    //     ].filter((_, i, arr) => i >= arr.length - 20),
-    //   };
-
     case MESSAGES_RECIEVED:
       return {
         ...state,
@@ -72,7 +64,10 @@ const chatReducer = (
         status: action.payload,
         isConnectingFailed: action.payload === 'error',
         isConnecting: action.payload === 'pending',
-        isConnectingError: action.payload !== 'opened',
+        isConnectingError:
+          action.payload === 'closed' ||
+          action.payload === 'error' ||
+          (state.isConnectingError && action.payload === 'pending'),
       };
 
     default:
@@ -100,24 +95,27 @@ export const actions = {
     } as const),
 };
 
-const messageSubscriber: MessagesRecievedSubscriberType | null = null;
+let messageSubscriber: MessagesRecievedSubscriberType | null = null;
 
 const messageSubscriberCreator = (dispatch: Dispatch) => {
-  return messageSubscriber
+  messageSubscriber = messageSubscriber
     ? messageSubscriber
     : (messages: Array<ChatMessageType>) => {
         dispatch(actions.messagesRecieved(messages));
       };
+
+  return messageSubscriber;
 };
 
-const statusSubscriber: MessagesRecievedSubscriberType | null = null;
+let statusSubscriber: StatusChangedSubscriberType | null = null;
 
 const statusSubscriberCreator = (dispatch: Dispatch) => {
-  return statusSubscriber
+  statusSubscriber = statusSubscriber
     ? statusSubscriber
     : (status: StatusType) => {
         dispatch(actions.statusChanged(status));
       };
+  return statusSubscriber;
 };
 
 export const subscribe = (): ThunkType => async (dispatch) => {

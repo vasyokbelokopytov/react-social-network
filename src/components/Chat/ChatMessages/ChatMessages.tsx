@@ -33,7 +33,6 @@ export const ChatMessages: React.FC<PropsType> = () => {
     if (isAutoscroll) {
       wrapperRef.current?.scrollTo({
         top: wrapperRef.current.scrollHeight,
-        behavior: 'smooth',
       });
     }
   }, [wrapperRef, messages, isAutoscroll]);
