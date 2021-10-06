@@ -56,7 +56,9 @@ export const UsersSearchForm: React.FC<PropsType> = (props) => {
         <form onSubmit={handleSubmit}>
           <Space direction="vertical" style={{ width: '100%' }} size="middle">
             <Field<string> name="term">
-              {({ input }) => <Input {...input} />}
+              {({ input }) => (
+                <Input {...input} placeholder="Search users . . ." />
+              )}
             </Field>
 
             <Space style={{ width: '100%', justifyContent: 'space-between' }}>

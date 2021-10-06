@@ -104,7 +104,6 @@ export const UsersPage: React.FC<PropsType> = () => {
 
   return (
     <section>
-      <Typography.Title level={2}>Search users:</Typography.Title>
       <Space direction="vertical" style={{ width: '100%' }} size="large">
         <UsersSearchForm onSubmit={filterChangeHandler} />
 
