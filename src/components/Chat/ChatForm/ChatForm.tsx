@@ -54,7 +54,7 @@ export const ChatForm: React.FC<PropsType> = () => {
       <TextArea
         disabled={IsConnectingError}
         className={styles.textarea}
-        placeholder="Type your message..."
+        placeholder="Type your message . . ."
         autoSize={{ minRows: 1, maxRows: 6 }}
         value={value}
         onChange={inputChangeHandler}
