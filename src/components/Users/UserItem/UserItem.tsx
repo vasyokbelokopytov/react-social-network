@@ -52,25 +52,26 @@ export const UserItem: React.FC<PropsType> = React.memo(
     return (
       <List.Item
         actions={[
-          isAuth && user.followed ? (
-            <Button
-              type="link"
-              style={{ width: 100 }}
-              onClick={unfollow}
-              disabled={usersInFollowingProcess.includes(user.id)}
-            >
-              Unfollow
-            </Button>
-          ) : (
-            <Button
-              type="link"
-              style={{ width: 100 }}
-              onClick={follow}
-              disabled={usersInFollowingProcess.includes(user.id)}
-            >
-              Follow
-            </Button>
-          ),
+          isAuth &&
+            (user.followed ? (
+              <Button
+                type="link"
+                style={{ width: 100 }}
+                onClick={unfollow}
+                disabled={usersInFollowingProcess.includes(user.id)}
+              >
+                Unfollow
+              </Button>
+            ) : (
+              <Button
+                type="link"
+                style={{ width: 100 }}
+                onClick={follow}
+                disabled={usersInFollowingProcess.includes(user.id)}
+              >
+                Follow
+              </Button>
+            )),
         ]}
       >
         <List.Item.Meta
