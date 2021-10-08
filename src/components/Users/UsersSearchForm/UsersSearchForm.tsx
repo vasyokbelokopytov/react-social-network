@@ -62,11 +62,11 @@ export const UsersSearchForm: React.FC<PropsType> = (props) => {
       </Form.Item>
 
       <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-        <Form.Item name="friend">
+        <Form.Item name="friend" noStyle>
           <Select options={friendOptions} style={{ width: 145 }}></Select>
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item noStyle>
           <Button
             type="primary"
             icon={<SearchOutlined />}

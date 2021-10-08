@@ -64,7 +64,6 @@ export const UsersPage: React.FC<PropsType> = () => {
         ? pageSize
         : query.count;
 
-    console.log(friend, term);
     dispatch(usersActions.filterChanged({ friend, term }));
     dispatch(usersActions.currentPageChanged(page));
     dispatch(usersActions.pageSizeChanged(count));
@@ -105,7 +104,7 @@ export const UsersPage: React.FC<PropsType> = () => {
 
   return (
     <section>
-      <Space direction="vertical" style={{ width: '100%' }} size="large">
+      <Space direction="vertical" style={{ width: '100%' }} size="middle">
         <UsersSearchForm onSubmit={filterChangeHandler} />
 
         <Card>
