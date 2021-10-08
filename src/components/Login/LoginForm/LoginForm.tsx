@@ -1,25 +1,17 @@
-import React, { useState } from 'react';
-import { Form, Field } from 'react-final-form';
-import { FORM_ERROR } from 'final-form';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { logIn } from '../../../redux/auth-reducer';
+import {
+  selectCaptchaUrl,
+  selectIsLoggingInProcessing,
+  selectLoggingInError,
+} from '../../../redux/selectors/auth-selectors';
 
+import { Form, Input, Button, Checkbox, Space, message } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import styles from './LoginForm.module.css';
-import Checkbox from '../../common/Checkbox/Checkbox';
-import Input from '../../common/Input/Input';
-import Loader from '../../common/Loader/Loader';
 
-import { required } from '../../../utilities/validators/validators';
-import { FormReturnType } from '../../../types/types';
-
-type PropsType = {
-  captchaUrl: string | null;
-
-  submitHandler: (
-    email: string,
-    password: string,
-    rememberMe: boolean,
-    captcha?: string
-  ) => FormReturnType;
-};
+import { Rule } from 'rc-field-form/lib/interface';
 
 type FormDataType = {
   email: string;
@@ -28,92 +20,82 @@ type FormDataType = {
   captcha?: string;
 };
 
-const LoginForm: React.FC<PropsType> = (props) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const submitHandler = async (formData: FormDataType) => {
-    setIsLoading(true);
+type PropsType = {};
 
-    const messages = await props.submitHandler(
-      formData.email,
-      formData.password,
-      formData.rememberMe,
-      formData.captcha
-    );
+export const LoginForm: React.FC<PropsType> = () => {
+  const captchaUrl = useSelector(selectCaptchaUrl);
+  const isLoading = useSelector(selectIsLoggingInProcessing);
+  const loggingInError = useSelector(selectLoggingInError);
+  const dispatch = useDispatch();
 
-    setIsLoading(false);
+  useEffect(() => {
+    if (loggingInError) message.error(loggingInError.message);
+  }, [loggingInError]);
 
-    return messages ? { [FORM_ERROR]: messages[0] } : undefined;
+  const emailRules: Rule[] = [
+    { required: true, message: 'Please, input your E-mail!' },
+    { type: 'email', message: 'E-mail is not valid!' },
+  ];
+
+  const passwordRules: Rule[] = [
+    { required: true, message: 'Please, input your Password!' },
+  ];
+
+  const captchaRules: Rule[] = [
+    { required: true, message: 'Please, input captcha!' },
+  ];
+
+  const submitHandler = ({
+    email,
+    password,
+    rememberMe,
+    captcha,
+  }: FormDataType) => {
+    return dispatch(logIn(email, password, rememberMe, captcha));
   };
 
   return (
-    <Form onSubmit={submitHandler}>
-      {({ handleSubmit, submitError, submitting }) => {
-        return (
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <Field<string>
-              component={Input}
-              validate={required}
-              name="email"
-              className={styles.field}
-              title="Email"
-            />
+    <Form
+      className={styles.form}
+      name="login"
+      initialValues={{ rememberMe: false }}
+      validateTrigger="onBlur"
+      onFinish={submitHandler}
+    >
+      <Form.Item name="email" rules={emailRules}>
+        <Input
+          prefix={<UserOutlined className={styles.fieldIcon} />}
+          placeholder="E-mail"
+        />
+      </Form.Item>
 
-            <Field<string>
-              component={Input}
-              validate={required}
-              name="password"
-              className={styles.field}
-              title="Password"
-              type="password"
-            />
+      <Form.Item name="password" rules={passwordRules}>
+        <Input.Password
+          prefix={<LockOutlined className={styles.fieldIcon} />}
+          placeholder="Password"
+        />
+      </Form.Item>
 
-            {props.captchaUrl && (
-              <div className={styles.captchaWrapper}>
-                <img
-                  className={styles.captcha}
-                  src={props.captchaUrl}
-                  alt="captcha"
-                />
+      {captchaUrl && (
+        <Form.Item name="captcha" rules={captchaRules}>
+          <div className={styles.captchaWrapper}>
+            <img className={styles.captcha} src={captchaUrl} alt="captcha" />
+            <Input />
+          </div>
+        </Form.Item>
+      )}
 
-                <Field<string>
-                  component={Input}
-                  name="captcha"
-                  validate={required}
-                  className={styles.field}
-                />
-              </div>
-            )}
+      <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+        <Form.Item name="rememberMe" valuePropName="checked" noStyle>
+          <Checkbox>Remember me</Checkbox>
+        </Form.Item>
 
-            <div className={styles.bottom}>
-              <div className={styles.checkboxWrapper}>
-                <Field<boolean>
-                  initialValue={false}
-                  component={Checkbox}
-                  id="rememberMe"
-                  className={styles.checkbox}
-                  name="rememberMe"
-                  type="checkbox"
-                />
-
-                <label className={styles.checkboxLabel} htmlFor="rememberMe">
-                  Remember me
-                </label>
-              </div>
-
-              <button className={styles.submitButton} disabled={submitting}>
-                Log In
-                {isLoading && <Loader className={styles.loader} />}
-              </button>
-            </div>
-
-            {submitError && (
-              <div className={styles.submitError}>{submitError}</div>
-            )}
-          </form>
-        );
-      }}
+        <Form.Item noStyle>
+          <Button type="primary" htmlType="submit" loading={isLoading}>
+            Log in
+          </Button>
+        </Form.Item>
+      </Space>
     </Form>
   );
 };
-
-export default LoginForm;

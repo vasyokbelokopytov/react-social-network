@@ -1,86 +1,17 @@
 .form {
-  width: 70%;
-  font-family: 'Roboto', sans-serif;
+  width: 400px;
 }
 
-.field {
-  margin-bottom: 25px;
+.fieldIcon {
+  color: rgba(0, 0, 0, 0.25);
 }
 
 .captchaWrapper {
-  text-align: center;
-}
-
-.bottom {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  margin-bottom: 20px;
-}
-
-.checkboxWrapper {
-  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.checkbox {
-  display: block;
-  margin: 0 10px 0 5px;
-}
-
-.checkboxLabel {
-  display: block;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.submitButton {
-  position: relative;
-  display: block;
-
-  font-size: 16px;
-  color: #ffffff;
-
-  border: none;
-  border-radius: 4px;
-  background-color: #727595;
-
-  padding: 10px 20px;
-
-  transition: background-color 200ms;
-
-  cursor: pointer;
-  outline: none;
-}
-
-.submitButton:focus,
-.submitButton:hover {
-  background-color: #7c80a7;
-  transition: background-color 200ms;
-}
-
-.submitButton:disabled {
-  background-color: #737480;
-  color: #dddddd;
-  cursor: not-allowed;
-}
-
-.submitError {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 20px;
-  font-weight: 500;
-
-  text-align: center;
-  color: rgb(247, 62, 62);
-  letter-spacing: 0.05em;
-}
-
-.loader {
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translate(-125%, -50%);
+.captcha {
+  width: 150px;
 }
