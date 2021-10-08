@@ -1,13 +1,11 @@
-import React from 'react';
-import { Field, Form } from 'react-final-form';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import {
   selectFilter,
   selectIsFetching,
 } from '../../../redux/selectors/users-selectors';
 
-import { Input, Select, Space } from 'antd';
-import { Button } from 'antd';
+import { Form, Input, Select, Space, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 import { FilterType } from '../../../types/types';
@@ -31,6 +29,11 @@ type PropsType = {
 export const UsersSearchForm: React.FC<PropsType> = (props) => {
   const filter = useSelector(selectFilter);
   const isFetching = useSelector(selectIsFetching);
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    form.resetFields();
+  }, [form, filter]);
 
   const friendOptions: OptionsType<FriendValueType> = [
     { value: 'null', label: 'All' },
@@ -49,41 +52,31 @@ export const UsersSearchForm: React.FC<PropsType> = (props) => {
 
   return (
     <Form
-      onSubmit={submitHandler}
+      form={form}
+      name="users"
+      onFinish={submitHandler}
       initialValues={{ term: filter.term, friend: String(filter.friend) }}
     >
-      {({ handleSubmit }) => (
-        <form onSubmit={handleSubmit}>
-          <Space direction="vertical" style={{ width: '100%' }} size="middle">
-            <Field<string> name="term">
-              {({ input }) => (
-                <Input {...input} placeholder="Search users . . ." />
-              )}
-            </Field>
+      <Form.Item name="term">
+        <Input placeholder="Search users . . ." />
+      </Form.Item>
 
-            <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-              <Field<FriendValueType> name="friend" options={friendOptions}>
-                {({ input }) => (
-                  <Select
-                    {...input}
-                    options={friendOptions}
-                    style={{ width: 145 }}
-                  />
-                )}
-              </Field>
+      <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+        <Form.Item name="friend">
+          <Select options={friendOptions} style={{ width: 145 }}></Select>
+        </Form.Item>
 
-              <Button
-                type="primary"
-                icon={<SearchOutlined />}
-                disabled={isFetching}
-                htmlType="submit"
-              >
-                Search
-              </Button>
-            </Space>
-          </Space>
-        </form>
-      )}
+        <Form.Item>
+          <Button
+            type="primary"
+            icon={<SearchOutlined />}
+            disabled={isFetching}
+            htmlType="submit"
+          >
+            Search
+          </Button>
+        </Form.Item>
+      </Space>
     </Form>
   );
 };

@@ -30,7 +30,7 @@ import {
 import { UserItem } from './UserItem/UserItem';
 import { UsersSearchForm } from './UsersSearchForm/UsersSearchForm';
 
-import { Card, List, Space, Typography, Pagination } from 'antd';
+import { Card, List, Space, Pagination } from 'antd';
 
 import { ThunkDispatchType, FilterType } from '../../types/types';
 
@@ -64,6 +64,7 @@ export const UsersPage: React.FC<PropsType> = () => {
         ? pageSize
         : query.count;
 
+    console.log(friend, term);
     dispatch(usersActions.filterChanged({ friend, term }));
     dispatch(usersActions.currentPageChanged(page));
     dispatch(usersActions.pageSizeChanged(count));
