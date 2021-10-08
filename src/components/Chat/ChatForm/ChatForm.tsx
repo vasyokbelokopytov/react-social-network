@@ -1,4 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  KeyboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Input, Button } from 'antd';
@@ -19,6 +25,7 @@ type PropsType = {};
 
 export const ChatForm: React.FC<PropsType> = () => {
   const [value, setValue] = useState('');
+  const textareaRef = useRef<null | HTMLTextAreaElement>(null);
 
   const IsConnectingError = useSelector(selectIsConnectingError);
   const pendingMessages = useSelector(selectPendingMessages);
@@ -42,8 +49,13 @@ export const ChatForm: React.FC<PropsType> = () => {
     }
   };
 
-  const keyPressHandler = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.code === 'Enter' && !e.shiftKey) {
+  const clickHandler = () => {
+    send(value);
+    textareaRef.current?.focus();
+  };
+
+  const enterHandler = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (!e.shiftKey) {
       e.preventDefault();
       send(value);
     }
@@ -52,20 +64,21 @@ export const ChatForm: React.FC<PropsType> = () => {
   return (
     <form className={styles.form}>
       <TextArea
+        ref={textareaRef}
         disabled={IsConnectingError}
         className={styles.textarea}
         placeholder="Type your message . . ."
         autoSize={{ minRows: 1, maxRows: 6 }}
         value={value}
         onChange={inputChangeHandler}
-        onKeyDown={keyPressHandler}
+        onPressEnter={enterHandler}
       />
       <Button
         disabled={IsConnectingError}
         className={styles.send}
         shape="circle"
         icon={<SendOutlined />}
-        onClick={() => send(value)}
+        onClick={clickHandler}
       />
     </form>
   );
