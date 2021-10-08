@@ -134,14 +134,14 @@ export const thunks = {
   loadUserProfile:
     (id: number): ThunkType =>
     async (dispatch) => {
-      const profile = await profileAPI.loadProfile(id);
+      const profile = await profileAPI.fetchProfile(id);
       dispatch(actions.setUserProfile(profile));
     },
 
   loadUserStatus:
     (id: number): ThunkType =>
     async (dispatch) => {
-      const status = await profileAPI.loadStatus(id);
+      const status = await profileAPI.fetchStatus(id);
       dispatch(actions.setUserStatus(status));
     },
 

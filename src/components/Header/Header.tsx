@@ -7,7 +7,6 @@ import {
   selectUserAuthLogin,
   selectUserAuthProfile,
 } from '../../redux/selectors/auth-selectors';
-import { thunks as authThunks } from '../../redux/auth-reducer';
 
 import { Layout, Avatar, Button, Space } from 'antd';
 import { UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
@@ -16,6 +15,7 @@ import Text from 'antd/lib/typography/Text';
 import styles from './Header.module.css';
 
 import logo from '../../assets/img/logo.png';
+import { logOut } from '../../redux/auth-reducer';
 
 const { Header: AntHeader } = Layout;
 
@@ -28,8 +28,8 @@ export const Header: React.FC<PropsType> = () => {
 
   const dispatch = useDispatch();
 
-  const logOut = () => {
-    dispatch(authThunks.logOut());
+  const clickHandler = () => {
+    dispatch(logOut());
   };
 
   return (
@@ -50,7 +50,7 @@ export const Header: React.FC<PropsType> = () => {
             type="link"
             shape="circle"
             icon={<LogoutOutlined style={{ fontSize: '24px' }} />}
-            onClick={logOut}
+            onClick={clickHandler}
           />
         </Space>
       ) : (

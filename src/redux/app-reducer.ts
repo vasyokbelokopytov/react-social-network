@@ -1,11 +1,11 @@
 import { ActionTypes, ThunkType } from '../types/types';
-import { thunks as authThunks } from './auth-reducer';
+import { auth } from './auth-reducer';
 
-const SET_INITIALIZED = 'social-network/app/SET_INITIALIZED';
-const SET_GLOBAL_ERROR = 'social-network/app/SET_GLOBAL_ERROR';
+const IS_INITIALIZED_CHANGED = 'app/IS_INITIALIZED_CHANGED';
+const GLOBAL_ERROR_CHANGED = 'app/GLOBAL_ERROR_CHANGED';
 
 const initialState = {
-  initialized: false as boolean,
+  isInitialized: false as boolean,
   globalError: null as null | Error,
 };
 
@@ -16,16 +16,16 @@ const appReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case SET_INITIALIZED:
+    case IS_INITIALIZED_CHANGED:
       return {
         ...state,
-        initialized: true,
+        isInitialized: action.payload,
       };
 
-    case SET_GLOBAL_ERROR:
+    case GLOBAL_ERROR_CHANGED:
       return {
         ...state,
-        globalError: action.globalError,
+        globalError: action.error,
       };
 
     default:
@@ -34,22 +34,26 @@ const appReducer = (
 };
 
 export const actions = {
-  setInitialized: () =>
+  isInitializedChanged: (isInitialized: boolean) =>
     ({
-      type: SET_INITIALIZED,
+      type: IS_INITIALIZED_CHANGED,
+      payload: isInitialized,
     } as const),
 
-  setGlobalError: (globalError: null | Error) =>
+  globalErrorChanged: (error: null | Error) =>
     ({
-      type: SET_GLOBAL_ERROR,
-      globalError,
+      type: GLOBAL_ERROR_CHANGED,
+      error,
     } as const),
 };
 
 export const initialize = (): ThunkType => async (dispatch) => {
-  await Promise.all([dispatch(authThunks.loadUserAuthData())]);
-
-  dispatch(actions.setInitialized());
+  try {
+    await Promise.all([dispatch(auth())]);
+    dispatch(actions.isInitializedChanged(true));
+  } catch (e) {
+    dispatch(actions.globalErrorChanged(e as Error));
+  }
 };
 
 export default appReducer;

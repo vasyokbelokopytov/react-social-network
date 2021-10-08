@@ -10,7 +10,7 @@ import { initialize, actions as appActions } from './redux/app-reducer';
 
 import {
   selectGlobalError,
-  selectInitialized,
+  selectIsInitialized,
 } from './redux/selectors/app-selectors';
 
 import { Header } from './components/Header/Header';
@@ -21,7 +21,7 @@ import { UsersPage } from './components/Users/UsersPage';
 import News from './components/News/News';
 import Music from './components/Music/Music';
 import Settings from './components/Settings/Settings';
-import MessagesContainer from './components/Messages/MessagesContainer';
+// import MessagesContainer from './components/Messages/MessagesContainer';
 import { ChatPage } from './components/Chat/ChatPage';
 import { LoginPage } from './components/Login/LoginPage';
 import Loader from './components/common/Loader/Loader';
@@ -34,7 +34,7 @@ const { Content } = Layout;
 
 class App extends React.Component<PropsType> {
   handlePromiseErrors = (e: PromiseRejectionEvent) => {
-    this.props.setGlobalError(e.reason);
+    this.props.globalErrorChanged(e.reason);
   };
 
   componentDidMount() {
@@ -80,13 +80,13 @@ class App extends React.Component<PropsType> {
 }
 
 const mapStateToProps = (state: GlobalStateType) => ({
-  initialized: selectInitialized(state),
+  initialized: selectIsInitialized(state),
   globalError: selectGlobalError(state),
 });
 
 const connector = connect(mapStateToProps, {
   initialize,
-  setGlobalError: appActions.setGlobalError,
+  globalErrorChanged: appActions.globalErrorChanged,
 });
 
 type MappedPropsType = ConnectedProps<typeof connector>;

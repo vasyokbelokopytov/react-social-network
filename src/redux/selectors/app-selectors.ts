@@ -1,7 +1,7 @@
 import { GlobalStateType } from '../redux-store';
 
-export const selectInitialized = (state: GlobalStateType) => {
-  return state.app.initialized;
+export const selectIsInitialized = (state: GlobalStateType) => {
+  return state.app.isInitialized;
 };
 
 export const selectGlobalError = (state: GlobalStateType) => {

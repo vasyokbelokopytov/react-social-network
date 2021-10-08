@@ -8,7 +8,7 @@ type SavePhotoType = {
 type LoadStatusType = string | null;
 
 export const profileAPI = {
-  async loadProfile(id: number) {
+  async fetchProfile(id: number) {
     const response = await template.get<ProfileType>(`profile/${id}`);
     return response.data;
   },
@@ -18,7 +18,7 @@ export const profileAPI = {
     return response.data;
   },
 
-  async loadStatus(id: number) {
+  async fetchStatus(id: number) {
     const response = await template.get<LoadStatusType>(`profile/status/${id}`);
     return response.data;
   },

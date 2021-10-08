@@ -3,23 +3,39 @@ import { authAPI } from '../api/auth-api';
 import { profileAPI } from '../api/profile-api';
 import { securityAPI } from '../api/security-api';
 
-import {
-  ActionTypes,
-  FormReturnType,
-  ProfileType,
-  ThunkType,
-} from '../types/types';
+import { ActionTypes, ProfileType, ThunkType } from '../types/types';
 
-const SET_USER_AUTH_DATA = 'social-network/auth/SET_USER_AUTH_DATA';
-const SET_USER_AUTH_PROFILE = 'social-network/auth/SET_USER_AUTH_PROFILE';
-const SET_CAPTCHA_URL = 'social-network/auth/SET_CAPTCHA_URL';
+const AUTH_DATA_CHANGED = 'auth/AUTH_DATA_CHANGED';
+
+const AUTH_ATTEMPT = 'auth/AUTH_ATTEMPT';
+const AUTH_SUCCEED = 'auth/AUTH_SUCCEED';
+const AUTH_FAILED = 'auth/AUTH_FAILED';
+
+const LOG_IN_ATTEMPT = 'auth/LOG_IN_ATTEMPT';
+const LOG_IN_SUCCEED = 'auth/LOG_IN_SUCCEED';
+const LOG_IN_FAILED = 'auth/LOG_IN_FAILED';
+
+const LOG_OUT_ATTEMPT = 'auth/LOG_OUT_ATTEMPT';
+const LOG_OUT_SUCCEED = 'auth/LOG_OUT_SUCCEED';
+const LOG_OUT_FAILED = 'auth/LOG_OUT_FAILED';
+
+const CAPTCHA_URL_CHANGED = 'auth/CAPTCHA_URL_CHANGED';
 
 const initialState = {
   id: null as null | number,
   email: null as null | string,
   login: null as null | string,
-  isAuth: false as boolean,
   profile: null as null | ProfileType,
+  isAuth: false as boolean,
+  isAuthProcessing: false,
+  authError: null as null | Error,
+
+  isLoggingInProcessing: false,
+  loggingInError: null as null | Error,
+
+  isLoggingOutProcessing: false,
+  loggingOutError: null as null | Error,
+
   captchaUrl: null as null | string,
 };
 
@@ -30,22 +46,80 @@ const authReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case SET_USER_AUTH_DATA:
+    case AUTH_DATA_CHANGED:
       return {
         ...state,
-        ...action.data,
+        id: action.payload.id,
+        email: action.payload.email,
+        login: action.payload.login,
+        isAuth: action.payload.isAuth,
+        profile: action.payload.profile,
       };
 
-    case SET_USER_AUTH_PROFILE:
+    case AUTH_ATTEMPT:
       return {
         ...state,
-        profile: action.profile,
+        isAuthProcessing: true,
       };
 
-    case SET_CAPTCHA_URL:
+    case AUTH_SUCCEED:
       return {
         ...state,
-        captchaUrl: action.captchaUrl,
+        isAuthProcessing: false,
+        authError: null,
+      };
+
+    case AUTH_FAILED:
+      return {
+        ...state,
+        isAuthProcessing: false,
+        authError: action.error,
+      };
+
+    case LOG_IN_ATTEMPT:
+      return {
+        ...state,
+        isLoggingInProcessing: true,
+      };
+
+    case LOG_IN_SUCCEED:
+      return {
+        ...state,
+        isLoggingInProcessing: false,
+        loggingInError: null,
+      };
+
+    case LOG_IN_FAILED:
+      return {
+        ...state,
+        isLoggingInProcessing: false,
+        loggingInError: action.error,
+      };
+
+    case LOG_OUT_ATTEMPT:
+      return {
+        ...state,
+        isLoggingOutProcessing: true,
+      };
+
+    case LOG_OUT_SUCCEED:
+      return {
+        ...state,
+        isLoggingOutProcessing: false,
+        loggingOutError: null,
+      };
+
+    case LOG_OUT_FAILED:
+      return {
+        ...state,
+        isLoggingOutProcessing: false,
+        loggingOutError: action.error,
+      };
+
+    case CAPTCHA_URL_CHANGED:
+      return {
+        ...state,
+        captchaUrl: action.payload,
       };
 
     default:
@@ -54,83 +128,143 @@ const authReducer = (
 };
 
 export const actions = {
-  setUserAuthData: (
+  authDataChanged: (
     id: number | null,
     email: string | null,
     login: string | null,
+    profile: ProfileType | null,
     isAuth: boolean
-  ) =>
-    ({
-      type: SET_USER_AUTH_DATA,
-      data: { id, email, login, isAuth },
-    } as const),
-
-  setCaptchaUrl: (captchaUrl: string) =>
-    ({
-      type: SET_CAPTCHA_URL,
-      captchaUrl,
-    } as const),
-
-  setUserAuthProfile: (profile: ProfileType | null) => {
+  ) => {
     return {
-      type: SET_USER_AUTH_PROFILE,
-      profile,
+      type: AUTH_DATA_CHANGED,
+      payload: { id, email, login, isAuth, profile },
+    } as const;
+  },
+
+  authAttempt: () => {
+    return {
+      type: AUTH_ATTEMPT,
+    } as const;
+  },
+
+  authSucceed: () => {
+    return {
+      type: AUTH_SUCCEED,
+    } as const;
+  },
+
+  authFailed: (error: Error) => {
+    return {
+      type: AUTH_FAILED,
+      error,
+    } as const;
+  },
+
+  logInAttempt: () => {
+    return {
+      type: LOG_IN_ATTEMPT,
+    } as const;
+  },
+
+  logInSucceed: () => {
+    return {
+      type: LOG_IN_SUCCEED,
+    } as const;
+  },
+
+  logInFailed: (error: Error) => {
+    return {
+      type: LOG_IN_FAILED,
+      error,
+    } as const;
+  },
+
+  logOutAttempt: () => {
+    return {
+      type: LOG_OUT_ATTEMPT,
+    } as const;
+  },
+
+  logOutSucceed: () => {
+    return {
+      type: LOG_OUT_SUCCEED,
+    } as const;
+  },
+
+  logOutFailed: (error: Error) => {
+    return {
+      type: LOG_OUT_FAILED,
+      error,
+    } as const;
+  },
+
+  captchaUrlChanged: (captchaUrl: string | null) => {
+    return {
+      type: CAPTCHA_URL_CHANGED,
+      payload: captchaUrl,
     } as const;
   },
 };
 
-export const thunks = {
-  loadUserAuthProfile:
-    (id: number): ThunkType =>
-    async (dispatch) => {
-      const data = await profileAPI.loadProfile(id);
-      dispatch(actions.setUserAuthProfile(data));
-    },
+export const auth = (): ThunkType => async (dispatch) => {
+  dispatch(actions.authAttempt());
 
-  loadUserAuthData: (): ThunkType => async (dispatch) => {
+  try {
     const data = await authAPI.me();
-
     if (data.resultCode === ResultCodes.success) {
       const { id, email, login } = data.data;
-      dispatch(actions.setUserAuthData(id, email, login, true));
-      dispatch(thunks.loadUserAuthProfile(id));
+      const profile = await profileAPI.fetchProfile(id);
+      dispatch(actions.authDataChanged(id, email, login, profile, true));
+    } else if (data.resultCode === ResultCodes.error) {
+      dispatch(actions.authFailed(new Error(data.messages[0])));
     }
-  },
+  } catch (e) {
+    dispatch(actions.authFailed(e as Error));
+  }
+};
 
-  logIn:
-    (
-      email: string,
-      password: string,
-      rememberMe: boolean,
-      captcha?: string
-    ): ThunkType<FormReturnType> =>
-    async (dispatch) => {
+export const logIn =
+  (
+    email: string,
+    password: string,
+    rememberMe: boolean,
+    captcha?: string
+  ): ThunkType =>
+  async (dispatch) => {
+    dispatch(actions.logInAttempt());
+
+    try {
       const data = await authAPI.login(email, password, rememberMe, captcha);
 
       if (data.resultCode === ResultCodes.success) {
-        dispatch(thunks.loadUserAuthData());
-        return;
+        dispatch(auth());
+        dispatch(actions.logInSucceed());
       } else if (data.resultCode === CaptchaResultCodes.captchaIsRequired) {
-        dispatch(thunks.getCaptchaUrl());
+        const { url } = await securityAPI.getCaptchaUrl();
+        dispatch(actions.captchaUrlChanged(url));
+        dispatch(actions.logInFailed(new Error(data.messages[0])));
+      } else if (data.resultCode === ResultCodes.error) {
+        dispatch(actions.logInFailed(new Error(data.messages[0])));
       }
-
-      return data.messages;
-    },
-
-  getCaptchaUrl: (): ThunkType => async (dispatch) => {
-    const data = await securityAPI.getCaptchaUrl();
-    const url = data.url;
-    dispatch(actions.setCaptchaUrl(url));
-  },
-
-  logOut: (): ThunkType => async (dispatch) => {
-    const data = await authAPI.logout();
-
-    if (data.resultCode === ResultCodes.success) {
-      dispatch(actions.setUserAuthData(null, null, null, false));
-      dispatch(actions.setUserAuthProfile(null));
+    } catch (e) {
+      dispatch(actions.logInFailed(e as Error));
     }
-  },
+  };
+
+export const logOut = (): ThunkType => async (dispatch) => {
+  dispatch(actions.logOutAttempt());
+
+  try {
+    const data = await authAPI.logout();
+    if (data.resultCode === ResultCodes.success) {
+      dispatch(actions.authDataChanged(null, null, null, null, false));
+      dispatch(actions.captchaUrlChanged(null));
+    } else if (data.resultCode === ResultCodes.error) {
+      dispatch(actions.logOutFailed(new Error(data.messages[0])));
+    }
+  } catch (e) {
+    dispatch(actions.logOutFailed(e as Error));
+  }
 };
 
 export default authReducer;
