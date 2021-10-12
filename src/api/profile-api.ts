@@ -1,4 +1,8 @@
-import { UserPhotosType, ProfileType } from '../types/types';
+import {
+  UserPhotosType,
+  ProfileType,
+  ProfileFormDataType,
+} from '../types/types';
 import { template, ResponseType } from './api';
 
 type SavePhotoType = {
@@ -13,7 +17,7 @@ export const profileAPI = {
     return response.data;
   },
 
-  async updateProfile(profile: ProfileType) {
+  async updateProfile(profile: ProfileType | ProfileFormDataType) {
     const response = await template.put<ResponseType>(`profile`, profile);
     return response.data;
   },

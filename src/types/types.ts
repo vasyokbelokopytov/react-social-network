@@ -34,13 +34,6 @@ export type UserType = {
   followed: boolean;
 };
 
-export type PostType = {
-  id: number;
-  name: string;
-  date: string;
-  text: string;
-};
-
 export type UserContactsType = {
   github: string | null;
   vk: string | null;
@@ -61,6 +54,8 @@ export type ProfileType = {
   photos: UserPhotosType;
   aboutMe: string | null;
 };
+
+export type ProfileFormDataType = Omit<ProfileType, 'userId' | 'photos'>;
 
 export type FilterType = {
   term: string;

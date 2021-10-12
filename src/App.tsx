@@ -16,7 +16,7 @@ import {
 import { Header } from './components/Header/Header';
 import { Navbar } from './components/Navbar/Navbar';
 import Main from './components/Main/Main';
-import { ProfilePage } from './components/Profile/ProfilePage';
+import { ProfilePage } from './components/Profile/Profile';
 import { UsersPage } from './components/Users/UsersPage';
 import News from './components/News/News';
 import Music from './components/Music/Music';

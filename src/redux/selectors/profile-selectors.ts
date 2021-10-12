@@ -4,10 +4,46 @@ export const selectProfile = (state: GlobalStateType) => {
   return state.profilePage.profile;
 };
 
+export const selectIsProfileFetching = (state: GlobalStateType) => {
+  return state.profilePage.isProfileFetching;
+};
+
+export const selectIsProfileUpdating = (state: GlobalStateType) => {
+  return state.profilePage.isProfileUpdating;
+};
+
+export const selectProfileFetchingError = (state: GlobalStateType) => {
+  return state.profilePage.profileFetchingError;
+};
+
+export const selectProfileUpdatingError = (state: GlobalStateType) => {
+  return state.profilePage.profileUpdatingError;
+};
+
 export const selectStatus = (state: GlobalStateType) => {
   return state.profilePage.status;
 };
 
-export const selectPosts = (state: GlobalStateType) => {
-  return state.profilePage.posts;
+export const selectIsStatusFetching = (state: GlobalStateType) => {
+  return state.profilePage.isStatusFetching;
+};
+
+export const selectIsStatusUpdating = (state: GlobalStateType) => {
+  return state.profilePage.isStatusUpdating;
+};
+
+export const selectStatusFetchingError = (state: GlobalStateType) => {
+  return state.profilePage.statusFetchingError;
+};
+
+export const selectStatusUpdatingError = (state: GlobalStateType) => {
+  return state.profilePage.statusUpdatingError;
+};
+
+export const selectIsAvatarUpdating = (state: GlobalStateType) => {
+  return state.profilePage.isAvatarUpdating;
+};
+
+export const selectAvatarUpdatingError = (state: GlobalStateType) => {
+  return state.profilePage.avatarUpdatingError;
 };

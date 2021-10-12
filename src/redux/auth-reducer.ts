@@ -26,6 +26,7 @@ const initialState = {
   email: null as null | string,
   login: null as null | string,
   profile: null as null | ProfileType,
+  status: null as null | string,
   isAuth: false as boolean,
   isAuthProcessing: false,
   authError: null as null | Error,
@@ -54,6 +55,7 @@ const authReducer = (
         login: action.payload.login,
         isAuth: action.payload.isAuth,
         profile: action.payload.profile,
+        status: action.payload.status,
       };
 
     case AUTH_ATTEMPT:
@@ -133,11 +135,12 @@ export const actions = {
     email: string | null,
     login: string | null,
     profile: ProfileType | null,
+    status: null | string,
     isAuth: boolean
   ) => {
     return {
       type: AUTH_DATA_CHANGED,
-      payload: { id, email, login, isAuth, profile },
+      payload: { id, email, login, isAuth, profile, status },
     } as const;
   },
 
@@ -214,7 +217,10 @@ export const auth = (): ThunkType => async (dispatch) => {
     if (data.resultCode === ResultCodes.success) {
       const { id, email, login } = data.data;
       const profile = await profileAPI.fetchProfile(id);
-      dispatch(actions.authDataChanged(id, email, login, profile, true));
+      const status = await profileAPI.fetchStatus(id);
+      dispatch(
+        actions.authDataChanged(id, email, login, profile, status, true)
+      );
     } else if (data.resultCode === ResultCodes.error) {
       dispatch(actions.authFailed(new Error(data.messages[0])));
     }
@@ -257,7 +263,7 @@ export const logOut = (): ThunkType => async (dispatch) => {
   try {
     const data = await authAPI.logout();
     if (data.resultCode === ResultCodes.success) {
-      dispatch(actions.authDataChanged(null, null, null, null, false));
+      dispatch(actions.authDataChanged(null, null, null, null, null, false));
       dispatch(actions.captchaUrlChanged(null));
     } else if (data.resultCode === ResultCodes.error) {
       dispatch(actions.logOutFailed(new Error(data.messages[0])));

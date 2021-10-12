@@ -1,52 +1,50 @@
-import { getStringDate } from '../utilities/helpers/helpers';
 import { ResultCodes } from '../api/api';
 
 import {
   ProfileType,
   UserPhotosType,
-  PostType,
   ActionTypes,
   ThunkType,
-  FormReturnType,
+  ProfileFormDataType,
 } from '../types/types';
 
 import { profileAPI } from '../api/profile-api';
 
-const ADD_POST = 'social-network/profile/ADD_POST';
-const DELETE_POST = 'social-network/profile/DELETE_POST';
-const SET_USER_PROFILE = 'social-network/profile/SET_USER_PROFILE';
-const SET_USER_STATUS = 'social-network/profile/SET_USER_STATUS';
-const SET_USER_PHOTOS = 'social-network/profile/SET_USER_PHOTOS';
+const PROFILE_FETCH_REQUESTED = 'profile/PROFILE_FETCH_REQUESTED';
+const PROFILE_FETCH_SUCCEED = 'profile/PROFILE_FETCH_SUCCEED';
+const PROFILE_FETCH_FAILED = 'profile/PROFILE_FETCH_FAILED';
+
+const PROFILE_UPDATE_REQUESTED = 'profile/PROFILE_UPDATE_REQUESTED';
+const PROFILE_UPDATE_SUCCEED = 'profile/PROFILE_UPDATE_SUCCEED';
+const PROFILE_UPDATE_FAILED = 'profile/PROFILE_UPDATE_FAILED';
+
+const STATUS_FETCH_REQUESTED = 'profile/STATUS_FETCH_REQUESTED';
+const STATUS_FETCH_SUCCEED = 'profile/STATUS_FETCH_SUCCEED';
+const STATUS_FETCH_FAILED = 'profile/STATUS_FETCH_FAILED';
+
+const STATUS_UPDATE_REQUESTED = 'profile/STATUS_UPDATE_REQUESTED';
+const STATUS_UPDATE_SUCCEED = 'profile/STATUS_UPDATE_SUCCEED';
+const STATUS_UPDATE_FAILED = 'profile/STATUS_UPDATE_FAILED';
+
+const AVATAR_UPDATE_REQUESTED = 'profile/AVATAR_UPDATE_REQUESTED';
+const AVATAR_UPDATE_SUCCEED = 'profile/AVATAR_UPDATE_SUCCEED';
+const AVATAR_UPDATE_FAILED = 'profile/AVATAR_UPDATE_FAILED';
 
 const initialState = {
   profile: null as null | ProfileType,
+  isProfileFetching: false,
+  isProfileUpdating: false,
+  profileFetchingError: null as Error | null,
+  profileUpdatingError: null as Error | null,
+
   status: null as null | string,
-  posts: [
-    {
-      id: 1,
-      name: 'Vasiliy Belokopytov',
-      date: '20:10 PM · 16.04.20',
-      text: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eos, eveniet asperiores obcaecati maxime explicabo minima, quas labore aspernatur dolorem consequatur quis dolore commodi, numquam adipisci. Laudantium est impedit at, quasi dignissimos nemo consequuntur animi molestias nesciunt, aspernatur magni consequatur fugiat! Dolore, eligendi? At distinctio rerum inventore corrupti officiis quae quis necessitatibus, fuga aperiam nesciunt ex debitis. Architecto, provident labore! Laboriosam quibusdam architecto tempora perspiciatis. Maxime inventore soluta nobis eius rerum, eos obcaecati. Placeat ab ducimus officia dolor sed ut commodi provident libero et rerum dignissimos cumque repudiandae, vero maiores ad, temporibus natus voluptas odio iste accusantium, a deleniti quo esse.',
-    },
-    {
-      id: 2,
-      name: 'Vasiliy Belokopytov',
-      date: '20:10 PM · 16.04.20',
-      text: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eos, eveniet asperiores obcaecati maxime explicabo minima, quas labore aspernatur dolorem consequatur quis dolore commodi, numquam adipisci. Laudantium est impedit at, quasi dignissimos nemo consequuntur animi molestias nesciunt, aspernatur magni consequatur fugiat! Dolore, eligendi? At distinctio rerum inventore corrupti officiis quae quis necessitatibus, fuga aperiam nesciunt ex debitis. Architecto, provident labore! Laboriosam quibusdam architecto tempora perspiciatis. Maxime inventore soluta nobis eius rerum, eos obcaecati. Placeat ab ducimus officia dolor sed ut commodi provident libero et rerum dignissimos cumque repudiandae, vero maiores ad, temporibus natus voluptas odio iste accusantium, a deleniti quo esse.',
-    },
-    {
-      id: 3,
-      name: 'Vasiliy Belokopytov',
-      date: '20:10 PM · 16.04.20',
-      text: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eos, eveniet asperiores obcaecati maxime explicabo minima, quas labore aspernatur dolorem consequatur quis dolore commodi, numquam adipisci. Laudantium est impedit at, quasi dignissimos nemo consequuntur animi molestias nesciunt, aspernatur magni consequatur fugiat! Dolore, eligendi? At distinctio rerum inventore corrupti officiis quae quis necessitatibus, fuga aperiam nesciunt ex debitis. Architecto, provident labore! Laboriosam quibusdam architecto tempora perspiciatis. Maxime inventore soluta nobis eius rerum, eos obcaecati. Placeat ab ducimus officia dolor sed ut commodi provident libero et rerum dignissimos cumque repudiandae, vero maiores ad, temporibus natus voluptas odio iste accusantium, a deleniti quo esse.',
-    },
-    {
-      id: 4,
-      name: 'Vasiliy Belokopytov',
-      date: '20:10 PM · 16.04.20',
-      text: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eos, eveniet asperiores obcaecati maxime explicabo minima, quas labore aspernatur dolorem consequatur quis dolore commodi, numquam adipisci. Laudantium est impedit at, quasi dignissimos nemo consequuntur animi molestias nesciunt, aspernatur magni consequatur fugiat! Dolore, eligendi? At distinctio rerum inventore corrupti officiis quae quis necessitatibus, fuga aperiam nesciunt ex debitis. Architecto, provident labore! Laboriosam quibusdam architecto tempora perspiciatis. Maxime inventore soluta nobis eius rerum, eos obcaecati. Placeat ab ducimus officia dolor sed ut commodi provident libero et rerum dignissimos cumque repudiandae, vero maiores ad, temporibus natus voluptas odio iste accusantium, a deleniti quo esse.',
-    },
-  ] as Array<PostType>,
+  isStatusFetching: false,
+  isStatusUpdating: false,
+  statusFetchingError: null as Error | null,
+  statusUpdatingError: null as Error | null,
+
+  isAvatarUpdating: false,
+  avatarUpdatingError: null as Error | null,
 };
 
 type InitialStateType = typeof initialState;
@@ -56,41 +54,108 @@ const profileReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case ADD_POST:
-      const newPost = {
-        id: state.posts.length + 1,
-        name: 'Vasiliy Belokopytov',
-        date: getStringDate(),
-        text: action.postText,
-      };
-
+    case PROFILE_FETCH_REQUESTED:
       return {
         ...state,
-        posts: [...state.posts, newPost],
+        isProfileFetching: true,
       };
 
-    case DELETE_POST:
+    case PROFILE_FETCH_SUCCEED:
       return {
         ...state,
-        posts: state.posts.filter((post) => post.id !== action.id),
+        profile: action.payload,
+        isProfileFetching: false,
+        profileFetchingError: null,
       };
 
-    case SET_USER_PROFILE:
+    case PROFILE_FETCH_FAILED:
       return {
         ...state,
-        profile: action.profile,
+        isProfileFetching: false,
+        profileFetchingError: action.error,
       };
 
-    case SET_USER_STATUS:
+    case PROFILE_UPDATE_REQUESTED:
       return {
         ...state,
-        status: action.status,
+        isProfileUpdating: true,
       };
 
-    case SET_USER_PHOTOS:
+    case PROFILE_UPDATE_SUCCEED:
       return {
         ...state,
-        profile: { ...state.profile, photos: action.photos } as ProfileType,
+        isProfileUpdating: false,
+        profileUpdatingError: null,
+      };
+
+    case PROFILE_UPDATE_FAILED:
+      return {
+        ...state,
+        isProfileUpdating: false,
+        profileUpdatingError: action.error,
+      };
+
+    case STATUS_FETCH_REQUESTED:
+      return {
+        ...state,
+        isStatusFetching: true,
+      };
+
+    case STATUS_FETCH_SUCCEED:
+      return {
+        ...state,
+        status: action.payload,
+        isStatusFetching: false,
+        statusFetchingError: null,
+      };
+
+    case STATUS_FETCH_FAILED:
+      return {
+        ...state,
+        isStatusFetching: false,
+        statusFetchingError: action.error,
+      };
+
+    case STATUS_UPDATE_REQUESTED:
+      return {
+        ...state,
+        isStatusUpdating: true,
+      };
+
+    case STATUS_UPDATE_SUCCEED:
+      return {
+        ...state,
+        status: action.payload,
+        isStatusUpdating: false,
+        statusUpdatingError: null,
+      };
+
+    case STATUS_UPDATE_FAILED:
+      return {
+        ...state,
+        isStatusUpdating: false,
+        statusUpdatingError: action.error,
+      };
+
+    case AVATAR_UPDATE_REQUESTED:
+      return {
+        ...state,
+        isAvatarUpdating: true,
+      };
+
+    case AVATAR_UPDATE_SUCCEED:
+      return {
+        ...state,
+        profile: { ...state.profile, photos: action.payload } as ProfileType,
+
+        isAvatarUpdating: false,
+        avatarUpdatingError: null,
+      };
+    case AVATAR_UPDATE_FAILED:
+      return {
+        ...state,
+        isAvatarUpdating: false,
+        avatarUpdatingError: action.error,
       };
 
     default:
@@ -99,86 +164,177 @@ const profileReducer = (
 };
 
 export const actions = {
-  setUserProfile: (profile: ProfileType) =>
+  profileFetchRequested: () =>
     ({
-      type: SET_USER_PROFILE,
-      profile,
+      type: PROFILE_FETCH_REQUESTED,
     } as const),
 
-  setUserStatus: (status: string | null) =>
+  profileFetchSucceed: (profile: ProfileType | null) =>
     ({
-      type: SET_USER_STATUS,
-      status,
+      type: PROFILE_FETCH_SUCCEED,
+      payload: profile,
     } as const),
 
-  setUserPhotos: (photos: UserPhotosType) =>
+  profileFetchFailed: (error: Error) =>
     ({
-      type: SET_USER_PHOTOS,
-      photos,
+      type: PROFILE_FETCH_FAILED,
+      error,
     } as const),
 
-  addPost: (postText: string) =>
+  profileUpdateRequested: () =>
     ({
-      type: ADD_POST,
-      postText,
+      type: PROFILE_UPDATE_REQUESTED,
     } as const),
 
-  deletePost: (id: number) =>
+  profileUpdateSucceed: () =>
     ({
-      type: DELETE_POST,
-      id,
+      type: PROFILE_UPDATE_SUCCEED,
+    } as const),
+
+  profileUpdateFailed: (error: Error) =>
+    ({
+      type: PROFILE_UPDATE_FAILED,
+      error,
+    } as const),
+
+  statusFetchRequested: () =>
+    ({
+      type: STATUS_FETCH_REQUESTED,
+    } as const),
+
+  statusFetchSucceed: (status: string | null) =>
+    ({
+      type: STATUS_FETCH_SUCCEED,
+      payload: status,
+    } as const),
+
+  statusFetchFailed: (error: Error) =>
+    ({
+      type: STATUS_FETCH_FAILED,
+      error,
+    } as const),
+
+  statusUpdateRequested: () =>
+    ({
+      type: STATUS_UPDATE_REQUESTED,
+    } as const),
+
+  statusUpdateSucceed: (status: string) =>
+    ({
+      type: STATUS_UPDATE_SUCCEED,
+      payload: status,
+    } as const),
+
+  statusUpdateFailed: (error: Error) =>
+    ({
+      type: STATUS_UPDATE_FAILED,
+      error,
+    } as const),
+
+  avatarUpdateRequested: () =>
+    ({
+      type: AVATAR_UPDATE_REQUESTED,
+    } as const),
+
+  avatarUpdateSucceed: (photos: UserPhotosType) =>
+    ({
+      type: AVATAR_UPDATE_SUCCEED,
+      payload: photos,
+    } as const),
+
+  avatarUpdateFailed: (error: Error) =>
+    ({
+      type: AVATAR_UPDATE_FAILED,
+      error,
     } as const),
 };
 
-export const thunks = {
-  loadUserProfile:
-    (id: number): ThunkType =>
-    async (dispatch) => {
+export const fetchProfile =
+  (id: number): ThunkType =>
+  async (dispatch) => {
+    dispatch(actions.profileFetchRequested());
+    try {
       const profile = await profileAPI.fetchProfile(id);
-      dispatch(actions.setUserProfile(profile));
-    },
+      dispatch(actions.profileFetchSucceed(profile));
+    } catch (e) {
+      dispatch(actions.profileFetchFailed(e as Error));
+    }
+  };
 
-  loadUserStatus:
-    (id: number): ThunkType =>
-    async (dispatch) => {
+export const updateProfile =
+  (profile: ProfileFormDataType | ProfileType): ThunkType =>
+  async (dispatch, getState) => {
+    dispatch(actions.profileUpdateRequested());
+
+    const id = getState().auth.id;
+
+    try {
+      const data = await profileAPI.updateProfile(profile);
+      if (data.resultCode === ResultCodes.success) {
+        if (id !== null) {
+          dispatch(actions.profileUpdateSucceed());
+          dispatch(fetchProfile(id));
+        } else {
+          dispatch(
+            actions.profileUpdateFailed(
+              new Error("Can't update profile of unauthorized user")
+            )
+          );
+        }
+      } else if (data.resultCode === ResultCodes.error) {
+        dispatch(actions.profileUpdateFailed(new Error(data.messages[0])));
+      }
+    } catch (e) {
+      dispatch(actions.profileUpdateFailed(e as Error));
+    }
+  };
+
+export const fetchStatus =
+  (id: number): ThunkType =>
+  async (dispatch) => {
+    dispatch(actions.statusFetchRequested());
+    try {
       const status = await profileAPI.fetchStatus(id);
-      dispatch(actions.setUserStatus(status));
-    },
+      dispatch(actions.statusFetchSucceed(status));
+    } catch (e) {
+      dispatch(actions.statusFetchFailed(e as Error));
+    }
+  };
 
-  updateUserStatus:
-    (status: string): ThunkType =>
-    async (dispatch) => {
+export const updateStatus =
+  (status: string): ThunkType =>
+  async (dispatch) => {
+    dispatch(actions.statusUpdateRequested());
+
+    try {
       const data = await profileAPI.updateStatus(status);
 
       if (data.resultCode === ResultCodes.success) {
-        dispatch(actions.setUserStatus(status));
+        dispatch(actions.statusUpdateSucceed(status));
+      } else if (data.resultCode === ResultCodes.error) {
+        dispatch(actions.statusUpdateFailed(new Error(data.messages[0])));
       }
-    },
+    } catch (e) {
+      dispatch(actions.statusUpdateFailed(e as Error));
+    }
+  };
 
-  savePhoto:
-    (file: File): ThunkType =>
-    async (dispatch) => {
+export const updateAvatar =
+  (file: File): ThunkType =>
+  async (dispatch) => {
+    dispatch(actions.avatarUpdateRequested());
+
+    try {
       const data = await profileAPI.savePhoto(file);
 
       if (data.resultCode === ResultCodes.success) {
-        dispatch(actions.setUserPhotos(data.data.photos));
+        dispatch(actions.avatarUpdateSucceed(data.data.photos));
+      } else if (data.resultCode === ResultCodes.error) {
+        dispatch(actions.avatarUpdateFailed(new Error(data.messages[0])));
       }
-    },
-
-  saveUserProfile:
-    (profile: ProfileType): ThunkType<FormReturnType> =>
-    async (dispatch, getState) => {
-      const id = getState().auth.id;
-
-      const data = await profileAPI.updateProfile(profile);
-
-      if (data.resultCode === ResultCodes.success && id !== null) {
-        dispatch(thunks.loadUserProfile(id));
-        return;
-      }
-
-      return data.messages;
-    },
-};
+    } catch (e) {
+      dispatch(actions.avatarUpdateFailed(e as Error));
+    }
+  };
 
 export default profileReducer;

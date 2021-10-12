@@ -16,6 +16,10 @@ export const selectUserAuthProfile = (state: GlobalStateType) => {
   return state.auth.profile;
 };
 
+export const selectUserAuthStatus = (state: GlobalStateType) => {
+  return state.auth.status;
+};
+
 export const selectIsAuth = (state: GlobalStateType) => {
   return state.auth.isAuth;
 };
