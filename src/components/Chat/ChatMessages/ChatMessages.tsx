@@ -75,7 +75,7 @@ export const ChatMessages: React.FC<PropsType> = () => {
       {IsConnectingError ? (
         <Result
           status="warning"
-          title="There are some problems with your connection."
+          title="There are some problems with connection."
           extra={
             <Button
               type="primary"
