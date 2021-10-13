@@ -18,6 +18,9 @@ import {
   selectTotalUsersCount,
   selectUsers,
   selectPageSizeOptions,
+  selectFetchingError,
+  selectFollowingError,
+  selectFilter,
 } from '../../redux/selectors/users-selectors';
 
 import {
@@ -30,7 +33,7 @@ import {
 import { UserItem } from './UserItem/UserItem';
 import { UsersSearchForm } from './UsersSearchForm/UsersSearchForm';
 
-import { Card, List, Space, Pagination } from 'antd';
+import { Card, List, Space, Pagination, Result, Button, message } from 'antd';
 
 import { ThunkDispatchType, FilterType } from '../../types/types';
 
@@ -41,10 +44,13 @@ export const UsersPage: React.FC<PropsType> = () => {
   const users = useSelector(selectUsers);
   const pageSize = useSelector(selectPageSize);
   const pageSizeOptinos = useSelector(selectPageSizeOptions);
+  const filter = useSelector(selectFilter);
   const totalUsersCount = useSelector(selectTotalUsersCount);
   const currentPage = useSelector(selectCurrentPage);
   const isFetching = useSelector(selectIsFetching);
+  const fetchingError = useSelector(selectFetchingError);
   const usersInFollowingProcess = useSelector(selectUsersInFollowingProcess);
+  const followingError = useSelector(selectFollowingError);
 
   const dispatch = useDispatch<ThunkDispatchType>();
 
@@ -71,6 +77,16 @@ export const UsersPage: React.FC<PropsType> = () => {
     dispatch(fetchUsers(page, count, { friend, term }));
   }, [dispatch, pageSize, pageSizeOptinos, query, isAuth]);
 
+  useEffect(() => {
+    if (followingError) message.error(followingError.message);
+  }, [followingError]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(usersActions.followingErrorChanged(null));
+    };
+  }, [dispatch]);
+
   const pageChangeHandler = (page: number) => {
     setQuery({
       page,
@@ -90,8 +106,13 @@ export const UsersPage: React.FC<PropsType> = () => {
       term: filter.term,
       page: 1,
     });
+  };
 
+  const refetch = () => {
     dispatch(fetchUsers(currentPage, pageSize, filter));
+    if (fetchingError) {
+      message.error(fetchingError.message);
+    }
   };
 
   const followUserHandler = (id: number) => {
@@ -108,22 +129,40 @@ export const UsersPage: React.FC<PropsType> = () => {
         <UsersSearchForm onSubmit={filterChangeHandler} />
 
         <Card>
-          <List
-            itemLayout="horizontal"
-            dataSource={users}
-            loading={isFetching}
-            renderItem={(user) => (
-              <UserItem
-                key={user.id}
-                user={user}
-                isAuth={isAuth}
-                isFetching={isFetching}
-                usersInFollowingProcess={usersInFollowingProcess}
-                followUser={followUserHandler}
-                unfollowUser={unfollowUserHandler}
-              />
-            )}
-          />
+          {fetchingError ? (
+            <Result
+              status="error"
+              title="Unable to load users"
+              subTitle={fetchingError.message}
+              extra={[
+                <Button
+                  type="primary"
+                  key="fetchUsers"
+                  onClick={refetch}
+                  loading={isFetching}
+                >
+                  Try again
+                </Button>,
+              ]}
+            />
+          ) : (
+            <List
+              itemLayout="horizontal"
+              dataSource={users}
+              loading={isFetching}
+              renderItem={(user) => (
+                <UserItem
+                  key={user.id}
+                  user={user}
+                  isAuth={isAuth}
+                  isFetching={isFetching}
+                  usersInFollowingProcess={usersInFollowingProcess}
+                  followUser={followUserHandler}
+                  unfollowUser={unfollowUserHandler}
+                />
+              )}
+            />
+          )}
         </Card>
 
         <Pagination

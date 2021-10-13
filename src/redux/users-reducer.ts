@@ -3,11 +3,12 @@ import usersAPI from '../api/users-api';
 
 import { ActionTypes, ThunkType, UserType, FilterType } from '../types/types';
 
-const USER_SUBSCRIBING_REQUEST = 'users/USER_SUBSCRIBING_REQUEST';
-const USER_SUBSCRIBING_SUCCEED = 'users/USER_SUBSCRIBING_SUCCEED';
-const USER_SUBSCRIBING_FAILED = 'users/USER_SUBSCRIBING_FAILED';
+export const USER_SUBSCRIBING_REQUEST = 'users/USER_SUBSCRIBING_REQUEST';
+export const USER_SUBSCRIBING_SUCCEED = 'users/USER_SUBSCRIBING_SUCCEED';
+export const USER_SUBSCRIBING_FAILED = 'users/USER_SUBSCRIBING_FAILED';
 const USERS_IN_FOLLOWING_PROCESS_CHANGED =
   'users/USERS_IN_FOLLOWING_PROCESS_CHANGED';
+const FOLLOWING_ERROR_CHANGED = 'users/FOLLOWING_ERROR_CHANGED';
 
 const USERS_FETCH_REQUESTED = 'users/USERS_FETCH_REQUESTED';
 const USERS_FETCH_SUCCEED = 'users/USERS_FETCH_SUCCEED';
@@ -85,6 +86,12 @@ const usersReducer = (
         followingError: action.error,
       };
 
+    case FOLLOWING_ERROR_CHANGED:
+      return {
+        ...state,
+        followingError: action.error,
+      };
+
     case USERS_FETCH_REQUESTED:
       return {
         ...state,
@@ -103,6 +110,7 @@ const usersReducer = (
     case USERS_FETCH_FAILED:
       return {
         ...state,
+        isFetching: false,
         fetchingError: action.error,
       };
 
@@ -152,7 +160,13 @@ export const actions = {
     ({
       type: USER_SUBSCRIBING_FAILED,
       payload: userId,
-      error: error,
+      error,
+    } as const),
+
+  followingErrorChanged: (error: Error | null) =>
+    ({
+      type: FOLLOWING_ERROR_CHANGED,
+      error,
     } as const),
 
   usersFetchRequested: () =>
@@ -169,7 +183,7 @@ export const actions = {
   usersFetchFailed: (error: Error) =>
     ({
       type: USERS_FETCH_FAILED,
-      error: error,
+      error,
     } as const),
 
   currentPageChanged: (currentPage: number) =>
@@ -233,9 +247,12 @@ export const followUser =
 
     try {
       const data = await usersAPI.follow(id);
-
       if (data.resultCode === ResultCodes.success) {
         dispatch(actions.userSubscribingSucceed(id, 'follow'));
+      } else if (data.resultCode === ResultCodes.error) {
+        dispatch(
+          actions.userSubscribingFailed(id, new Error(data.messages[0]))
+        );
       }
     } catch (e) {
       dispatch(actions.userSubscribingFailed(id, e as Error));
@@ -252,6 +269,10 @@ export const unfollowUser =
 
       if (data.resultCode === ResultCodes.success) {
         dispatch(actions.userSubscribingSucceed(id, 'unfollow'));
+      } else if (data.resultCode === ResultCodes.error) {
+        dispatch(
+          actions.userSubscribingFailed(id, new Error(data.messages[0]))
+        );
       }
     } catch (e) {
       dispatch(actions.userSubscribingFailed(id, e as Error));
