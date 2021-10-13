@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectIsAuth,
+  selectLoggingOutError,
   selectUserAuthLogin,
   selectUserAuthProfile,
 } from '../../redux/selectors/auth-selectors';
 
-import { Layout, Avatar, Button, Space } from 'antd';
+import { Layout, Avatar, Button, Space, message } from 'antd';
 import { UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
 import Text from 'antd/lib/typography/Text';
 
@@ -25,6 +26,12 @@ export const Header: React.FC<PropsType> = () => {
   const isAuth = useSelector(selectIsAuth);
   const login = useSelector(selectUserAuthLogin);
   const profile = useSelector(selectUserAuthProfile);
+
+  const logOutError = useSelector(selectLoggingOutError);
+
+  useEffect(() => {
+    if (logOutError) message.error(logOutError.message);
+  }, [logOutError]);
 
   const dispatch = useDispatch();
 
