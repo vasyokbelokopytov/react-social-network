@@ -10,6 +10,7 @@ type SavePhotoType = {
 };
 
 type LoadStatusType = string | null;
+type followingStatusType = boolean;
 
 export const profileAPI = {
   async fetchProfile(id: number) {
@@ -19,6 +20,11 @@ export const profileAPI = {
 
   async updateProfile(profile: ProfileType | ProfileFormDataType) {
     const response = await template.put<ResponseType>(`profile`, profile);
+    return response.data;
+  },
+
+  async checkFollowing(id: number) {
+    const response = await template.get<followingStatusType>(`follow/${id}`);
     return response.data;
   },
 
