@@ -9,6 +9,7 @@ import { Form, Input, Select, Space, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 import { FilterType } from '../../../types/types';
+import { selectIsAuth } from '../../../redux/selectors/auth-selectors';
 
 type FriendValueType = 'null' | 'true' | 'false';
 
@@ -27,6 +28,7 @@ type PropsType = {
 };
 
 export const UsersSearchForm: React.FC<PropsType> = (props) => {
+  const isAuth = useSelector(selectIsAuth);
   const filter = useSelector(selectFilter);
   const isFetching = useSelector(selectIsFetching);
   const [form] = Form.useForm();
@@ -44,7 +46,7 @@ export const UsersSearchForm: React.FC<PropsType> = (props) => {
   const submitHandler = async (filter: FormType) => {
     const normalizedFilter = {
       ...filter,
-      friend: JSON.parse(filter.friend),
+      friend: isAuth ? JSON.parse(filter.friend) : null,
     };
 
     props.onSubmit(normalizedFilter);
@@ -61,10 +63,17 @@ export const UsersSearchForm: React.FC<PropsType> = (props) => {
         <Input placeholder="Search users . . ." />
       </Form.Item>
 
-      <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-        <Form.Item name="friend" noStyle>
-          <Select options={friendOptions} style={{ width: 145 }}></Select>
-        </Form.Item>
+      <Space
+        style={{
+          width: '100%',
+          justifyContent: isAuth ? 'space-between' : 'flex-end',
+        }}
+      >
+        {isAuth && (
+          <Form.Item name="friend" noStyle>
+            <Select options={friendOptions} style={{ width: 145 }}></Select>
+          </Form.Item>
+        )}
 
         <Form.Item noStyle>
           <Button

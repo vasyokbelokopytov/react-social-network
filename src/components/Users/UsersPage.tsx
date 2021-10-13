@@ -56,7 +56,7 @@ export const UsersPage: React.FC<PropsType> = () => {
   });
 
   useEffect(() => {
-    const friend = query.friend === undefined ? null : query.friend;
+    const friend = query.friend === undefined || !isAuth ? null : query.friend;
     const term = !query.term ? '' : query.term;
     const page = !query.page ? 1 : query.page;
     const count =
@@ -69,7 +69,7 @@ export const UsersPage: React.FC<PropsType> = () => {
     dispatch(usersActions.pageSizeChanged(count));
 
     dispatch(fetchUsers(page, count, { friend, term }));
-  }, [dispatch, pageSize, pageSizeOptinos, query]);
+  }, [dispatch, pageSize, pageSizeOptinos, query, isAuth]);
 
   const pageChangeHandler = (page: number) => {
     setQuery({
