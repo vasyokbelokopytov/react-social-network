@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logIn } from '../../../redux/auth-reducer';
+import { actions as authActions, logIn } from '../../../redux/auth-reducer';
 import {
   selectCaptchaUrl,
   selectIsLoggingInProcessing,
@@ -12,6 +12,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import styles from './LoginForm.module.css';
 
 import { Rule } from 'rc-field-form/lib/interface';
+import { useErrorMessage } from '../../../hooks/useErrorMessage';
 
 type FormDataType = {
   email: string;
@@ -28,9 +29,7 @@ export const LoginForm: React.FC<PropsType> = () => {
   const loggingInError = useSelector(selectLoggingInError);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (loggingInError) message.error(loggingInError.message);
-  }, [loggingInError]);
+  useErrorMessage(loggingInError, authActions.loggingInErrorChanged);
 
   const emailRules: Rule[] = [
     { required: true, message: 'Please, input your E-mail!' },

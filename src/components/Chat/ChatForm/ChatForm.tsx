@@ -15,7 +15,7 @@ import styles from './ChatForm.module.css';
 import { sendMessage, sendPendingMessage } from '../../../redux/chat-reducer';
 
 import {
-  selectIsConnectingError,
+  selectConnectingError,
   selectPendingMessages,
 } from '../../../redux/selectors/chat-selectors';
 
@@ -27,23 +27,23 @@ export const ChatForm: React.FC<PropsType> = () => {
   const [value, setValue] = useState('');
   const textareaRef = useRef<null | HTMLTextAreaElement>(null);
 
-  const IsConnectingError = useSelector(selectIsConnectingError);
+  const connectingError = useSelector(selectConnectingError);
   const pendingMessages = useSelector(selectPendingMessages);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!IsConnectingError && pendingMessages.length) {
+    if (!connectingError && pendingMessages.length) {
       dispatch(sendPendingMessage(pendingMessages[0]));
     }
-  }, [dispatch, IsConnectingError, pendingMessages]);
+  }, [dispatch, connectingError, pendingMessages]);
 
   const inputChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
   };
 
   const send = (message: string) => {
-    if (!IsConnectingError) {
+    if (!connectingError) {
       if (message.trim() !== '') dispatch(sendMessage(message));
       setValue('');
     }
@@ -65,7 +65,7 @@ export const ChatForm: React.FC<PropsType> = () => {
     <form className={styles.form}>
       <TextArea
         ref={textareaRef}
-        disabled={IsConnectingError}
+        disabled={!!connectingError}
         className={styles.textarea}
         placeholder="Type your message . . ."
         autoSize={{ minRows: 1, maxRows: 6 }}
@@ -74,7 +74,7 @@ export const ChatForm: React.FC<PropsType> = () => {
         onPressEnter={enterHandler}
       />
       <Button
-        disabled={IsConnectingError}
+        disabled={!!connectingError}
         className={styles.send}
         shape="circle"
         icon={<SendOutlined />}

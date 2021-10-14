@@ -13,6 +13,7 @@ const FOLLOWING_ERROR_CHANGED = 'users/FOLLOWING_ERROR_CHANGED';
 const USERS_FETCH_REQUESTED = 'users/USERS_FETCH_REQUESTED';
 const USERS_FETCH_SUCCEED = 'users/USERS_FETCH_SUCCEED';
 const USERS_FETCH_FAILED = 'users/USERS_FETCH_FAILED';
+const FETCHING_ERROR_CHANGED = 'users/FETCHING_ERROR_CHANGED';
 const IS_FETCHING_CHANGED = 'users/IS_FETCHING_CHANGED';
 const TOTAL_USERS_COUNT_CHANGED = 'users/TOTAL_USERS_COUNT_CHANGED';
 
@@ -114,6 +115,12 @@ const usersReducer = (
         fetchingError: action.error,
       };
 
+    case FETCHING_ERROR_CHANGED:
+      return {
+        ...state,
+        fetchingError: action.error,
+      };
+
     case CURRENT_PAGE_CHANGED:
       return {
         ...state,
@@ -183,6 +190,12 @@ export const actions = {
   usersFetchFailed: (error: Error) =>
     ({
       type: USERS_FETCH_FAILED,
+      error,
+    } as const),
+
+  fetchingErrorChanged: (error: Error | null) =>
+    ({
+      type: FETCHING_ERROR_CHANGED,
       error,
     } as const),
 

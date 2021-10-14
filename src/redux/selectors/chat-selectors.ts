@@ -8,12 +8,8 @@ export const selectStatus = (state: GlobalStateType) => {
   return state.chat.status;
 };
 
-export const selectIsConnectingFailed = (state: GlobalStateType) => {
-  return state.chat.isConnectingFailed;
-};
-
-export const selectIsConnectingError = (state: GlobalStateType) => {
-  return state.chat.isConnectingError;
+export const selectConnectingError = (state: GlobalStateType) => {
+  return state.chat.connectingError;
 };
 
 export const selectIsConnecting = (state: GlobalStateType) => {

@@ -8,11 +8,7 @@ import styles from './ChatPage.module.css';
 import { ChatMessages } from './ChatMessages/ChatMessages';
 import { ChatForm } from './ChatForm/ChatForm';
 import { useDispatch } from 'react-redux';
-import {
-  actions as chatActions,
-  subscribe,
-  unsubscribe,
-} from '../../redux/chat-reducer';
+import { subscribe, unsubscribe } from '../../redux/chat-reducer';
 
 const Chat: React.FC = () => {
   const dispatch = useDispatch();
@@ -21,7 +17,6 @@ const Chat: React.FC = () => {
     dispatch(subscribe());
     return () => {
       dispatch(unsubscribe());
-      dispatch(chatActions.statusChanged('pending'));
     };
   }, [dispatch]);
 

@@ -36,6 +36,7 @@ import { UsersSearchForm } from './UsersSearchForm/UsersSearchForm';
 import { Card, List, Space, Pagination, Result, Button, message } from 'antd';
 
 import { ThunkDispatchType, FilterType } from '../../types/types';
+import { useErrorMessage } from '../../hooks/useErrorMessage';
 
 type PropsType = {};
 
@@ -77,15 +78,8 @@ export const UsersPage: React.FC<PropsType> = () => {
     dispatch(fetchUsers(page, count, { friend, term }));
   }, [dispatch, pageSize, pageSizeOptinos, query, isAuth]);
 
-  useEffect(() => {
-    if (followingError) message.error(followingError.message);
-  }, [followingError]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(usersActions.followingErrorChanged(null));
-    };
-  }, [dispatch]);
+  useErrorMessage(fetchingError, usersActions.fetchingErrorChanged, false);
+  useErrorMessage(followingError, usersActions.followingErrorChanged);
 
   const pageChangeHandler = (page: number) => {
     setQuery({
@@ -110,9 +104,6 @@ export const UsersPage: React.FC<PropsType> = () => {
 
   const refetch = () => {
     dispatch(fetchUsers(currentPage, pageSize, filter));
-    if (fetchingError) {
-      message.error(fetchingError.message);
-    }
   };
 
   const followUserHandler = (id: number) => {

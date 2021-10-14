@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { selectUserAuthId } from '../../../redux/selectors/auth-selectors';
 import {
+  selectConnectingError,
   selectIsConnecting,
-  selectIsConnectingError,
-  selectIsConnectingFailed,
   selectMessages,
 } from '../../../redux/selectors/chat-selectors';
 
@@ -15,14 +14,14 @@ import styles from './ChatMessages.module.css';
 
 import { ChatMessage } from './ChatMessage/ChatMessage';
 import { reconnect } from '../../../redux/chat-reducer';
+import { useErrorMessage } from '../../../hooks/useErrorMessage';
 
 type PropsType = {};
 
 export const ChatMessages: React.FC<PropsType> = () => {
   const authId = useSelector(selectUserAuthId);
   const messages = useSelector(selectMessages);
-  const isConnectingFailed = useSelector(selectIsConnectingFailed);
-  const IsConnectingError = useSelector(selectIsConnectingError);
+  const connectingError = useSelector(selectConnectingError);
   const isConnecting = useSelector(selectIsConnecting);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -37,9 +36,7 @@ export const ChatMessages: React.FC<PropsType> = () => {
     }
   }, [wrapperRef, messages, isAutoscroll]);
 
-  useEffect(() => {
-    if (isConnectingFailed) message.error('Unable to connect');
-  }, [isConnectingFailed]);
+  useErrorMessage(connectingError);
 
   useEffect(() => {
     if (isConnecting) {
@@ -72,7 +69,7 @@ export const ChatMessages: React.FC<PropsType> = () => {
 
   return (
     <div className={styles.wrapper} ref={wrapperRef} onScroll={scrollHandler}>
-      {IsConnectingError ? (
+      {connectingError ? (
         <Result
           status="warning"
           title="There are some problems with connection."

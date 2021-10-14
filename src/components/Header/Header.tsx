@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import {
   selectUserAuthProfile,
 } from '../../redux/selectors/auth-selectors';
 
-import { Layout, Avatar, Button, Space, message } from 'antd';
+import { Layout, Avatar, Button, Space } from 'antd';
 import { UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
 import Text from 'antd/lib/typography/Text';
 
@@ -17,6 +17,7 @@ import styles from './Header.module.css';
 
 import logo from '../../assets/img/logo.png';
 import { logOut } from '../../redux/auth-reducer';
+import { useErrorMessage } from '../../hooks/useErrorMessage';
 
 const { Header: AntHeader } = Layout;
 
@@ -29,9 +30,7 @@ export const Header: React.FC<PropsType> = () => {
 
   const logOutError = useSelector(selectLoggingOutError);
 
-  useEffect(() => {
-    if (logOutError) message.error(logOutError.message);
-  }, [logOutError]);
+  useErrorMessage(logOutError);
 
   const dispatch = useDispatch();
 

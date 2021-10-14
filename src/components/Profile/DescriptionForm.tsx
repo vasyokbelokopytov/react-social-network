@@ -48,7 +48,7 @@ export const DescriptionForm: React.FC<PropsType> = ({
 
   useEffect(() => {
     if (prevIsLoading && !isLoading && !error) {
-      message.success('Update profile succeed!');
+      message.success('Updating profile succeed!');
       setIsEditing(false);
     } else if (prevIsLoading && !isLoading && error) {
       message.error(error.message);

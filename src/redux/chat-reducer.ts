@@ -21,8 +21,7 @@ const initialState = {
   messages: [] as Array<ChatPendingMessage>,
   pendingMessages: [] as Array<ChatPendingMessage>,
   status: 'pending' as StatusType,
-  isConnectingError: false,
-  isConnectingFailed: false,
+  connectingError: null as Error | null,
   isConnecting: false,
 };
 
@@ -62,12 +61,13 @@ const chatReducer = (
       return {
         ...state,
         status: action.payload,
-        isConnectingFailed: action.payload === 'error',
         isConnecting: action.payload === 'pending',
-        isConnectingError:
+        connectingError:
           action.payload === 'closed' ||
           action.payload === 'error' ||
-          (state.isConnectingError && action.payload === 'pending'),
+          (state.connectingError && action.payload === 'pending')
+            ? state.connectingError ?? new Error('Unable to connect')
+            : null,
       };
 
     default:
@@ -127,6 +127,7 @@ export const subscribe = (): ThunkType => async (dispatch) => {
 export const unsubscribe = (): ThunkType => async (dispatch) => {
   chatAPI.unsubscribe('messages-recieved', messageSubscriberCreator(dispatch));
   chatAPI.unsubscribe('status-changed', statusSubscriberCreator(dispatch));
+  dispatch(actions.statusChanged('pending'));
 };
 
 export const reconnect = (): ThunkType => async () => {

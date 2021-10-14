@@ -14,6 +14,7 @@ const AUTH_FAILED = 'auth/AUTH_FAILED';
 const LOG_IN_ATTEMPT = 'auth/LOG_IN_ATTEMPT';
 const LOG_IN_SUCCEED = 'auth/LOG_IN_SUCCEED';
 const LOG_IN_FAILED = 'auth/LOG_IN_FAILED';
+const LOGGING_IN_ERROR_CHANGED = 'auth/LOGGING_IN_ERROR_CHANGED';
 
 const LOG_OUT_ATTEMPT = 'auth/LOG_OUT_ATTEMPT';
 const LOG_OUT_SUCCEED = 'auth/LOG_OUT_SUCCEED';
@@ -95,6 +96,12 @@ const authReducer = (
       return {
         ...state,
         isLoggingInProcessing: false,
+        loggingInError: action.error,
+      };
+
+    case LOGGING_IN_ERROR_CHANGED:
+      return {
+        ...state,
         loggingInError: action.error,
       };
 
@@ -181,6 +188,12 @@ export const actions = {
       error,
     } as const;
   },
+
+  loggingInErrorChanged: (error: Error | null) =>
+    ({
+      type: LOGGING_IN_ERROR_CHANGED,
+      error,
+    } as const),
 
   logOutAttempt: () => {
     return {
