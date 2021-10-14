@@ -20,6 +20,18 @@ export const selectProfileUpdatingError = (state: GlobalStateType) => {
   return state.profilePage.profileUpdatingError;
 };
 
+export const selectFollowingStatus = (state: GlobalStateType) => {
+  return state.profilePage.followingStatus;
+};
+
+export const selectIsFollowingStatusFetching = (state: GlobalStateType) => {
+  return state.profilePage.isFollowingStatusFetching;
+};
+
+export const selectFollowingStatusError = (state: GlobalStateType) => {
+  return state.profilePage.followingStatusError;
+};
+
 export const selectStatus = (state: GlobalStateType) => {
   return state.profilePage.status;
 };

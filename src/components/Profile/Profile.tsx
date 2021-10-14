@@ -1,31 +1,40 @@
-import { Card } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Button, Card, Result } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import withOwnerRedirect from '../../hoc/withOwnerRedirect';
+import { useErrorMessage } from '../../hooks/useErrorMessage';
 import {
-  actions,
+  actions as profileActions,
+  fetchFollowingStatus,
   fetchProfile,
   fetchStatus,
 } from '../../redux/profile-reducer';
+
 import {
-  selectUserAuthId,
   selectUserAuthProfile,
   selectUserAuthStatus,
 } from '../../redux/selectors/auth-selectors';
-import { selectProfile } from '../../redux/selectors/profile-selectors';
+import {
+  selectIsProfileFetching,
+  selectProfile,
+  selectProfileFetchingError,
+} from '../../redux/selectors/profile-selectors';
 import { AvatarPart } from './AvatarPart';
 import { DescriptionForm } from './DescriptionForm';
 import { DescriptionPart } from './DescriptionPart';
+import { ProfileSkeleton } from './ProfileSkeleton';
 
 import { TitlePart } from './TitlePart';
 
 const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const profile = useSelector(selectProfile);
+  const isProfileFetching = useSelector(selectIsProfileFetching);
+  const profileError = useSelector(selectProfileFetchingError);
+
   const authStatus = useSelector(selectUserAuthStatus);
   const authProfile = useSelector(selectUserAuthProfile);
-  const authUserId = useSelector(selectUserAuthId);
 
   const { userId } = useParams<{ userId?: string }>();
   const dispatch = useDispatch();
@@ -34,17 +43,48 @@ const Profile: React.FC = () => {
     setIsEditing(true);
   };
 
-  useEffect(() => {
-    if (!userId) {
-      if (authProfile) dispatch(actions.profileFetchSucceed(authProfile));
-
-      if (authUserId) dispatch(actions.statusFetchSucceed(authStatus));
+  const loadProfilePage = useCallback(() => {
+    if (userId) {
+      dispatch(fetchProfile(+userId));
+      dispatch(fetchStatus(+userId));
+      dispatch(fetchFollowingStatus(+userId));
       return;
     }
 
-    dispatch(fetchProfile(+userId));
-    dispatch(fetchStatus(+userId));
-  }, [dispatch, authProfile, authStatus, authUserId, userId]);
+    dispatch(profileActions.statusFetchSucceed(authStatus));
+    dispatch(profileActions.profileFetchSucceed(authProfile));
+  }, [dispatch, authProfile, authStatus, userId]);
+
+  useEffect(() => {
+    loadProfilePage();
+  }, [loadProfilePage]);
+
+  useErrorMessage(
+    profileError,
+    profileActions.profileFetchingErrorChanged,
+    false
+  );
+
+  if (isProfileFetching) return <ProfileSkeleton />;
+
+  if (profileError)
+    return (
+      <Result
+        status="error"
+        title="Unable to load profile"
+        subTitle={profileError.message}
+        extra={[
+          <Button
+            type="primary"
+            key="fetchProfile"
+            onClick={loadProfilePage}
+            loading={isProfileFetching}
+          >
+            Try again
+          </Button>,
+        ]}
+      />
+    );
 
   if (!profile) return null;
 
@@ -52,7 +92,13 @@ const Profile: React.FC = () => {
     <>
       <Card style={{ minHeight: '100%' }}>
         <Card.Meta
-          avatar={<AvatarPart isOwner={!userId} photo={profile.photos.large} />}
+          avatar={
+            <AvatarPart
+              isOwner={!userId}
+              photo={profile.photos.large}
+              userId={userId ? +userId : null}
+            />
+          }
           title={
             <TitlePart isOwner={!userId} name={profile.fullName} edit={edit} />
           }

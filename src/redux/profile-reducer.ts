@@ -1,6 +1,11 @@
 import { ResultCodes } from '../api/api';
 
 import {
+  actions as usersActions,
+  USER_SUBSCRIBING_SUCCEED,
+} from './users-reducer';
+
+import {
   ProfileType,
   UserPhotosType,
   ActionTypes,
@@ -13,10 +18,16 @@ import { profileAPI } from '../api/profile-api';
 const PROFILE_FETCH_REQUESTED = 'profile/PROFILE_FETCH_REQUESTED';
 const PROFILE_FETCH_SUCCEED = 'profile/PROFILE_FETCH_SUCCEED';
 const PROFILE_FETCH_FAILED = 'profile/PROFILE_FETCH_FAILED';
+const PROFILE_FETCHING_ERROR_CHANGED = 'profile/PROFILE_FETCHING_ERROR_CHANGED';
 
 const PROFILE_UPDATE_REQUESTED = 'profile/PROFILE_UPDATE_REQUESTED';
 const PROFILE_UPDATE_SUCCEED = 'profile/PROFILE_UPDATE_SUCCEED';
 const PROFILE_UPDATE_FAILED = 'profile/PROFILE_UPDATE_FAILED';
+
+const FOLLOWING_STATUS_FETCH_REQUESTED =
+  'profile/FOLLOWING_STATUS_FETCH_REQUEST';
+const FOLLOWING_STATUS_FETCH_SUCCEED = 'profile/FOLLOWING_STATUS_FETCH_SUCCEED';
+const FOLLOWING_STATUS_FETCH_FAILED = 'profile/FOLLOWING_STATUS_FETCH_FAILED';
 
 const STATUS_FETCH_REQUESTED = 'profile/STATUS_FETCH_REQUESTED';
 const STATUS_FETCH_SUCCEED = 'profile/STATUS_FETCH_SUCCEED';
@@ -37,6 +48,10 @@ const initialState = {
   profileFetchingError: null as Error | null,
   profileUpdatingError: null as Error | null,
 
+  followingStatus: false,
+  isFollowingStatusFetching: false,
+  followingStatusError: null as Error | null,
+
   status: null as null | string,
   isStatusFetching: false,
   isStatusUpdating: false,
@@ -51,7 +66,7 @@ type InitialStateType = typeof initialState;
 
 const profileReducer = (
   state = initialState,
-  action: ActionTypes<typeof actions>
+  action: ActionTypes<typeof actions & typeof usersActions>
 ): InitialStateType => {
   switch (action.type) {
     case PROFILE_FETCH_REQUESTED:
@@ -75,6 +90,12 @@ const profileReducer = (
         profileFetchingError: action.error,
       };
 
+    case PROFILE_FETCHING_ERROR_CHANGED:
+      return {
+        ...state,
+        profileFetchingError: action.error,
+      };
+
     case PROFILE_UPDATE_REQUESTED:
       return {
         ...state,
@@ -93,6 +114,34 @@ const profileReducer = (
         ...state,
         isProfileUpdating: false,
         profileUpdatingError: action.error,
+      };
+
+    case FOLLOWING_STATUS_FETCH_REQUESTED:
+      return {
+        ...state,
+        isFollowingStatusFetching: true,
+      };
+
+    case FOLLOWING_STATUS_FETCH_SUCCEED:
+      return {
+        ...state,
+        followingStatus: action.payload,
+        isFollowingStatusFetching: false,
+        followingStatusError: null,
+      };
+
+    case FOLLOWING_STATUS_FETCH_FAILED:
+      return {
+        ...state,
+        isFollowingStatusFetching: false,
+        followingStatusError: action.error,
+      };
+
+    case USER_SUBSCRIBING_SUCCEED:
+      return {
+        ...state,
+        followingStatus: action.payload.type === 'follow' ? true : false,
+        isFollowingStatusFetching: false,
       };
 
     case STATUS_FETCH_REQUESTED:
@@ -151,6 +200,7 @@ const profileReducer = (
         isAvatarUpdating: false,
         avatarUpdatingError: null,
       };
+
     case AVATAR_UPDATE_FAILED:
       return {
         ...state,
@@ -181,6 +231,12 @@ export const actions = {
       error,
     } as const),
 
+  profileFetchingErrorChanged: (error: Error | null) =>
+    ({
+      type: PROFILE_FETCHING_ERROR_CHANGED,
+      error,
+    } as const),
+
   profileUpdateRequested: () =>
     ({
       type: PROFILE_UPDATE_REQUESTED,
@@ -194,6 +250,23 @@ export const actions = {
   profileUpdateFailed: (error: Error) =>
     ({
       type: PROFILE_UPDATE_FAILED,
+      error,
+    } as const),
+
+  followingStatusFetchRequested: () =>
+    ({
+      type: FOLLOWING_STATUS_FETCH_REQUESTED,
+    } as const),
+
+  followingStatusFetchSucceed: (followingStatus: boolean) =>
+    ({
+      type: FOLLOWING_STATUS_FETCH_SUCCEED,
+      payload: followingStatus,
+    } as const),
+
+  followingStatusFetchFailed: (error: Error) =>
+    ({
+      type: FOLLOWING_STATUS_FETCH_FAILED,
       error,
     } as const),
 
@@ -286,6 +359,19 @@ export const updateProfile =
       }
     } catch (e) {
       dispatch(actions.profileUpdateFailed(e as Error));
+    }
+  };
+
+export const fetchFollowingStatus =
+  (id: number): ThunkType =>
+  async (dispatch) => {
+    dispatch(actions.followingStatusFetchRequested());
+
+    try {
+      const followingStatus = await profileAPI.checkFollowing(id);
+      dispatch(actions.followingStatusFetchSucceed(followingStatus));
+    } catch (e) {
+      dispatch(actions.followingStatusFetchFailed(e as Error));
     }
   };
 
