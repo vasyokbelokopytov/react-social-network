@@ -28,10 +28,12 @@ const FOLLOWING_STATUS_FETCH_REQUESTED =
   'profile/FOLLOWING_STATUS_FETCH_REQUEST';
 const FOLLOWING_STATUS_FETCH_SUCCEED = 'profile/FOLLOWING_STATUS_FETCH_SUCCEED';
 const FOLLOWING_STATUS_FETCH_FAILED = 'profile/FOLLOWING_STATUS_FETCH_FAILED';
+const FOLLOWING_STATUS_ERROR_CHANGED = 'profile/FOLLOWING_STATUS_ERROR_CHANGED';
 
 const STATUS_FETCH_REQUESTED = 'profile/STATUS_FETCH_REQUESTED';
 const STATUS_FETCH_SUCCEED = 'profile/STATUS_FETCH_SUCCEED';
 const STATUS_FETCH_FAILED = 'profile/STATUS_FETCH_FAILED';
+const STATUS_FETCHING_ERROR_CHANGED = 'profile/STATUS_FETCHING_ERROR_CHANGED';
 
 const STATUS_UPDATE_REQUESTED = 'profile/STATUS_UPDATE_REQUESTED';
 const STATUS_UPDATE_SUCCEED = 'profile/STATUS_UPDATE_SUCCEED';
@@ -137,6 +139,12 @@ const profileReducer = (
         followingStatusError: action.error,
       };
 
+    case FOLLOWING_STATUS_ERROR_CHANGED:
+      return {
+        ...state,
+        followingStatusError: action.error,
+      };
+
     case USER_SUBSCRIBING_SUCCEED:
       return {
         ...state,
@@ -162,6 +170,12 @@ const profileReducer = (
       return {
         ...state,
         isStatusFetching: false,
+        statusFetchingError: action.error,
+      };
+
+    case STATUS_FETCHING_ERROR_CHANGED:
+      return {
+        ...state,
         statusFetchingError: action.error,
       };
 
@@ -270,6 +284,12 @@ export const actions = {
       error,
     } as const),
 
+  followingStatusErrorChanged: (error: Error) =>
+    ({
+      type: FOLLOWING_STATUS_ERROR_CHANGED,
+      error,
+    } as const),
+
   statusFetchRequested: () =>
     ({
       type: STATUS_FETCH_REQUESTED,
@@ -284,6 +304,12 @@ export const actions = {
   statusFetchFailed: (error: Error) =>
     ({
       type: STATUS_FETCH_FAILED,
+      error,
+    } as const),
+
+  statusFetchingErrorChanged: (error: Error) =>
+    ({
+      type: STATUS_FETCHING_ERROR_CHANGED,
       error,
     } as const),
 

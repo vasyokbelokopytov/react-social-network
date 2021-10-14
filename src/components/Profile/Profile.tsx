@@ -59,6 +59,13 @@ const Profile: React.FC = () => {
     loadProfilePage();
   }, [loadProfilePage]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(profileActions.profileFetchSucceed(null));
+      dispatch(profileActions.statusFetchSucceed(null));
+    };
+  }, [dispatch]);
+
   useErrorMessage(
     profileError,
     profileActions.profileFetchingErrorChanged,

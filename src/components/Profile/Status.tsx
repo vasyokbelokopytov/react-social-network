@@ -3,15 +3,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   selectIsStatusUpdating,
   selectStatus,
+  selectStatusFetchingError,
 } from '../../redux/selectors/profile-selectors';
-import { updateStatus } from '../../redux/profile-reducer';
+import {
+  actions as profileActions,
+  updateStatus,
+} from '../../redux/profile-reducer';
 
 import { Button, Input, Popover, Space, Typography } from 'antd';
+import { useErrorMessage } from '../../hooks/useErrorMessage';
 
 type PropsType = { isOwner: boolean };
 
 export const Status: React.FC<PropsType> = ({ isOwner }) => {
   const status = useSelector(selectStatus);
+  const statusFetchingError = useSelector(selectStatusFetchingError);
   const isLoading = useSelector(selectIsStatusUpdating);
 
   const [inputValue, setInputValue] = useState('');
@@ -22,6 +28,12 @@ export const Status: React.FC<PropsType> = ({ isOwner }) => {
   useEffect(() => {
     setInputValue(status ?? '');
   }, [status, isEditing]);
+
+  useErrorMessage(
+    statusFetchingError,
+    profileActions.statusFetchingErrorChanged,
+    false
+  );
 
   const isEditingChangeHandler = (isEditing: boolean) => {
     if (isOwner) {
@@ -43,6 +55,8 @@ export const Status: React.FC<PropsType> = ({ isOwner }) => {
   const cancel = () => {
     setIsEditing(false);
   };
+
+  if (statusFetchingError) return null;
 
   return (
     <Popover
