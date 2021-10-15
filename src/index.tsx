@@ -1,4 +1,4 @@
-import React, { StrictMode } from 'react';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { QueryParamProvider } from 'use-query-params';
@@ -6,7 +6,7 @@ import store from './redux/redux-store';
 import { Provider } from 'react-redux';
 
 import './index.css';
-import App from './App';
+import { App } from './App';
 
 ReactDOM.render(
   <StrictMode>

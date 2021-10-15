@@ -239,6 +239,7 @@ export const auth = (): ThunkType => async (dispatch) => {
     }
   } catch (e) {
     dispatch(actions.authFailed(e as Error));
+    throw e;
   }
 };
 

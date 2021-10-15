@@ -22,7 +22,7 @@ const initialState = {
   pendingMessages: [] as Array<ChatPendingMessage>,
   status: 'pending' as StatusType,
   connectingError: null as Error | null,
-  isConnecting: false,
+  isConnecting: true,
 };
 
 type InitialStateType = typeof initialState;

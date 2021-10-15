@@ -33,7 +33,7 @@ import {
 import { UserItem } from './UserItem/UserItem';
 import { UsersSearchForm } from './UsersSearchForm/UsersSearchForm';
 
-import { Card, List, Space, Pagination, Result, Button, message } from 'antd';
+import { Card, List, Space, Pagination, Result, Button } from 'antd';
 
 import { ThunkDispatchType, FilterType } from '../../types/types';
 import { useErrorMessage } from '../../hooks/useErrorMessage';

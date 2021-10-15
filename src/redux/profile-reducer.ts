@@ -23,6 +23,7 @@ const PROFILE_FETCHING_ERROR_CHANGED = 'profile/PROFILE_FETCHING_ERROR_CHANGED';
 const PROFILE_UPDATE_REQUESTED = 'profile/PROFILE_UPDATE_REQUESTED';
 const PROFILE_UPDATE_SUCCEED = 'profile/PROFILE_UPDATE_SUCCEED';
 const PROFILE_UPDATE_FAILED = 'profile/PROFILE_UPDATE_FAILED';
+const PROFILE_UPDATING_ERROR_CHANGED = 'profile/PROFILE_UPDATING_ERROR_CHANGED';
 
 const FOLLOWING_STATUS_FETCH_REQUESTED =
   'profile/FOLLOWING_STATUS_FETCH_REQUEST';
@@ -38,6 +39,7 @@ const STATUS_FETCHING_ERROR_CHANGED = 'profile/STATUS_FETCHING_ERROR_CHANGED';
 const STATUS_UPDATE_REQUESTED = 'profile/STATUS_UPDATE_REQUESTED';
 const STATUS_UPDATE_SUCCEED = 'profile/STATUS_UPDATE_SUCCEED';
 const STATUS_UPDATE_FAILED = 'profile/STATUS_UPDATE_FAILED';
+const STATUS_UPDATING_ERROR_CHANGED = 'profile/STATUS_UPDATING_ERROR_CHANGED';
 
 const AVATAR_UPDATE_REQUESTED = 'profile/AVATAR_UPDATE_REQUESTED';
 const AVATAR_UPDATE_SUCCEED = 'profile/AVATAR_UPDATE_SUCCEED';
@@ -115,6 +117,12 @@ const profileReducer = (
       return {
         ...state,
         isProfileUpdating: false,
+        profileUpdatingError: action.error,
+      };
+
+    case PROFILE_UPDATING_ERROR_CHANGED:
+      return {
+        ...state,
         profileUpdatingError: action.error,
       };
 
@@ -200,6 +208,12 @@ const profileReducer = (
         statusUpdatingError: action.error,
       };
 
+    case STATUS_UPDATING_ERROR_CHANGED:
+      return {
+        ...state,
+        statusUpdatingError: action.error,
+      };
+
     case AVATAR_UPDATE_REQUESTED:
       return {
         ...state,
@@ -267,6 +281,12 @@ export const actions = {
       error,
     } as const),
 
+  profileUpdatingErrorChanged: (error: Error | null) =>
+    ({
+      type: PROFILE_UPDATING_ERROR_CHANGED,
+      error,
+    } as const),
+
   followingStatusFetchRequested: () =>
     ({
       type: FOLLOWING_STATUS_FETCH_REQUESTED,
@@ -327,6 +347,12 @@ export const actions = {
   statusUpdateFailed: (error: Error) =>
     ({
       type: STATUS_UPDATE_FAILED,
+      error,
+    } as const),
+
+  statusUpdatingErrorChanged: (error: Error | null) =>
+    ({
+      type: STATUS_UPDATING_ERROR_CHANGED,
       error,
     } as const),
 

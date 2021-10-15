@@ -4,6 +4,7 @@ import {
   selectIsStatusUpdating,
   selectStatus,
   selectStatusFetchingError,
+  selectStatusUpdatingError,
 } from '../../redux/selectors/profile-selectors';
 import {
   actions as profileActions,
@@ -18,6 +19,7 @@ type PropsType = { isOwner: boolean };
 export const Status: React.FC<PropsType> = ({ isOwner }) => {
   const status = useSelector(selectStatus);
   const statusFetchingError = useSelector(selectStatusFetchingError);
+  const statusUpdatingError = useSelector(selectStatusUpdatingError);
   const isLoading = useSelector(selectIsStatusUpdating);
 
   const [inputValue, setInputValue] = useState('');
@@ -33,6 +35,11 @@ export const Status: React.FC<PropsType> = ({ isOwner }) => {
     statusFetchingError,
     profileActions.statusFetchingErrorChanged,
     false
+  );
+
+  useErrorMessage(
+    statusUpdatingError,
+    profileActions.statusUpdatingErrorChanged
   );
 
   const isEditingChangeHandler = (isEditing: boolean) => {

@@ -1,12 +1,17 @@
 import { ActionTypes, ThunkType } from '../types/types';
 import { auth } from './auth-reducer';
 
-const IS_INITIALIZED_CHANGED = 'app/IS_INITIALIZED_CHANGED';
-const GLOBAL_ERROR_CHANGED = 'app/GLOBAL_ERROR_CHANGED';
+const INITIALIZING_ATTEMPT = 'app/INITIALIZE_ATTEMPT';
+const INITIALIZING_SUCCEED = 'app/INITIALIZING_SUCCEED';
+const INITIALIZING_FAILED = 'app/INITIALIZING_FAILED';
+
+const UNHANDLED_ERROR_CHANGED = 'app/UNHANDLED_ERROR_CHANGED';
 
 const initialState = {
-  isInitialized: false as boolean,
-  globalError: null as null | Error,
+  isAppInitialized: false as boolean,
+  isInitializing: false,
+  initializingError: null as null | Error,
+  unhandledError: null as null | Error,
 };
 
 type InitialStateType = typeof initialState;
@@ -16,16 +21,32 @@ const appReducer = (
   action: ActionTypes<typeof actions>
 ): InitialStateType => {
   switch (action.type) {
-    case IS_INITIALIZED_CHANGED:
+    case INITIALIZING_ATTEMPT:
       return {
         ...state,
-        isInitialized: action.payload,
+        isInitializing: true,
       };
 
-    case GLOBAL_ERROR_CHANGED:
+    case INITIALIZING_SUCCEED:
       return {
         ...state,
-        globalError: action.error,
+        isInitializing: false,
+        isAppInitialized: true,
+        initializingError: null,
+      };
+
+    case INITIALIZING_FAILED:
+      return {
+        ...state,
+        isInitializing: false,
+        isAppInitialized: false,
+        initializingError: action.error,
+      };
+
+    case UNHANDLED_ERROR_CHANGED:
+      return {
+        ...state,
+        unhandledError: action.error,
       };
 
     default:
@@ -34,25 +55,35 @@ const appReducer = (
 };
 
 export const actions = {
-  isInitializedChanged: (isInitialized: boolean) =>
+  initializingAttempt: () =>
     ({
-      type: IS_INITIALIZED_CHANGED,
-      payload: isInitialized,
+      type: INITIALIZING_ATTEMPT,
     } as const),
 
-  globalErrorChanged: (error: null | Error) =>
+  initializingSucceed: () =>
     ({
-      type: GLOBAL_ERROR_CHANGED,
+      type: INITIALIZING_SUCCEED,
+    } as const),
+  initializingFailed: (error: Error) =>
+    ({
+      type: INITIALIZING_FAILED,
+      error,
+    } as const),
+
+  unhandledErrorChanged: (error: null | Error) =>
+    ({
+      type: UNHANDLED_ERROR_CHANGED,
       error,
     } as const),
 };
 
-export const initialize = (): ThunkType => async (dispatch) => {
+export const initializeApp = (): ThunkType => async (dispatch) => {
+  dispatch(actions.initializingAttempt());
   try {
     await Promise.all([dispatch(auth())]);
-    dispatch(actions.isInitializedChanged(true));
+    dispatch(actions.initializingSucceed());
   } catch (e) {
-    dispatch(actions.globalErrorChanged(e as Error));
+    dispatch(actions.initializingFailed(e as Error));
   }
 };
 

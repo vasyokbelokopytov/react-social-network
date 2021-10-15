@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from '../../hooks/usePrevious';
 
-import { updateProfile } from '../../redux/profile-reducer';
+import {
+  actions as profileActions,
+  updateProfile,
+} from '../../redux/profile-reducer';
 import { selectUserAuthProfile } from '../../redux/selectors/auth-selectors';
 import {
   selectIsProfileUpdating,
@@ -23,6 +26,7 @@ import {
 
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProfileFormDataType } from '../../types/types';
+import { useErrorMessage } from '../../hooks/useErrorMessage';
 
 type PropsType = {
   isEditing: boolean;
@@ -50,10 +54,10 @@ export const DescriptionForm: React.FC<PropsType> = ({
     if (prevIsLoading && !isLoading && !error) {
       message.success('Updating profile succeed!');
       setIsEditing(false);
-    } else if (prevIsLoading && !isLoading && error) {
-      message.error(error.message);
     }
   }, [prevIsLoading, isLoading, error, setIsEditing]);
+
+  useErrorMessage(error, profileActions.profileUpdatingErrorChanged);
 
   const checkboxChangeHandler = (e: CheckboxChangeEvent) => {
     setIsLookingForAJob(e.target.checked);

@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { connect, ConnectedProps } from 'react-redux';
-
-import { GlobalStateType } from './redux/redux-store';
+import { useDispatch, useSelector } from 'react-redux';
 
 import './App.css';
 
-import { initialize, actions as appActions } from './redux/app-reducer';
+import { initializeApp, actions as appActions } from './redux/app-reducer';
 
 import {
-  selectGlobalError,
-  selectIsInitialized,
+  selectInitializingError,
+  selectIsAppInitialized,
+  selectIsInitializing,
+  selectUnhandledError,
 } from './redux/selectors/app-selectors';
 
 import { Header } from './components/Header/Header';
@@ -21,47 +21,79 @@ import { UsersPage } from './components/Users/UsersPage';
 import News from './components/News/News';
 import Music from './components/Music/Music';
 import Settings from './components/Settings/Settings';
-// import MessagesContainer from './components/Messages/MessagesContainer';
 import { ChatPage } from './components/Chat/ChatPage';
 import { LoginPage } from './components/Login/LoginPage';
-import Loader from './components/common/Loader/Loader';
-import NotFound from './components/NotFound/NotFound';
-import ErrorBox from './components/ErrorBox/ErrorBox';
 
-import { Layout } from 'antd';
+import NotFound from './components/NotFound/NotFound';
+
+import { Button, Layout, Result, Spin } from 'antd';
+import { useErrorMessage } from './hooks/useErrorMessage';
 
 const { Content } = Layout;
 
-class App extends React.Component<PropsType> {
-  handlePromiseErrors = (e: PromiseRejectionEvent) => {
-    this.props.globalErrorChanged(e.reason);
+export const App: React.FC = () => {
+  const isAppInitialized = useSelector(selectIsAppInitialized);
+  const unhandlerError = useSelector(selectUnhandledError);
+  const isInitializing = useSelector(selectIsInitializing);
+  const initializingError = useSelector(selectInitializingError);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const handlePromiseErrors = (e: PromiseRejectionEvent) => {
+      dispatch(appActions.unhandledErrorChanged(e.reason));
+    };
+
+    dispatch(initializeApp());
+    window.addEventListener('unhandledrejection', handlePromiseErrors);
+
+    return () => {
+      window.removeEventListener('unhandledrejection', handlePromiseErrors);
+    };
+  }, [dispatch]);
+
+  useErrorMessage(unhandlerError);
+
+  const init = () => {
+    dispatch(initializeApp());
   };
 
-  componentDidMount() {
-    this.props.initialize();
-    window.addEventListener('unhandledrejection', this.handlePromiseErrors);
+  if (isInitializing) {
+    return (
+      <Spin className="appLoader" size="large" tip="Application is loading" />
+    );
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('unhandledrejection', this.handlePromiseErrors);
+  if (initializingError) {
+    return (
+      <Result
+        className="appErrorResult"
+        status="error"
+        title="Unable to initialize application"
+        subTitle={initializingError.message}
+        extra={[
+          <Button
+            type="primary"
+            key="initializeApp"
+            onClick={init}
+            loading={isInitializing}
+          >
+            Try again
+          </Button>,
+        ]}
+      />
+    );
   }
 
-  render() {
-    if (!this.props.initialized) {
-      return <Loader className="loader" />;
-    }
-
+  if (isAppInitialized)
     return (
       <Layout className="app">
         <Header />
-
         <Layout>
           <Navbar />
-
           <Content className="content">
             <Switch>
               <Route exact path="/" render={() => <Main />} />
-              {/* <Route path="/messages" render={() => <MessagesContainer />} /> */}
               <Route path="/chat" render={() => <ChatPage />} />
               <Route path="/profile/:userId?" render={() => <ProfilePage />} />
               <Route path="/users" render={() => <UsersPage />} />
@@ -73,24 +105,8 @@ class App extends React.Component<PropsType> {
             </Switch>
           </Content>
         </Layout>
-        {this.props.globalError && <ErrorBox error={this.props.globalError} />}
       </Layout>
     );
-  }
-}
 
-const mapStateToProps = (state: GlobalStateType) => ({
-  initialized: selectIsInitialized(state),
-  globalError: selectGlobalError(state),
-});
-
-const connector = connect(mapStateToProps, {
-  initialize,
-  globalErrorChanged: appActions.globalErrorChanged,
-});
-
-type MappedPropsType = ConnectedProps<typeof connector>;
-type OwnPropsType = {};
-export type PropsType = MappedPropsType & OwnPropsType;
-
-export default connector(App);
+  return null;
+};

@@ -7,7 +7,7 @@ import {
   selectLoggingInError,
 } from '../../../redux/selectors/auth-selectors';
 
-import { Form, Input, Button, Checkbox, Space, message } from 'antd';
+import { Form, Input, Button, Checkbox, Space } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import styles from './LoginForm.module.css';
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, Space } from 'antd';
+import UserOutlined from '@ant-design/icons/UserOutlined';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIsAuth } from '../../redux/selectors/auth-selectors';
 import {
@@ -59,7 +60,7 @@ export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
 
   return (
     <Space direction="vertical" size="middle">
-      <Avatar shape="square" size={150} src={photo} />
+      <Avatar shape="square" size={150} src={photo} icon={<UserOutlined />} />
 
       {isAuth && !isOwner && !followingStatusError && (
         <Button

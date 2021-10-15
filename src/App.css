@@ -10,9 +10,8 @@
   overflow: auto;
 }
 
-.loader {
-  width: 70px;
-  height: 70px;
+.appLoader,
+.appErrorResult {
   position: fixed;
   top: 50%;
   left: 50%;
