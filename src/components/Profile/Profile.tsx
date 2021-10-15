@@ -12,6 +12,7 @@ import {
 } from '../../redux/profile-reducer';
 
 import {
+  selectIsAuth,
   selectUserAuthProfile,
   selectUserAuthStatus,
 } from '../../redux/selectors/auth-selectors';
@@ -29,6 +30,7 @@ import { TitlePart } from './TitlePart';
 
 const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const isAuth = useSelector(selectIsAuth);
   const profile = useSelector(selectProfile);
   const isProfileFetching = useSelector(selectIsProfileFetching);
   const profileError = useSelector(selectProfileFetchingError);
@@ -47,13 +49,13 @@ const Profile: React.FC = () => {
     if (userId) {
       dispatch(fetchProfile(+userId));
       dispatch(fetchStatus(+userId));
-      dispatch(fetchFollowingStatus(+userId));
+      if (isAuth) dispatch(fetchFollowingStatus(+userId));
       return;
     }
 
     dispatch(profileActions.statusFetchSucceed(authStatus));
     dispatch(profileActions.profileFetchSucceed(authProfile));
-  }, [dispatch, authProfile, authStatus, userId]);
+  }, [dispatch, isAuth, authProfile, authStatus, userId]);
 
   useEffect(() => {
     loadProfilePage();
