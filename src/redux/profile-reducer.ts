@@ -44,6 +44,7 @@ const STATUS_UPDATING_ERROR_CHANGED = 'profile/STATUS_UPDATING_ERROR_CHANGED';
 const AVATAR_UPDATE_REQUESTED = 'profile/AVATAR_UPDATE_REQUESTED';
 const AVATAR_UPDATE_SUCCEED = 'profile/AVATAR_UPDATE_SUCCEED';
 const AVATAR_UPDATE_FAILED = 'profile/AVATAR_UPDATE_FAILED';
+const AVATAR_UPDATING_ERROR_CHANGED = 'profile/AVATAR_UPDATING_ERROR_CHANGED';
 
 const initialState = {
   profile: null as null | ProfileType,
@@ -236,6 +237,12 @@ const profileReducer = (
         avatarUpdatingError: action.error,
       };
 
+    case AVATAR_UPDATING_ERROR_CHANGED:
+      return {
+        ...state,
+        avatarUpdatingError: action.error,
+      };
+
     default:
       return state;
   }
@@ -372,6 +379,12 @@ export const actions = {
       type: AVATAR_UPDATE_FAILED,
       error,
     } as const),
+
+  avatarUpdatingErrorChanged: (error: Error | null) =>
+    ({
+      type: AVATAR_UPDATING_ERROR_CHANGED,
+      error,
+    } as const),
 };
 
 export const fetchProfile =
@@ -469,6 +482,7 @@ export const updateAvatar =
         dispatch(actions.avatarUpdateSucceed(data.data.photos));
       } else if (data.resultCode === ResultCodes.error) {
         dispatch(actions.avatarUpdateFailed(new Error(data.messages[0])));
+      } else {
       }
     } catch (e) {
       dispatch(actions.avatarUpdateFailed(e as Error));
