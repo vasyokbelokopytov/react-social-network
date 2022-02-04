@@ -1,9 +1,13 @@
-import { ActionTypes, ContactType, MessageType } from '../types/types';
+import { createSlice } from '@reduxjs/toolkit';
+import { ContactType, MessageType } from '../types/types';
 import { getStringDate } from '../utilities/helpers/helpers';
 
-const SEND_MESSAGE = 'social-network/messages/SEND_MESSAGE';
+interface MessagesState {
+  contacts: ContactType[];
+  messages: MessageType[];
+}
 
-const initialState = {
+const initialState: MessagesState = {
   contacts: [
     {
       id: 1,
@@ -75,7 +79,7 @@ const initialState = {
       date: '21:00',
       text: 'Hi, how are you?',
     },
-  ] as Array<ContactType>,
+  ],
 
   messages: [
     {
@@ -108,40 +112,26 @@ const initialState = {
       date: '22:30',
       text: 'njnj',
     },
-  ] as Array<MessageType>,
+  ],
 };
 
-type InitialStateType = typeof initialState;
-
-const messagesReducer = (
-  state = initialState,
-  action: ActionTypes<typeof actions>
-): InitialStateType => {
-  switch (action.type) {
-    case SEND_MESSAGE:
+const messagesSlice = createSlice({
+  name: 'messages',
+  initialState,
+  reducers: {
+    sendMessage: (state, action) => {
       const newMessage: MessageType = {
         id: state.messages.length + 1,
         sender: 'self',
         date: getStringDate(),
-        text: action.message,
+        text: action.payload,
       };
 
-      return {
-        ...state,
-        messages: [...state.messages, newMessage],
-      };
+      state.messages.push(newMessage);
+    },
+  },
+});
 
-    default:
-      return state;
-  }
-};
+export const { sendMessage } = messagesSlice.actions;
 
-export const actions = {
-  sendMessage: (message: string) =>
-    ({
-      type: SEND_MESSAGE,
-      message,
-    } as const),
-};
-
-export default messagesReducer;
+export default messagesSlice.reducer;

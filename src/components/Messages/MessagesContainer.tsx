@@ -1,22 +1,22 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
-import { GlobalStateType } from '../../redux/redux-store';
 
-import { actions as messagesActions } from '../../redux/messages-reducer';
+import { sendMessage } from '../../redux/messagesSlice';
 import withAuthRedirect from '../../hoc/withAuthRedirect';
 
 import Messages from './Messages';
+import { RootState } from '../../redux/store';
 
-const mapStateToProps = (state: GlobalStateType) => {
+const mapStateToProps = (state: RootState) => {
   return {
-    messages: state.messagesPage.messages,
-    contacts: state.messagesPage.contacts,
+    messages: state.messages.messages,
+    contacts: state.messages.contacts,
   };
 };
 
 const connector = connect(mapStateToProps, {
-  sendMessage: messagesActions.sendMessage,
+  sendMessage,
 });
 
 type MappedPropsType = ConnectedProps<typeof connector>;

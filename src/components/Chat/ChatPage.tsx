@@ -8,7 +8,7 @@ import styles from './ChatPage.module.css';
 import { ChatMessages } from './ChatMessages/ChatMessages';
 import { ChatForm } from './ChatForm/ChatForm';
 import { useDispatch } from 'react-redux';
-import { subscribe, unsubscribe } from '../../redux/chat-reducer';
+import { subscribe, unsubscribe } from '../../redux/chatSlice';
 
 const Chat: React.FC = () => {
   const dispatch = useDispatch();

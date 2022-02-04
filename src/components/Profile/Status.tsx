@@ -1,46 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
 import {
-  selectIsStatusUpdating,
-  selectStatus,
-  selectStatusFetchingError,
-  selectStatusUpdatingError,
-} from '../../redux/selectors/profile-selectors';
-import {
-  actions as profileActions,
+  statusFetchingErrorChanged,
+  statusUpdatingErrorChanged,
   updateStatus,
-} from '../../redux/profile-reducer';
+} from '../../redux/profileSlice';
 
 import { Button, Input, Popover, Space, Typography } from 'antd';
 import { useErrorMessage } from '../../hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 type PropsType = { isOwner: boolean };
 
 export const Status: React.FC<PropsType> = ({ isOwner }) => {
-  const status = useSelector(selectStatus);
-  const statusFetchingError = useSelector(selectStatusFetchingError);
-  const statusUpdatingError = useSelector(selectStatusUpdatingError);
-  const isLoading = useSelector(selectIsStatusUpdating);
+  const status = useAppSelector((state) => state.profile.status);
+  const statusFetchingError = useAppSelector(
+    (state) => state.profile.statusFetchingError
+  );
+  const statusUpdatingError = useAppSelector(
+    (state) => state.profile.statusUpdatingError
+  );
+  const isLoading = useAppSelector((state) => state.profile.isStatusUpdating);
 
   const [inputValue, setInputValue] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setInputValue(status ?? '');
   }, [status, isEditing]);
 
-  useErrorMessage(
-    statusFetchingError,
-    profileActions.statusFetchingErrorChanged,
-    false
-  );
-
-  useErrorMessage(
-    statusUpdatingError,
-    profileActions.statusUpdatingErrorChanged
-  );
+  useErrorMessage(statusFetchingError, statusFetchingErrorChanged, false);
+  useErrorMessage(statusUpdatingError, statusUpdatingErrorChanged);
 
   const isEditingChangeHandler = (isEditing: boolean) => {
     if (isOwner) {

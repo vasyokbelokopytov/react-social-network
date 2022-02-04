@@ -2,9 +2,7 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
-
-import { selectIsAuth } from '../redux/selectors/auth-selectors';
-import { GlobalStateType } from '../redux/redux-store';
+import { RootState } from '../redux/store';
 
 type MapStateToPropsType = {
   isAuth: boolean;
@@ -25,12 +23,12 @@ function withOwnerRedirect<P>(Component: React.ComponentType<P>) {
     return <Component {...(props as unknown as P)} />;
   };
 
-  const mapStateToProps = (state: GlobalStateType): MapStateToPropsType => ({
-    isAuth: selectIsAuth(state),
+  const mapStateToProps = (state: RootState): MapStateToPropsType => ({
+    isAuth: state.auth.isAuth,
   });
 
   return compose<React.ComponentType<P>>(
-    connect<MapStateToPropsType, {}, P, GlobalStateType>(mapStateToProps),
+    connect<MapStateToPropsType, {}, P, RootState>(mapStateToProps),
     withRouter
   )(containerComponent);
 }

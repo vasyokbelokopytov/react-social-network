@@ -1,27 +1,15 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import {
-  actions as usersActions,
+  currentPageChanged,
+  fetchingErrorChanged,
   fetchUsers,
+  filterChanged,
+  followingErrorChanged,
   followUser,
+  pageSizeChanged,
   unfollowUser,
-} from '../../redux/users-reducer';
-
-import { selectIsAuth } from '../../redux/selectors/auth-selectors';
-
-import {
-  selectCurrentPage,
-  selectUsersInFollowingProcess,
-  selectIsFetching,
-  selectPageSize,
-  selectTotalUsersCount,
-  selectUsers,
-  selectPageSizeOptions,
-  selectFetchingError,
-  selectFollowingError,
-  selectFilter,
-} from '../../redux/selectors/users-selectors';
+} from '../../redux/usersSlice';
 
 import {
   useQueryParams,
@@ -35,25 +23,32 @@ import { UsersSearchForm } from './UsersSearchForm/UsersSearchForm';
 
 import { Card, List, Space, Pagination, Result, Button } from 'antd';
 
-import { ThunkDispatchType, FilterType } from '../../types/types';
+import { FilterType } from '../../types/types';
 import { useErrorMessage } from '../../hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 type PropsType = {};
 
 export const UsersPage: React.FC<PropsType> = () => {
-  const isAuth = useSelector(selectIsAuth);
-  const users = useSelector(selectUsers);
-  const pageSize = useSelector(selectPageSize);
-  const pageSizeOptinos = useSelector(selectPageSizeOptions);
-  const filter = useSelector(selectFilter);
-  const totalUsersCount = useSelector(selectTotalUsersCount);
-  const currentPage = useSelector(selectCurrentPage);
-  const isFetching = useSelector(selectIsFetching);
-  const fetchingError = useSelector(selectFetchingError);
-  const usersInFollowingProcess = useSelector(selectUsersInFollowingProcess);
-  const followingError = useSelector(selectFollowingError);
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
+  const users = useAppSelector((state) => state.users.users);
+  const pageSize = useAppSelector((state) => state.users.pageSize);
+  const pageSizeOptinos = useAppSelector(
+    (state) => state.users.pageSizeOptions
+  );
+  const filter = useAppSelector((state) => state.users.filter);
+  const totalUsersCount = useAppSelector(
+    (state) => state.users.totalUsersCount
+  );
+  const currentPage = useAppSelector((state) => state.users.currentPage);
+  const isFetching = useAppSelector((state) => state.users.isFetching);
+  const fetchingError = useAppSelector((state) => state.users.fetchingError);
+  const usersInFollowingProcess = useAppSelector(
+    (state) => state.users.usersInFollowingProcess
+  );
+  const followingError = useAppSelector((state) => state.users.followingError);
 
-  const dispatch = useDispatch<ThunkDispatchType>();
+  const dispatch = useAppDispatch();
 
   const [query, setQuery] = useQueryParams({
     term: StringParam,
@@ -71,15 +66,15 @@ export const UsersPage: React.FC<PropsType> = () => {
         ? pageSize
         : query.count;
 
-    dispatch(usersActions.filterChanged({ friend, term }));
-    dispatch(usersActions.currentPageChanged(page));
-    dispatch(usersActions.pageSizeChanged(count));
+    dispatch(filterChanged({ friend, term }));
+    dispatch(currentPageChanged(page));
+    dispatch(pageSizeChanged(count));
 
-    dispatch(fetchUsers(page, count, { friend, term }));
+    dispatch(fetchUsers({ filter: { term, friend }, pageSize, page }));
   }, [dispatch, pageSize, pageSizeOptinos, query, isAuth]);
 
-  useErrorMessage(fetchingError, usersActions.fetchingErrorChanged, false);
-  useErrorMessage(followingError, usersActions.followingErrorChanged);
+  useErrorMessage(fetchingError, fetchingErrorChanged, false);
+  useErrorMessage(followingError, followingErrorChanged);
 
   const pageChangeHandler = (page: number) => {
     setQuery({
@@ -87,7 +82,7 @@ export const UsersPage: React.FC<PropsType> = () => {
     });
   };
 
-  const pageSizeChanged = (page: number, count: number) => {
+  const pageSizeChangeHandler = (page: number, count: number) => {
     setQuery({
       count,
       page,
@@ -103,7 +98,7 @@ export const UsersPage: React.FC<PropsType> = () => {
   };
 
   const refetch = () => {
-    dispatch(fetchUsers(currentPage, pageSize, filter));
+    dispatch(fetchUsers({ page: currentPage, pageSize, filter }));
   };
 
   const followUserHandler = (id: number) => {
@@ -124,7 +119,7 @@ export const UsersPage: React.FC<PropsType> = () => {
             <Result
               status="error"
               title="Unable to load users"
-              subTitle={fetchingError.message}
+              subTitle={fetchingError}
               extra={[
                 <Button
                   type="primary"
@@ -163,7 +158,7 @@ export const UsersPage: React.FC<PropsType> = () => {
           pageSize={pageSize}
           pageSizeOptions={pageSizeOptinos.map((o) => String(o))}
           onChange={pageChangeHandler}
-          onShowSizeChange={pageSizeChanged}
+          onShowSizeChange={pageSizeChangeHandler}
         />
       </Space>
     </section>

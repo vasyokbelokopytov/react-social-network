@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { GlobalStateType } from '../redux/redux-store';
-import { selectIsAuth } from '../redux/selectors/auth-selectors';
+import { RootState } from '../redux/store';
 
 type MapStateToPropsType = {
   isAuth: boolean;
@@ -14,11 +13,11 @@ function withAuthRedirect<P>(Component: React.ComponentType<P>) {
     return <Component {...(props as unknown as P)} />;
   };
 
-  const mapStateToProps = (state: GlobalStateType): MapStateToPropsType => ({
-    isAuth: selectIsAuth(state),
+  const mapStateToProps = (state: RootState): MapStateToPropsType => ({
+    isAuth: state.auth.isAuth,
   });
 
-  return connect<MapStateToPropsType, {}, P, GlobalStateType>(mapStateToProps)(
+  return connect<MapStateToPropsType, {}, P, RootState>(mapStateToProps)(
     containerComponent
   );
 }

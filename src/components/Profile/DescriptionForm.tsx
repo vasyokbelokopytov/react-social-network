@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { usePrevious } from '../../hooks/usePrevious';
 
 import {
-  actions as profileActions,
+  profileUpdatingErrorChanged,
   updateProfile,
-} from '../../redux/profile-reducer';
-import { selectUserAuthProfile } from '../../redux/selectors/auth-selectors';
-import {
-  selectIsProfileUpdating,
-  selectProfileUpdatingError,
-} from '../../redux/selectors/profile-selectors';
+} from '../../redux/profileSlice';
 
 import {
   Button,
@@ -27,6 +21,7 @@ import {
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProfileFormDataType } from '../../types/types';
 import { useErrorMessage } from '../../hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 type PropsType = {
   isEditing: boolean;
@@ -37,14 +32,14 @@ export const DescriptionForm: React.FC<PropsType> = ({
   isEditing,
   setIsEditing,
 }) => {
-  const isLoading = useSelector(selectIsProfileUpdating);
+  const isLoading = useAppSelector((state) => state.profile.isProfileUpdating);
   const prevIsLoading = usePrevious(isLoading);
-  const error = useSelector(selectProfileUpdatingError);
-  const profile = useSelector(selectUserAuthProfile);
+  const error = useAppSelector((state) => state.profile.profileUpdatingError);
+  const profile = useAppSelector((state) => state.auth.profile);
   const [isLookingForAJob, setIsLookingForAJob] = useState(false);
   const [form] = Form.useForm();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (profile) setIsLookingForAJob(profile.lookingForAJob);
@@ -57,7 +52,7 @@ export const DescriptionForm: React.FC<PropsType> = ({
     }
   }, [prevIsLoading, isLoading, error, setIsEditing]);
 
-  useErrorMessage(error, profileActions.profileUpdatingErrorChanged);
+  useErrorMessage(error, profileUpdatingErrorChanged);
 
   const checkboxChangeHandler = (e: CheckboxChangeEvent) => {
     setIsLookingForAJob(e.target.checked);

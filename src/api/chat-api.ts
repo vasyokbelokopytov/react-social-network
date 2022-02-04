@@ -16,8 +16,8 @@ type EventSubscribersType = {
 };
 
 let ws: WebSocket | null = null;
-
 let timer: ReturnType<typeof setTimeout> | null = null;
+
 const primaryConnectionCheck = () => {
   const localTimer = setTimeout(() => {
     if (timer) {

@@ -5,19 +5,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { Input, Button } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
 
 import styles from './ChatForm.module.css';
 
-import { sendMessage, sendPendingMessage } from '../../../redux/chat-reducer';
-
-import {
-  selectConnectingError,
-  selectPendingMessages,
-} from '../../../redux/selectors/chat-selectors';
+import { sendMessage, sendPendingMessage } from '../../../redux/chatSlice';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 
 const { TextArea } = Input;
 
@@ -27,10 +22,10 @@ export const ChatForm: React.FC<PropsType> = () => {
   const [value, setValue] = useState('');
   const textareaRef = useRef<null | HTMLTextAreaElement>(null);
 
-  const connectingError = useSelector(selectConnectingError);
-  const pendingMessages = useSelector(selectPendingMessages);
+  const connectingError = useAppSelector((state) => state.chat.connectingError);
+  const pendingMessages = useAppSelector((state) => state.chat.pendingMessages);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!connectingError && pendingMessages.length) {

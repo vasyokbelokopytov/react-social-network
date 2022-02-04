@@ -1,14 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectIsAuth,
-  selectLoggingOutError,
-  selectUserAuthLogin,
-  selectUserAuthProfile,
-} from '../../redux/selectors/auth-selectors';
-
 import { Layout, Avatar, Button, Space } from 'antd';
 import { UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
 import Text from 'antd/lib/typography/Text';
@@ -16,26 +8,27 @@ import Text from 'antd/lib/typography/Text';
 import styles from './Header.module.css';
 
 import logo from '../../assets/img/logo.png';
-import { logOut } from '../../redux/auth-reducer';
+import { signOut } from '../../redux/authSlice';
 import { useErrorMessage } from '../../hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 const { Header: AntHeader } = Layout;
 
 type PropsType = {};
 
 export const Header: React.FC<PropsType> = () => {
-  const isAuth = useSelector(selectIsAuth);
-  const login = useSelector(selectUserAuthLogin);
-  const profile = useSelector(selectUserAuthProfile);
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
+  const login = useAppSelector((state) => state.auth.login);
+  const profile = useAppSelector((state) => state.auth.profile);
 
-  const logOutError = useSelector(selectLoggingOutError);
+  const logOutError = useAppSelector((state) => state.auth.signingOutError);
 
   useErrorMessage(logOutError);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const clickHandler = () => {
-    dispatch(logOut());
+    dispatch(signOut());
   };
 
   return (

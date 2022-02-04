@@ -1,17 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 
 import './App.css';
 
-import { initializeApp, actions as appActions } from './redux/app-reducer';
-
-import {
-  selectInitializingError,
-  selectIsAppInitialized,
-  selectIsInitializing,
-  selectUnhandledError,
-} from './redux/selectors/app-selectors';
+import { init } from './redux/appSlice';
 
 import { Header } from './components/Header/Header';
 import { Navbar } from './components/Navbar/Navbar';
@@ -27,36 +19,24 @@ import { LoginPage } from './components/Login/LoginPage';
 import NotFound from './components/NotFound/NotFound';
 
 import { Button, Layout, Result, Spin } from 'antd';
-import { useErrorMessage } from './hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from './hooks/redux';
 
 const { Content } = Layout;
 
 export const App: React.FC = () => {
-  const isAppInitialized = useSelector(selectIsAppInitialized);
-  const unhandlerError = useSelector(selectUnhandledError);
-  const isInitializing = useSelector(selectIsInitializing);
-  const initializingError = useSelector(selectInitializingError);
+  const isAppInitialized = useAppSelector((state) => state.app.isInited);
+  const isInitializing = useAppSelector((state) => state.app.isIniting);
+  const initializingError = useAppSelector((state) => state.app.error);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    const handlePromiseErrors = (e: PromiseRejectionEvent) => {
-      dispatch(appActions.unhandledErrorChanged(e.reason));
-    };
-
-    dispatch(initializeApp());
-    window.addEventListener('unhandledrejection', handlePromiseErrors);
-
-    return () => {
-      window.removeEventListener('unhandledrejection', handlePromiseErrors);
-    };
+  const initializeApp = useCallback(() => {
+    dispatch(init());
   }, [dispatch]);
 
-  useErrorMessage(unhandlerError);
-
-  const init = () => {
-    dispatch(initializeApp());
-  };
+  useEffect(() => {
+    initializeApp();
+  }, [dispatch, initializeApp]);
 
   if (isInitializing) {
     return (
@@ -70,12 +50,12 @@ export const App: React.FC = () => {
         className="appErrorResult"
         status="error"
         title="Unable to initialize application"
-        subTitle={initializingError.message}
+        subTitle={initializingError}
         extra={[
           <Button
             type="primary"
             key="initializeApp"
-            onClick={init}
+            onClick={initializeApp}
             loading={isInitializing}
           >
             Try again

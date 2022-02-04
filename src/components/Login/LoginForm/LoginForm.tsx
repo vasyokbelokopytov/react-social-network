@@ -1,11 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions as authActions, logIn } from '../../../redux/auth-reducer';
-import {
-  selectCaptchaUrl,
-  selectIsLoggingInProcessing,
-  selectLoggingInError,
-} from '../../../redux/selectors/auth-selectors';
+import { signIn, signingInErrorChanged } from '../../../redux/authSlice';
 
 import { Form, Input, Button, Checkbox, Space } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
@@ -13,6 +7,7 @@ import styles from './LoginForm.module.css';
 
 import { Rule } from 'rc-field-form/lib/interface';
 import { useErrorMessage } from '../../../hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 
 type FormDataType = {
   email: string;
@@ -24,12 +19,12 @@ type FormDataType = {
 type PropsType = {};
 
 export const LoginForm: React.FC<PropsType> = () => {
-  const captchaUrl = useSelector(selectCaptchaUrl);
-  const isLoading = useSelector(selectIsLoggingInProcessing);
-  const loggingInError = useSelector(selectLoggingInError);
-  const dispatch = useDispatch();
+  const captchaUrl = useAppSelector((state) => state.auth.captcha);
+  const isLoading = useAppSelector((state) => state.auth.isSigningIn);
+  const loggingInError = useAppSelector((state) => state.auth.signingInError);
+  const dispatch = useAppDispatch();
 
-  useErrorMessage(loggingInError, authActions.loggingInErrorChanged);
+  useErrorMessage(loggingInError, signingInErrorChanged);
 
   const emailRules: Rule[] = [
     { required: true, message: 'Please, input your E-mail!' },
@@ -50,7 +45,7 @@ export const LoginForm: React.FC<PropsType> = () => {
     rememberMe,
     captcha,
   }: FormDataType) => {
-    return dispatch(logIn(email, password, rememberMe, captcha));
+    return dispatch(signIn({ email, password, rememberMe, captcha }));
   };
 
   return (

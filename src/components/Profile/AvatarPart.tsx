@@ -1,35 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Button, message, Space, Upload } from 'antd';
 import UserOutlined from '@ant-design/icons/UserOutlined';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectIsAuth } from '../../redux/selectors/auth-selectors';
+
 import {
-  selectAvatarUpdatingError,
-  selectFollowingStatus,
-  selectFollowingStatusError,
-  selectIsAvatarUpdating,
-} from '../../redux/selectors/profile-selectors';
-import {
-  selectFollowingError,
-  selectUsersInFollowingProcess,
-} from '../../redux/selectors/users-selectors';
-import {
-  actions as usersActions,
+  followingErrorChanged,
   followUser,
   unfollowUser,
-} from '../../redux/users-reducer';
+} from '../../redux/usersSlice';
 import { useErrorMessage } from '../../hooks/useErrorMessage';
 import {
-  actions as profileActions,
+  avatarUpdatingErrorChanged,
+  profileFetchingErrorChanged,
   updateAvatar,
-} from '../../redux/profile-reducer';
+} from '../../redux/profileSlice';
 
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 
 import styles from './AvatarPart.module.css';
-
-import { ThunkDispatchType } from '../../types/types';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 
 type PropsType = {
   userId: number | null;
@@ -38,15 +27,25 @@ type PropsType = {
 };
 
 export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
-  const isAuth = useSelector(selectIsAuth);
-  const isFollowed = useSelector(selectFollowingStatus);
-  const followingStatusError = useSelector(selectFollowingStatusError);
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
+  const isFollowed = useAppSelector((state) => state.profile.followingStatus);
+  const followingStatusError = useAppSelector(
+    (state) => state.profile.followingStatusError
+  );
 
-  const usersInFollowingProcess = useSelector(selectUsersInFollowingProcess);
-  const subscriptionError = useSelector(selectFollowingError);
+  const usersInFollowingProcess = useAppSelector(
+    (state) => state.users.usersInFollowingProcess
+  );
+  const subscriptionError = useAppSelector(
+    (state) => state.users.followingError
+  );
 
-  const isAvatarUpdating = useSelector(selectIsAvatarUpdating);
-  const avatarUpdatingError = useSelector(selectAvatarUpdatingError);
+  const isAvatarUpdating = useAppSelector(
+    (state) => state.profile.isAvatarUpdating
+  );
+  const avatarUpdatingError = useAppSelector(
+    (state) => state.profile.avatarUpdatingError
+  );
 
   const [isFollowing, setIsFollowing] = useState(() =>
     userId ? usersInFollowingProcess.includes(userId) : false
@@ -54,7 +53,7 @@ export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
 
   const [isUploadVisible, setIsUploadVisible] = useState(false);
 
-  const dispatch = useDispatch<ThunkDispatchType>();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setIsFollowing(userId ? usersInFollowingProcess.includes(userId) : false);
@@ -66,16 +65,9 @@ export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
     }
   }, [avatarUpdatingError, isAvatarUpdating]);
 
-  useErrorMessage(subscriptionError, usersActions.followingErrorChanged);
-  useErrorMessage(
-    followingStatusError,
-    profileActions.profileFetchingErrorChanged,
-    false
-  );
-  useErrorMessage(
-    avatarUpdatingError,
-    profileActions.avatarUpdatingErrorChanged
-  );
+  useErrorMessage(subscriptionError, followingErrorChanged);
+  useErrorMessage(followingStatusError, profileFetchingErrorChanged, false);
+  useErrorMessage(avatarUpdatingError, avatarUpdatingErrorChanged);
 
   const subscriptionHandler = () => {
     if (isFollowed && userId) {

@@ -1,23 +1,17 @@
-import { Action, ActionCreator } from 'redux';
-import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import { GlobalStateType } from '../redux/redux-store';
+export interface AuthData {
+  id: null | number;
+  email: null | string;
+  login: null | string;
+  profile: null | ProfileType;
+  status: null | string;
+}
 
-type ActionCreatorsType = {
-  [key: string]: ActionCreator<Action>;
-};
-
-export type ActionTypes<T extends ActionCreatorsType> = ReturnType<
-  T extends { [key: string]: infer AC } ? AC : never
->;
-
-export type ThunkType<R = void> = ThunkAction<
-  R,
-  GlobalStateType,
-  unknown,
-  Action
->;
-
-export type ThunkDispatchType = ThunkDispatch<GlobalStateType, unknown, Action>;
+export interface SignInPayload {
+  email: string;
+  password: string;
+  rememberMe: boolean;
+  captcha?: string;
+}
 
 export type FormReturnType = Promise<Array<string> | undefined>;
 

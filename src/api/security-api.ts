@@ -9,6 +9,6 @@ export const securityAPI = {
     const response = await template.get<GetCaptchaUrlType>(
       `/security/get-captcha-url`
     );
-    return response.data;
+    return response.data.url;
   },
 };

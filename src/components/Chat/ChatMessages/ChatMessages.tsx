@@ -1,32 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
-import { selectUserAuthId } from '../../../redux/selectors/auth-selectors';
-import {
-  selectConnectingError,
-  selectIsConnecting,
-  selectMessages,
-} from '../../../redux/selectors/chat-selectors';
 
 import { Button, List, Result, message } from 'antd';
 
 import styles from './ChatMessages.module.css';
 
 import { ChatMessage } from './ChatMessage/ChatMessage';
-import { reconnect } from '../../../redux/chat-reducer';
+import { reconnect } from '../../../redux/chatSlice';
 import { useErrorMessage } from '../../../hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 
 type PropsType = {};
 
 export const ChatMessages: React.FC<PropsType> = () => {
-  const authId = useSelector(selectUserAuthId);
-  const messages = useSelector(selectMessages);
-  const connectingError = useSelector(selectConnectingError);
-  const isConnecting = useSelector(selectIsConnecting);
+  const authId = useAppSelector((state) => state.auth.id);
+  const messages = useAppSelector((state) => state.chat.messages);
+  const connectingError = useAppSelector((state) => state.chat.connectingError);
+  const isConnecting = useAppSelector((state) => state.chat.isConnecting);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [isAutoscroll, setIsAutoscroll] = useState(true);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (isAutoscroll) {

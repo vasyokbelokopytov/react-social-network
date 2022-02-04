@@ -1,15 +1,10 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import {
-  selectFilter,
-  selectIsFetching,
-} from '../../../redux/selectors/users-selectors';
 
 import { Form, Input, Select, Space, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 import { FilterType } from '../../../types/types';
-import { selectIsAuth } from '../../../redux/selectors/auth-selectors';
+import { useAppSelector } from '../../../hooks/redux';
 
 type FriendValueType = 'null' | 'true' | 'false';
 
@@ -28,9 +23,9 @@ type PropsType = {
 };
 
 export const UsersSearchForm: React.FC<PropsType> = (props) => {
-  const isAuth = useSelector(selectIsAuth);
-  const filter = useSelector(selectFilter);
-  const isFetching = useSelector(selectIsFetching);
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
+  const filter = useAppSelector((state) => state.users.filter);
+  const isFetching = useAppSelector((state) => state.users.isFetching);
   const [form] = Form.useForm();
 
   useEffect(() => {

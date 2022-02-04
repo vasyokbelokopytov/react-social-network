@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { List, Avatar, Spin } from 'antd';
-import { ChatPendingMessage } from '../../../../redux/chat-reducer';
+import { ChatPendingMessage } from '../../../../redux/chatSlice';
 
 type PropsType = {
   message: ChatPendingMessage;

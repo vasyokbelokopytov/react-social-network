@@ -1,26 +1,18 @@
 import { Button, Card, Result } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import withOwnerRedirect from '../../hoc/withOwnerRedirect';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useErrorMessage } from '../../hooks/useErrorMessage';
 import {
-  actions as profileActions,
   fetchFollowingStatus,
   fetchProfile,
   fetchStatus,
-} from '../../redux/profile-reducer';
+  profileChanged,
+  profileFetchingErrorChanged,
+  statusChanged,
+} from '../../redux/profileSlice';
 
-import {
-  selectIsAuth,
-  selectUserAuthProfile,
-  selectUserAuthStatus,
-} from '../../redux/selectors/auth-selectors';
-import {
-  selectIsProfileFetching,
-  selectProfile,
-  selectProfileFetchingError,
-} from '../../redux/selectors/profile-selectors';
 import { AvatarPart } from './AvatarPart';
 import { DescriptionForm } from './DescriptionForm';
 import { DescriptionPart } from './DescriptionPart';
@@ -30,22 +22,26 @@ import { TitlePart } from './TitlePart';
 
 const Profile: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const isAuth = useSelector(selectIsAuth);
-  const profile = useSelector(selectProfile);
-  const isProfileFetching = useSelector(selectIsProfileFetching);
-  const profileError = useSelector(selectProfileFetchingError);
+  const isAuth = useAppSelector((state) => state.auth.isAuth);
+  const profile = useAppSelector((state) => state.profile.profile);
+  const isProfileFetching = useAppSelector(
+    (state) => state.profile.isProfileFetching
+  );
+  const profileError = useAppSelector(
+    (state) => state.profile.profileFetchingError
+  );
 
-  const authStatus = useSelector(selectUserAuthStatus);
-  const authProfile = useSelector(selectUserAuthProfile);
+  const authStatus = useAppSelector((state) => state.auth.status);
+  const authProfile = useAppSelector((state) => state.auth.profile);
 
   const { userId } = useParams<{ userId?: string }>();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const edit = () => {
     setIsEditing(true);
   };
 
-  const loadProfilePage = useCallback(() => {
+  const loadprofile = useCallback(() => {
     if (userId) {
       dispatch(fetchProfile(+userId));
       dispatch(fetchStatus(+userId));
@@ -53,26 +49,22 @@ const Profile: React.FC = () => {
       return;
     }
 
-    dispatch(profileActions.statusFetchSucceed(authStatus));
-    dispatch(profileActions.profileFetchSucceed(authProfile));
+    dispatch(statusChanged(authStatus));
+    dispatch(profileChanged(authProfile));
   }, [dispatch, isAuth, authProfile, authStatus, userId]);
 
   useEffect(() => {
-    loadProfilePage();
-  }, [loadProfilePage]);
+    loadprofile();
+  }, [loadprofile]);
 
   useEffect(() => {
     return () => {
-      dispatch(profileActions.profileFetchSucceed(null));
-      dispatch(profileActions.statusFetchSucceed(null));
+      dispatch(statusChanged(null));
+      dispatch(profileChanged(null));
     };
   }, [dispatch]);
 
-  useErrorMessage(
-    profileError,
-    profileActions.profileFetchingErrorChanged,
-    false
-  );
+  useErrorMessage(profileError, profileFetchingErrorChanged, false);
 
   if (isProfileFetching) return <ProfileSkeleton />;
 
@@ -81,12 +73,12 @@ const Profile: React.FC = () => {
       <Result
         status="error"
         title="Unable to load profile"
-        subTitle={profileError.message}
+        subTitle={profileError}
         extra={[
           <Button
             type="primary"
             key="fetchProfile"
-            onClick={loadProfilePage}
+            onClick={loadprofile}
             loading={isProfileFetching}
           >
             Try again
