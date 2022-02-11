@@ -3,23 +3,19 @@ import { Route, Switch } from 'react-router-dom';
 
 import './App.css';
 
-import { init } from './redux/appSlice';
+import { init } from './features/app/appSlice';
 
 import { Header } from './components/Header/Header';
 import { Navbar } from './components/Navbar/Navbar';
-import Main from './components/Main/Main';
-import { ProfilePage } from './components/Profile/Profile';
-import { UsersPage } from './components/Users/UsersPage';
-import News from './components/News/News';
-import Music from './components/Music/Music';
-import Settings from './components/Settings/Settings';
-import { ChatPage } from './components/Chat/ChatPage';
-import { LoginPage } from './components/Login/LoginPage';
-
-import NotFound from './components/NotFound/NotFound';
+import { Main } from './components/Main/Main';
+import { Profile } from './components/Profile/Profile';
+import { Users } from './components/Users/Users';
+import { Chat } from './components/Chat/Chat';
+import { SignIn } from './components/SignIn/SignIn';
+import { NotFound } from './components/NotFound/NotFound';
 
 import { Button, Layout, Result, Spin } from 'antd';
-import { useAppDispatch, useAppSelector } from './hooks/redux';
+import { useAppDispatch, useAppSelector } from './app/hooks/redux';
 
 const { Content } = Layout;
 
@@ -74,13 +70,10 @@ export const App: React.FC = () => {
           <Content className="content">
             <Switch>
               <Route exact path="/" render={() => <Main />} />
-              <Route path="/chat" render={() => <ChatPage />} />
-              <Route path="/profile/:userId?" render={() => <ProfilePage />} />
-              <Route path="/users" render={() => <UsersPage />} />
-              <Route path="/news" render={() => <News />} />
-              <Route path="/music" render={() => <Music />} />
-              <Route path="/settings" render={() => <Settings />} />
-              <Route path="/login" render={() => <LoginPage />} />
+              <Route path="/chat" render={() => <Chat />} />
+              <Route path="/profile/:userId?" render={() => <Profile />} />
+              <Route path="/users" render={() => <Users />} />
+              <Route path="/sign-in" render={() => <SignIn />} />
               <Route path="*" render={() => <NotFound />} />
             </Switch>
           </Content>

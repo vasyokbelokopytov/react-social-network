@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 import { Form, Input, Select, Space, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
-import { FilterType } from '../../../types/types';
-import { useAppSelector } from '../../../hooks/redux';
+import { Filter } from '../../../app/types';
+import { useAppSelector } from '../../../app/hooks/redux';
 
 type FriendValueType = 'null' | 'true' | 'false';
 
@@ -13,16 +13,16 @@ type OptionsType<value> = Array<{
   label: string;
 }>;
 
-type FormType = {
+interface FormData {
   term: string;
   friend: FriendValueType;
-};
+}
 
-type PropsType = {
-  onSubmit: (filter: FilterType) => void;
-};
+interface Props {
+  onSubmit: (filter: Filter) => void;
+}
 
-export const UsersSearchForm: React.FC<PropsType> = (props) => {
+export const UsersSearchForm: React.FC<Props> = (props) => {
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const filter = useAppSelector((state) => state.users.filter);
   const isFetching = useAppSelector((state) => state.users.isFetching);
@@ -38,7 +38,7 @@ export const UsersSearchForm: React.FC<PropsType> = (props) => {
     { value: 'false', label: 'Only unfollowed' },
   ];
 
-  const submitHandler = async (filter: FormType) => {
+  const submitHandler = async (filter: FormData) => {
     const normalizedFilter = {
       ...filter,
       friend: isAuth ? JSON.parse(filter.friend) : null,

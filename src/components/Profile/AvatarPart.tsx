@@ -6,19 +6,19 @@ import {
   followingErrorChanged,
   followUser,
   unfollowUser,
-} from '../../redux/usersSlice';
-import { useErrorMessage } from '../../hooks/useErrorMessage';
+} from '../../features/users/usersSlice';
+import { useErrorMessage } from '../../app/hooks/useErrorMessage';
 import {
   avatarUpdatingErrorChanged,
   profileFetchingErrorChanged,
   updateAvatar,
-} from '../../redux/profileSlice';
+} from '../../features/profile/profileSlice';
 
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 
 import styles from './AvatarPart.module.css';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
 
 type PropsType = {
   userId: number | null;

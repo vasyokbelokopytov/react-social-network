@@ -8,21 +8,14 @@
   padding: 0 24px;
 }
 
+.logo,
+.login,
+.avatar,
+.signIn,
+.signOut {
+  display: block;
+}
+
 .logo {
-  display: block;
-
   height: 40px;
-}
-
-.login {
-  display: block;
-}
-
-.avatar {
-  display: block;
-}
-
-.logIn,
-.logOut {
-  display: block;
 }

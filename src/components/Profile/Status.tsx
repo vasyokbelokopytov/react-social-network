@@ -4,11 +4,11 @@ import {
   statusFetchingErrorChanged,
   statusUpdatingErrorChanged,
   updateStatus,
-} from '../../redux/profileSlice';
+} from '../../features/profile/profileSlice';
 
 import { Button, Input, Popover, Space, Typography } from 'antd';
-import { useErrorMessage } from '../../hooks/useErrorMessage';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useErrorMessage } from '../../app/hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
 
 type PropsType = { isOwner: boolean };
 

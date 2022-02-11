@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import { Layout, Avatar, Button, Space } from 'antd';
 import { UserOutlined, LogoutOutlined, LoginOutlined } from '@ant-design/icons';
@@ -8,27 +8,29 @@ import Text from 'antd/lib/typography/Text';
 import styles from './Header.module.css';
 
 import logo from '../../assets/img/logo.png';
-import { signOut } from '../../redux/authSlice';
-import { useErrorMessage } from '../../hooks/useErrorMessage';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { signOut } from '../../features/auth/authSlice';
+import { useErrorMessage } from '../../app/hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
 
 const { Header: AntHeader } = Layout;
 
-type PropsType = {};
-
-export const Header: React.FC<PropsType> = () => {
+export const Header: React.FC = () => {
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const login = useAppSelector((state) => state.auth.login);
   const profile = useAppSelector((state) => state.auth.profile);
+  const signingOutError = useAppSelector((state) => state.auth.signingOutError);
 
-  const logOutError = useAppSelector((state) => state.auth.signingOutError);
-
-  useErrorMessage(logOutError);
+  useErrorMessage(signingOutError);
 
   const dispatch = useAppDispatch();
+  const history = useHistory();
 
-  const clickHandler = () => {
+  const signOutClickHandler = () => {
     dispatch(signOut());
+  };
+
+  const signInClickHandler = () => {
+    history.push('/sign-in');
   };
 
   return (
@@ -45,22 +47,21 @@ export const Header: React.FC<PropsType> = () => {
           />
           <Text className={styles.login}>{login}</Text>
           <Button
-            className={styles.logOut}
+            className={styles.signOut}
             type="link"
             shape="circle"
             icon={<LogoutOutlined style={{ fontSize: '24px' }} />}
-            onClick={clickHandler}
+            onClick={signOutClickHandler}
           />
         </Space>
       ) : (
-        <Link to="/login">
-          <Button
-            className={styles.logIn}
-            type="link"
-            shape="circle"
-            icon={<LoginOutlined style={{ fontSize: '24px' }} />}
-          ></Button>
-        </Link>
+        <Button
+          className={styles.signIn}
+          type="link"
+          shape="circle"
+          icon={<LoginOutlined style={{ fontSize: '24px' }} />}
+          onClick={signInClickHandler}
+        ></Button>
       )}
     </AntHeader>
   );

@@ -1,37 +1,20 @@
-import React, {
-  ChangeEvent,
-  KeyboardEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ChangeEvent, KeyboardEvent, useRef, useState } from 'react';
 
 import { Input, Button } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
 
 import styles from './ChatForm.module.css';
 
-import { sendMessage, sendPendingMessage } from '../../../redux/chatSlice';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { sendMessage } from '../../../features/chat/chatSlice';
+import { useAppSelector } from '../../../app/hooks/redux';
 
 const { TextArea } = Input;
 
-type PropsType = {};
-
-export const ChatForm: React.FC<PropsType> = () => {
+export const ChatForm: React.FC = () => {
   const [value, setValue] = useState('');
   const textareaRef = useRef<null | HTMLTextAreaElement>(null);
 
   const connectingError = useAppSelector((state) => state.chat.connectingError);
-  const pendingMessages = useAppSelector((state) => state.chat.pendingMessages);
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (!connectingError && pendingMessages.length) {
-      dispatch(sendPendingMessage(pendingMessages[0]));
-    }
-  }, [dispatch, connectingError, pendingMessages]);
 
   const inputChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
@@ -39,7 +22,7 @@ export const ChatForm: React.FC<PropsType> = () => {
 
   const send = (message: string) => {
     if (!connectingError) {
-      if (message.trim() !== '') dispatch(sendMessage(message));
+      if (message.trim() !== '') sendMessage(message);
       setValue('');
     }
   };

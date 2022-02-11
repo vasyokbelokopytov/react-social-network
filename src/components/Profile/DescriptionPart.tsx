@@ -1,14 +1,14 @@
 import React from 'react';
 
 import { Tabs, Typography } from 'antd';
-import { UserContactsType } from '../../types/types';
+import { UserContacts } from '../../app/types';
 
 const { TabPane } = Tabs;
 
 type PropsType = {
   isLookingForAJob: boolean;
   jobDescription: string | null;
-  contacts: UserContactsType;
+  contacts: UserContacts;
   aboutMe: string | null;
 };
 

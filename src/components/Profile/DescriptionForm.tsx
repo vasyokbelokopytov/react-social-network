@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { usePrevious } from '../../hooks/usePrevious';
+import { usePrevious } from '../../app/hooks/usePrevious';
 
 import {
   profileUpdatingErrorChanged,
   updateProfile,
-} from '../../redux/profileSlice';
+} from '../../features/profile/profileSlice';
 
 import {
   Button,
@@ -19,9 +19,9 @@ import {
 } from 'antd';
 
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { ProfileFormDataType } from '../../types/types';
-import { useErrorMessage } from '../../hooks/useErrorMessage';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { ProfileFormData } from '../../app/types';
+import { useErrorMessage } from '../../app/hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
 
 type PropsType = {
   isEditing: boolean;
@@ -63,7 +63,7 @@ export const DescriptionForm: React.FC<PropsType> = ({
     setIsEditing(false);
   };
 
-  const submitHandler = (formData: ProfileFormDataType) => {
+  const submitHandler = (formData: ProfileFormData) => {
     dispatch(updateProfile(formData));
   };
 

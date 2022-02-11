@@ -1,9 +1,9 @@
 import { Button, Card, Result } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import withOwnerRedirect from '../../hoc/withOwnerRedirect';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { useErrorMessage } from '../../hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
+import { useErrorMessage } from '../../app/hooks/useErrorMessage';
+import { useOwnerRedirect } from '../../app/hooks/useOwnerRedirect';
 import {
   fetchFollowingStatus,
   fetchProfile,
@@ -11,7 +11,7 @@ import {
   profileChanged,
   profileFetchingErrorChanged,
   statusChanged,
-} from '../../redux/profileSlice';
+} from '../../features/profile/profileSlice';
 
 import { AvatarPart } from './AvatarPart';
 import { DescriptionForm } from './DescriptionForm';
@@ -20,7 +20,8 @@ import { ProfileSkeleton } from './ProfileSkeleton';
 
 import { TitlePart } from './TitlePart';
 
-const Profile: React.FC = () => {
+export const Profile: React.FC = () => {
+  useOwnerRedirect();
   const [isEditing, setIsEditing] = useState(false);
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const profile = useAppSelector((state) => state.profile.profile);
@@ -117,5 +118,3 @@ const Profile: React.FC = () => {
     </>
   );
 };
-
-export const ProfilePage = withOwnerRedirect(Profile);

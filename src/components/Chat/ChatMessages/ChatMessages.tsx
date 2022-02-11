@@ -4,14 +4,12 @@ import { Button, List, Result, message } from 'antd';
 
 import styles from './ChatMessages.module.css';
 
-import { ChatMessage } from './ChatMessage/ChatMessage';
-import { reconnect } from '../../../redux/chatSlice';
-import { useErrorMessage } from '../../../hooks/useErrorMessage';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
+import { ChatMessageItem } from './ChatMessageItem/ChatMessageItem';
+import { reconnect } from '../../../features/chat/chatSlice';
+import { useErrorMessage } from '../../../app/hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks/redux';
 
-type PropsType = {};
-
-export const ChatMessages: React.FC<PropsType> = () => {
+export const ChatMessagesList: React.FC = () => {
   const authId = useAppSelector((state) => state.auth.id);
   const messages = useAppSelector((state) => state.chat.messages);
   const connectingError = useAppSelector((state) => state.chat.connectingError);
@@ -45,11 +43,11 @@ export const ChatMessages: React.FC<PropsType> = () => {
 
   const scrollHandler = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const target = e.currentTarget;
+    const bottomOffset = Math.abs(
+      target.scrollHeight - target.scrollTop - target.clientHeight
+    );
 
-    if (
-      Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) <
-      50
-    ) {
+    if (bottomOffset < 50) {
       setIsAutoscroll(true);
     } else {
       setIsAutoscroll(false);
@@ -82,7 +80,11 @@ export const ChatMessages: React.FC<PropsType> = () => {
           itemLayout="horizontal"
           dataSource={messages}
           renderItem={(message) => (
-            <ChatMessage key={message.id} message={message} authId={authId} />
+            <ChatMessageItem
+              key={message.id}
+              message={message}
+              authId={authId}
+            />
           )}
         />
       )}
