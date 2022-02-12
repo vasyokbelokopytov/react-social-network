@@ -1,12 +1,9 @@
 import React from 'react';
-import {
-  signIn,
-  signingInErrorChanged,
-} from '../../../features/auth/authSlice';
+import { signIn } from '../../../features/auth/authSlice';
 
 import { Form, Input, Button, Checkbox, Space } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import styles from './LoginForm.module.css';
+import styles from './SignInForm.module.css';
 
 import { Rule } from 'rc-field-form/lib/interface';
 import { useErrorMessage } from '../../../app/hooks/useErrorMessage';
@@ -16,10 +13,10 @@ import { SignInPayload } from '../../../app/types';
 export const LoginForm: React.FC = () => {
   const captchaUrl = useAppSelector((state) => state.auth.captcha);
   const isLoading = useAppSelector((state) => state.auth.isSigningIn);
-  const loggingInError = useAppSelector((state) => state.auth.signingInError);
+  const signingInError = useAppSelector((state) => state.auth.signingInError);
   const dispatch = useAppDispatch();
 
-  useErrorMessage(loggingInError, signingInErrorChanged);
+  useErrorMessage(signingInError);
 
   const emailRules: Rule[] = [
     { required: true, message: 'Please, input your E-mail!' },

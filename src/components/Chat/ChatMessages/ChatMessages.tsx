@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks/redux';
 export const ChatMessagesList: React.FC = () => {
   const authId = useAppSelector((state) => state.auth.id);
   const messages = useAppSelector((state) => state.chat.messages);
-  const connectingError = useAppSelector((state) => state.chat.connectingError);
+  const error = useAppSelector((state) => state.chat.error);
   const isConnecting = useAppSelector((state) => state.chat.isConnecting);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -27,7 +27,7 @@ export const ChatMessagesList: React.FC = () => {
     }
   }, [wrapperRef, messages, isAutoscroll]);
 
-  useErrorMessage(connectingError);
+  useErrorMessage(error);
 
   useEffect(() => {
     if (isConnecting) {
@@ -60,7 +60,7 @@ export const ChatMessagesList: React.FC = () => {
 
   return (
     <div className={styles.wrapper} ref={wrapperRef} onScroll={scrollHandler}>
-      {connectingError ? (
+      {error ? (
         <Result
           status="warning"
           title="There are some problems with connection."

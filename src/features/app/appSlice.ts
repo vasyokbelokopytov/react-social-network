@@ -24,7 +24,7 @@ export const init = createAsyncThunk<
     await Promise.all([dispatch(auth()).unwrap()]);
   } catch (e) {
     const error = e as Error;
-    rejectWithValue(error.message);
+    return rejectWithValue(error.message);
   }
 });
 

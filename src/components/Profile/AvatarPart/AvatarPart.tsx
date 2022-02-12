@@ -2,23 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Avatar, Button, message, Space, Upload } from 'antd';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 
-import {
-  followingErrorChanged,
-  followUser,
-  unfollowUser,
-} from '../../features/users/usersSlice';
-import { useErrorMessage } from '../../app/hooks/useErrorMessage';
-import {
-  avatarUpdatingErrorChanged,
-  profileFetchingErrorChanged,
-  updateAvatar,
-} from '../../features/profile/profileSlice';
+import { followUser, unfollowUser } from '../../../features/users/usersSlice';
+import { useErrorMessage } from '../../../app/hooks/useErrorMessage';
+import { updateAvatar } from '../../../features/profile/profileSlice';
 
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 
 import styles from './AvatarPart.module.css';
-import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks/redux';
 
 type PropsType = {
   userId: number | null;
@@ -65,9 +57,9 @@ export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
     }
   }, [avatarUpdatingError, isAvatarUpdating]);
 
-  useErrorMessage(subscriptionError, followingErrorChanged);
-  useErrorMessage(followingStatusError, profileFetchingErrorChanged, false);
-  useErrorMessage(avatarUpdatingError, avatarUpdatingErrorChanged);
+  useErrorMessage(subscriptionError);
+  useErrorMessage(followingStatusError);
+  useErrorMessage(avatarUpdatingError);
 
   const subscriptionHandler = () => {
     if (isFollowed && userId) {
@@ -125,6 +117,7 @@ export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
             <div style={{ marginTop: 8 }}>Upload</div>
           </div>
         </Upload>
+
         <Avatar
           style={isUploadVisible ? { opacity: 0, pointerEvents: 'none' } : {}}
           className={styles.avatar}

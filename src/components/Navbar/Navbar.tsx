@@ -7,9 +7,6 @@ import {
   MessageOutlined,
   UserOutlined,
   SearchOutlined,
-  BellOutlined,
-  CustomerServiceOutlined,
-  SettingOutlined,
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -36,15 +33,6 @@ export const Navbar: React.FC = () => {
         </Menu.Item>
         <Menu.Item key="/users" icon={<SearchOutlined />}>
           <Link to="/users">Users</Link>
-        </Menu.Item>
-        <Menu.Item key="/news" icon={<BellOutlined />}>
-          <Link to="/news">News</Link>
-        </Menu.Item>
-        <Menu.Item key="/music" icon={<CustomerServiceOutlined />}>
-          <Link to="/music">Music</Link>
-        </Menu.Item>
-        <Menu.Item key="/settings" icon={<SettingOutlined />}>
-          <Link to="/settings">Settings</Link>
         </Menu.Item>
       </Menu>
     </Sider>

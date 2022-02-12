@@ -12,7 +12,6 @@ import { AppDispatch, AppThunk } from '../../app/store';
 export interface ChatState {
   messages: (ChatMessage & WithUuid)[];
   status: ChatConnectionStatus;
-  connectingError: string | null;
   isConnecting: boolean;
   error: string | null;
 }
@@ -20,7 +19,6 @@ export interface ChatState {
 const initialState: ChatState = {
   messages: [],
   status: 'pending',
-  connectingError: null,
   isConnecting: true,
   error: null,
 };
@@ -40,16 +38,16 @@ const chatSlice = createSlice({
       state.status = payload;
       state.isConnecting = payload === 'pending';
 
-      state.connectingError =
+      state.error =
         payload === 'closed' ||
         payload === 'error' ||
-        (state.connectingError && payload === 'pending')
-          ? state.connectingError ?? 'Unable to connect'
+        (state.error && payload === 'pending')
+          ? state.error ?? 'Unable to connect'
           : null;
     },
 
-    errorChanged: (state, { payload }: PayloadAction<string | null>) => {
-      state.error = payload;
+    messagesChanged: (state, { payload }) => {
+      state.messages = payload;
     },
   },
 });
@@ -87,6 +85,7 @@ export const unsubscribe = (): AppThunk => async (dispatch) => {
   chatAPI.unsubscribe('messages-recieved', messageSubscriberCreator(dispatch));
   chatAPI.unsubscribe('status-changed', statusSubscriberCreator(dispatch));
   dispatch(statusChanged('pending'));
+  dispatch(messagesChanged([]));
 };
 
 export const reconnect = (): AppThunk => async () => {
@@ -97,7 +96,7 @@ export const sendMessage = (message: string) => {
   chatAPI.sendMessage(message);
 };
 
-export const { statusChanged, messagesRecieved, errorChanged } =
+export const { statusChanged, messagesRecieved, messagesChanged } =
   chatSlice.actions;
 
 export default chatSlice.reducer;

@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  statusFetchingErrorChanged,
-  statusUpdatingErrorChanged,
-  updateStatus,
-} from '../../features/profile/profileSlice';
+import { updateStatus } from '../../../features/profile/profileSlice';
 
 import { Button, Input, Popover, Space, Typography } from 'antd';
-import { useErrorMessage } from '../../app/hooks/useErrorMessage';
-import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
+import { useErrorMessage } from '../../../app/hooks/useErrorMessage';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks/redux';
 
-type PropsType = { isOwner: boolean };
+interface Props {
+  isOwner: boolean;
+}
 
-export const Status: React.FC<PropsType> = ({ isOwner }) => {
+export const Status: React.FC<Props> = ({ isOwner }) => {
   const status = useAppSelector((state) => state.profile.status);
   const statusFetchingError = useAppSelector(
     (state) => state.profile.statusFetchingError
@@ -31,8 +29,8 @@ export const Status: React.FC<PropsType> = ({ isOwner }) => {
     setInputValue(status ?? '');
   }, [status, isEditing]);
 
-  useErrorMessage(statusFetchingError, statusFetchingErrorChanged, false);
-  useErrorMessage(statusUpdatingError, statusUpdatingErrorChanged);
+  useErrorMessage(statusFetchingError);
+  useErrorMessage(statusUpdatingError);
 
   const isEditingChangeHandler = (isEditing: boolean) => {
     if (isOwner) {

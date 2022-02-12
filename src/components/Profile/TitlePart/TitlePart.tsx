@@ -5,13 +5,13 @@ import EditOutlined from '@ant-design/icons/EditOutlined';
 
 import { Status } from './Status';
 
-type PropsType = {
+interface Props {
   isOwner: boolean;
   name: string;
   edit: () => void;
-};
+}
 
-export const TitlePart: React.FC<PropsType> = ({ isOwner, name, edit }) => {
+export const TitlePart: React.FC<Props> = ({ isOwner, name, edit }) => {
   return (
     <Space
       direction="vertical"

@@ -13,6 +13,8 @@ interface ProfileState {
   isProfileUpdating: boolean;
   profileFetchingError: string | null;
   profileUpdatingError: string | null;
+  isProfileEditing: boolean;
+  profileUpdatingSucceedMessage: string | null;
 
   followingStatus: boolean;
   isFollowingStatusFetching: boolean;
@@ -34,6 +36,8 @@ const initialState: ProfileState = {
   isProfileUpdating: false,
   profileFetchingError: null,
   profileUpdatingError: null,
+  isProfileEditing: false,
+  profileUpdatingSucceedMessage: null,
 
   followingStatus: false,
   isFollowingStatusFetching: false,
@@ -78,10 +82,10 @@ export const updateProfile = createAsyncThunk<
       if (id !== null) {
         dispatch(fetchProfile(id));
       } else {
-        rejectWithValue('Unable to update profile of unauthorized user');
+        return rejectWithValue('Unable to update profile of unauthorized user');
       }
     } else if (data.resultCode === ResultCodes.error) {
-      rejectWithValue(data.messages[0]);
+      return rejectWithValue(data.messages[0]);
     }
   } catch (e) {
     const error = e as AxiosError;
@@ -178,24 +182,8 @@ const profileSlice = createSlice({
       state.status = payload;
     },
 
-    profileFetchingErrorChanged: (state, { payload }) => {
-      state.profileFetchingError = payload;
-    },
-
-    profileUpdatingErrorChanged: (state, { payload }) => {
-      state.profileUpdatingError = payload;
-    },
-
-    statusFetchingErrorChanged: (state, { payload }) => {
-      state.statusFetchingError = payload;
-    },
-
-    statusUpdatingErrorChanged: (state, { payload }) => {
-      state.statusUpdatingError = payload;
-    },
-
-    avatarUpdatingErrorChanged: (state, { payload }) => {
-      state.avatarUpdatingError = payload;
+    isProfileEditingChanged: (state, { payload }) => {
+      state.isProfileEditing = payload;
     },
   },
 
@@ -217,9 +205,12 @@ const profileSlice = createSlice({
       .addCase(updateProfile.pending, (state) => {
         state.isProfileUpdating = true;
         state.profileUpdatingError = null;
+        state.profileUpdatingSucceedMessage = null;
       })
       .addCase(updateProfile.fulfilled, (state) => {
         state.isProfileUpdating = false;
+        state.profileUpdatingSucceedMessage = 'Profile update succeed!';
+        state.isProfileEditing = false;
       })
       .addCase(updateProfile.rejected, (state, { payload }) => {
         state.isProfileUpdating = false;
@@ -282,14 +273,7 @@ const profileSlice = createSlice({
       }),
 });
 
-export const {
-  profileChanged,
-  statusChanged,
-  profileFetchingErrorChanged,
-  profileUpdatingErrorChanged,
-  statusFetchingErrorChanged,
-  statusUpdatingErrorChanged,
-  avatarUpdatingErrorChanged,
-} = profileSlice.actions;
+export const { profileChanged, statusChanged, isProfileEditingChanged } =
+  profileSlice.actions;
 
 export default profileSlice.reducer;

@@ -1,28 +1,27 @@
-import { Button, Card, Result } from 'antd';
-import React, { useCallback, useEffect, useState } from 'react';
+import { Card } from 'antd';
+import React, { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
-import { useErrorMessage } from '../../app/hooks/useErrorMessage';
 import { useOwnerRedirect } from '../../app/hooks/useOwnerRedirect';
 import {
   fetchFollowingStatus,
   fetchProfile,
   fetchStatus,
+  isProfileEditingChanged,
   profileChanged,
-  profileFetchingErrorChanged,
   statusChanged,
 } from '../../features/profile/profileSlice';
 
-import { AvatarPart } from './AvatarPart';
+import { AvatarPart } from './AvatarPart/AvatarPart';
 import { DescriptionForm } from './DescriptionForm';
-import { DescriptionPart } from './DescriptionPart';
+import { DescriptionPart } from './DescriptionPart/DescriptionPart';
 import { ProfileSkeleton } from './ProfileSkeleton';
 
-import { TitlePart } from './TitlePart';
+import { TitlePart } from './TitlePart/TitlePart';
+import { ProfileError } from './ProfileError';
 
 export const Profile: React.FC = () => {
   useOwnerRedirect();
-  const [isEditing, setIsEditing] = useState(false);
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const profile = useAppSelector((state) => state.profile.profile);
   const isProfileFetching = useAppSelector(
@@ -39,10 +38,10 @@ export const Profile: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const edit = () => {
-    setIsEditing(true);
+    dispatch(isProfileEditingChanged(true));
   };
 
-  const loadprofile = useCallback(() => {
+  const loadProfile = useCallback(() => {
     if (userId) {
       dispatch(fetchProfile(+userId));
       dispatch(fetchStatus(+userId));
@@ -55,8 +54,8 @@ export const Profile: React.FC = () => {
   }, [dispatch, isAuth, authProfile, authStatus, userId]);
 
   useEffect(() => {
-    loadprofile();
-  }, [loadprofile]);
+    loadProfile();
+  }, [loadProfile]);
 
   useEffect(() => {
     return () => {
@@ -65,26 +64,14 @@ export const Profile: React.FC = () => {
     };
   }, [dispatch]);
 
-  useErrorMessage(profileError, profileFetchingErrorChanged, false);
-
   if (isProfileFetching) return <ProfileSkeleton />;
 
   if (profileError)
     return (
-      <Result
-        status="error"
-        title="Unable to load profile"
-        subTitle={profileError}
-        extra={[
-          <Button
-            type="primary"
-            key="fetchProfile"
-            onClick={loadprofile}
-            loading={isProfileFetching}
-          >
-            Try again
-          </Button>,
-        ]}
+      <ProfileError
+        error={profileError}
+        isLoading={isProfileFetching}
+        loadProfile={loadProfile}
       />
     );
 
@@ -114,7 +101,7 @@ export const Profile: React.FC = () => {
           }
         />
       </Card>
-      <DescriptionForm isEditing={isEditing} setIsEditing={setIsEditing} />
+      <DescriptionForm />
     </>
   );
 };

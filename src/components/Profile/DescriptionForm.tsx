@@ -1,41 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { usePrevious } from '../../app/hooks/usePrevious';
 
 import {
-  profileUpdatingErrorChanged,
+  isProfileEditingChanged,
   updateProfile,
 } from '../../features/profile/profileSlice';
 
-import {
-  Button,
-  Drawer,
-  Space,
-  Form,
-  Row,
-  Col,
-  Input,
-  Checkbox,
-  message,
-} from 'antd';
+import { Button, Drawer, Space, Form, Row, Col, Input, Checkbox } from 'antd';
 
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProfileFormData } from '../../app/types';
 import { useErrorMessage } from '../../app/hooks/useErrorMessage';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
+import { useSuccessMessage } from '../../app/hooks/useSucceedMessage';
 
-type PropsType = {
-  isEditing: boolean;
-  setIsEditing: (isEditing: boolean) => void;
-};
-
-export const DescriptionForm: React.FC<PropsType> = ({
-  isEditing,
-  setIsEditing,
-}) => {
+export const DescriptionForm: React.FC = () => {
+  const profile = useAppSelector((state) => state.profile.profile);
+  const isEditing = useAppSelector((state) => state.profile.isProfileEditing);
   const isLoading = useAppSelector((state) => state.profile.isProfileUpdating);
-  const prevIsLoading = usePrevious(isLoading);
   const error = useAppSelector((state) => state.profile.profileUpdatingError);
-  const profile = useAppSelector((state) => state.auth.profile);
+  const succeedMessage = useAppSelector(
+    (state) => state.profile.profileUpdatingSucceedMessage
+  );
+
   const [isLookingForAJob, setIsLookingForAJob] = useState(false);
   const [form] = Form.useForm();
 
@@ -43,16 +29,10 @@ export const DescriptionForm: React.FC<PropsType> = ({
 
   useEffect(() => {
     if (profile) setIsLookingForAJob(profile.lookingForAJob);
-  }, [profile]);
+  }, [form, profile]);
 
-  useEffect(() => {
-    if (prevIsLoading && !isLoading && !error) {
-      message.success('Updating profile succeed!');
-      setIsEditing(false);
-    }
-  }, [prevIsLoading, isLoading, error, setIsEditing]);
-
-  useErrorMessage(error, profileUpdatingErrorChanged);
+  useErrorMessage(error);
+  useSuccessMessage(succeedMessage);
 
   const checkboxChangeHandler = (e: CheckboxChangeEvent) => {
     setIsLookingForAJob(e.target.checked);
@@ -60,10 +40,12 @@ export const DescriptionForm: React.FC<PropsType> = ({
 
   const closeHandler = () => {
     form.resetFields();
-    setIsEditing(false);
+    dispatch(isProfileEditingChanged(false));
   };
 
   const submitHandler = (formData: ProfileFormData) => {
+    console.log(formData);
+
     dispatch(updateProfile(formData));
   };
 
@@ -75,6 +57,7 @@ export const DescriptionForm: React.FC<PropsType> = ({
       width={720}
       onClose={closeHandler}
       visible={isEditing}
+      getContainer={false}
     >
       <Form
         form={form}
@@ -109,21 +92,22 @@ export const DescriptionForm: React.FC<PropsType> = ({
             </Form.Item>
           </Col>
         </Row>
-        {isLookingForAJob && (
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="lookingForAJobDescription"
-                label="Job description"
-              >
-                <Input.TextArea
-                  rows={4}
-                  placeholder="Describe your deam job . . ."
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-        )}
+
+        <Row gutter={16}>
+          <Col span={24}>
+            <Form.Item
+              hidden={!isLookingForAJob}
+              name="lookingForAJobDescription"
+              label="Job description"
+            >
+              <Input.TextArea
+                rows={4}
+                placeholder="Describe your dream job . . ."
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item name="aboutMe" label="About me">

@@ -16,6 +16,7 @@ import { NotFound } from './components/NotFound/NotFound';
 
 import { Button, Layout, Result, Spin } from 'antd';
 import { useAppDispatch, useAppSelector } from './app/hooks/redux';
+import { ProtectedRoute } from './features/auth/ProtectedRoute';
 
 const { Content } = Layout;
 
@@ -69,12 +70,24 @@ export const App: React.FC = () => {
           <Navbar />
           <Content className="content">
             <Switch>
-              <Route exact path="/" render={() => <Main />} />
-              <Route path="/chat" render={() => <Chat />} />
-              <Route path="/profile/:userId?" render={() => <Profile />} />
-              <Route path="/users" render={() => <Users />} />
-              <Route path="/sign-in" render={() => <SignIn />} />
-              <Route path="*" render={() => <NotFound />} />
+              <Route exact path="/">
+                <Main />
+              </Route>
+              <ProtectedRoute path="/chat">
+                <Chat />
+              </ProtectedRoute>
+              <Route path="/profile/:userId?">
+                <Profile />
+              </Route>
+              <Route path="/users">
+                <Users />
+              </Route>
+              <Route path="/sign-in">
+                <SignIn />
+              </Route>
+              <Route path="*">
+                <NotFound />
+              </Route>
             </Switch>
           </Content>
         </Layout>

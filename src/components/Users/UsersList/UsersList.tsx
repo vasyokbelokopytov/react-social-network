@@ -2,12 +2,7 @@ import { Button, Card, List, Result } from 'antd';
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks/redux';
 import { useErrorMessage } from '../../../app/hooks/useErrorMessage';
-import {
-  fetchingErrorChanged,
-  followingErrorChanged,
-  followUser,
-  unfollowUser,
-} from '../../../features/users/usersSlice';
+import { followUser, unfollowUser } from '../../../features/users/usersSlice';
 import { UserItem } from './UsersListItem';
 
 interface Props {
@@ -26,8 +21,8 @@ export const UsersList: React.FC<Props> = ({ refetch }) => {
 
   const dispatch = useAppDispatch();
 
-  useErrorMessage(fetchingError, fetchingErrorChanged, false);
-  useErrorMessage(followingError, followingErrorChanged);
+  useErrorMessage(fetchingError);
+  useErrorMessage(followingError);
 
   const followUserHandler = (id: number) => {
     dispatch(followUser(id));

@@ -107,15 +107,15 @@ export const signIn = createAsyncThunk<
       dispatch(auth());
     } else if (signInData.resultCode === CaptchaResultCodes.captchaIsRequired) {
       dispatch(getCaptcha());
-      rejectWithValue(signInData.messages[0]);
+      return rejectWithValue(signInData.messages[0]);
     } else if (signInData.resultCode === ResultCodes.error) {
-      rejectWithValue(signInData.messages[0]);
+      return rejectWithValue(signInData.messages[0]);
     } else {
-      rejectWithValue('Unknown result code');
+      return rejectWithValue('Unknown result code');
     }
   } catch (e) {
     const error = e as AxiosError;
-    rejectWithValue(error.response?.statusText ?? 'Unable to sign in');
+    return rejectWithValue(error.response?.statusText ?? 'Unable to sign in');
   }
 });
 
@@ -126,13 +126,15 @@ export const signOut = createAsyncThunk<void, void, { rejectValue: string }>(
       const signOutData = await authAPI.logOut();
       if (signOutData.resultCode === ResultCodes.success) {
       } else if (signOutData.resultCode === ResultCodes.error) {
-        rejectWithValue(signOutData.messages[0]);
+        return rejectWithValue(signOutData.messages[0]);
       } else {
-        rejectWithValue('Unknown result code');
+        return rejectWithValue('Unknown result code');
       }
     } catch (e) {
       const error = e as AxiosError;
-      rejectWithValue(error.response?.statusText ?? 'Unable to sign out');
+      return rejectWithValue(
+        error.response?.statusText ?? 'Unable to sign out'
+      );
     }
   }
 );
@@ -141,15 +143,8 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    signingInErrorChanged: (state, action) => {
-      state.signingInError = action.payload;
-    },
     signingUpErrorChanged: (state, action) => {
       state.signingUpError = action.payload;
-    },
-
-    signingOutErrorChanged: (state, action) => {
-      state.signingOutError = action.payload;
     },
   },
 
@@ -200,10 +195,6 @@ const authSlice = createSlice({
       }),
 });
 
-export const {
-  signingInErrorChanged,
-  signingOutErrorChanged,
-  signingUpErrorChanged,
-} = authSlice.actions;
+export const { signingUpErrorChanged } = authSlice.actions;
 
 export default authSlice.reducer;

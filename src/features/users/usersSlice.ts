@@ -62,13 +62,15 @@ export const followUser = createAsyncThunk<
     const data = await usersAPI.follow(id);
     if (data.resultCode === ResultCodes.success) {
     } else if (data.resultCode === ResultCodes.error) {
-      rejectWithValue(data.messages[0]);
+      return rejectWithValue(data.messages[0]);
     } else {
-      rejectWithValue('Unknown result code');
+      return rejectWithValue('Unknown result code');
     }
   } catch (e) {
     const error = e as AxiosError;
-    rejectWithValue(error.response?.statusText || 'Unable to follow user');
+    return rejectWithValue(
+      error.response?.statusText || 'Unable to follow user'
+    );
   }
 });
 
@@ -81,13 +83,15 @@ export const unfollowUser = createAsyncThunk<
     const data = await usersAPI.unfollow(id);
     if (data.resultCode === ResultCodes.success) {
     } else if (data.resultCode === ResultCodes.error) {
-      rejectWithValue(data.messages[0]);
+      return rejectWithValue(data.messages[0]);
     } else {
-      rejectWithValue('Unknown result code');
+      return rejectWithValue('Unknown result code');
     }
   } catch (e) {
     const error = e as AxiosError;
-    rejectWithValue(error.response?.statusText || 'Unable to unfollow user');
+    return rejectWithValue(
+      error.response?.statusText || 'Unable to unfollow user'
+    );
   }
 });
 
@@ -103,14 +107,6 @@ const usersSlice = createSlice({
     },
     filterChanged: (state, { payload }) => {
       state.filter = payload;
-    },
-
-    fetchingErrorChanged: (state, { payload }) => {
-      state.fetchingError = payload;
-    },
-
-    followingErrorChanged: (state, { payload }) => {
-      state.followingError = payload;
     },
   },
   extraReducers: (builder) =>
@@ -168,12 +164,7 @@ const usersSlice = createSlice({
       }),
 });
 
-export const {
-  currentPageChanged,
-  filterChanged,
-  pageSizeChanged,
-  followingErrorChanged,
-  fetchingErrorChanged,
-} = usersSlice.actions;
+export const { currentPageChanged, filterChanged, pageSizeChanged } =
+  usersSlice.actions;
 
 export default usersSlice.reducer;

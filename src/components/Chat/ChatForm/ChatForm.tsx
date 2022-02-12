@@ -14,14 +14,14 @@ export const ChatForm: React.FC = () => {
   const [value, setValue] = useState('');
   const textareaRef = useRef<null | HTMLTextAreaElement>(null);
 
-  const connectingError = useAppSelector((state) => state.chat.connectingError);
+  const error = useAppSelector((state) => state.chat.error);
 
   const inputChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
   };
 
   const send = (message: string) => {
-    if (!connectingError) {
+    if (!error) {
       if (message.trim() !== '') sendMessage(message);
       setValue('');
     }
@@ -43,7 +43,7 @@ export const ChatForm: React.FC = () => {
     <form className={styles.form}>
       <TextArea
         ref={textareaRef}
-        disabled={!!connectingError}
+        disabled={!!error}
         className={styles.textarea}
         placeholder="Type your message . . ."
         autoSize={{ minRows: 1, maxRows: 6 }}
@@ -52,7 +52,7 @@ export const ChatForm: React.FC = () => {
         onPressEnter={enterHandler}
       />
       <Button
-        disabled={!!connectingError}
+        disabled={!!error}
         className={styles.send}
         shape="circle"
         icon={<SendOutlined />}

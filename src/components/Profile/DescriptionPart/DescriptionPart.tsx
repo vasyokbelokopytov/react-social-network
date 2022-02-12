@@ -1,18 +1,18 @@
 import React from 'react';
 
 import { Tabs, Typography } from 'antd';
-import { UserContacts } from '../../app/types';
+import { UserContacts } from '../../../app/types';
 
 const { TabPane } = Tabs;
 
-type PropsType = {
+interface Props {
   isLookingForAJob: boolean;
   jobDescription: string | null;
   contacts: UserContacts;
   aboutMe: string | null;
-};
+}
 
-export const DescriptionPart: React.FC<PropsType> = ({
+export const DescriptionPart: React.FC<Props> = ({
   contacts,
   isLookingForAJob,
   jobDescription,
