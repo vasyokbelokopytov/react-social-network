@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Button, message, Space, Upload } from 'antd';
+import { Avatar, message, Space, Upload } from 'antd';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 
-import { followUser, unfollowUser } from '../../../features/users/usersSlice';
 import { useErrorMessage } from '../../../app/hooks/useErrorMessage';
 import { updateAvatar } from '../../../features/profile/profileSlice';
 
@@ -11,27 +10,15 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined';
 
 import styles from './AvatarPart.module.css';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks/redux';
+import { FollowButton } from './FollowButton';
 
-type PropsType = {
+interface Props {
   userId: number | null;
   photo: string | null;
   isOwner: boolean;
-};
+}
 
-export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
-  const isAuth = useAppSelector((state) => state.auth.isAuth);
-  const isFollowed = useAppSelector((state) => state.profile.followingStatus);
-  const followingStatusError = useAppSelector(
-    (state) => state.profile.followingStatusError
-  );
-
-  const usersInFollowingProcess = useAppSelector(
-    (state) => state.users.usersInFollowingProcess
-  );
-  const subscriptionError = useAppSelector(
-    (state) => state.users.followingError
-  );
-
+export const AvatarPart: React.FC<Props> = ({ photo, isOwner, userId }) => {
   const isAvatarUpdating = useAppSelector(
     (state) => state.profile.isAvatarUpdating
   );
@@ -39,17 +26,9 @@ export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
     (state) => state.profile.avatarUpdatingError
   );
 
-  const [isFollowing, setIsFollowing] = useState(() =>
-    userId ? usersInFollowingProcess.includes(userId) : false
-  );
-
   const [isUploadVisible, setIsUploadVisible] = useState(false);
 
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    setIsFollowing(userId ? usersInFollowingProcess.includes(userId) : false);
-  }, [isFollowed, userId, usersInFollowingProcess]);
 
   useEffect(() => {
     if (!avatarUpdatingError && !isAvatarUpdating) {
@@ -57,17 +36,7 @@ export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
     }
   }, [avatarUpdatingError, isAvatarUpdating]);
 
-  useErrorMessage(subscriptionError);
-  useErrorMessage(followingStatusError);
   useErrorMessage(avatarUpdatingError);
-
-  const subscriptionHandler = () => {
-    if (isFollowed && userId) {
-      dispatch(unfollowUser(+userId));
-    } else if (!isFollowed && userId) {
-      dispatch(followUser(+userId));
-    }
-  };
 
   const beforeUpload = (file: File) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -87,7 +56,7 @@ export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
   };
 
   const mouseOverHandler = () => {
-    if (!isAvatarUpdating) {
+    if (!isAvatarUpdating && isOwner) {
       setIsUploadVisible(true);
     }
   };
@@ -128,16 +97,7 @@ export const AvatarPart: React.FC<PropsType> = ({ photo, isOwner, userId }) => {
         ></Avatar>
       </div>
 
-      {isAuth && !isOwner && !followingStatusError && (
-        <Button
-          type="primary"
-          block
-          onClick={subscriptionHandler}
-          loading={isFollowing}
-        >
-          {isFollowed ? 'Unfollow' : 'Follow'}
-        </Button>
-      )}
+      <FollowButton isOwner={isOwner} userId={userId} />
     </Space>
   );
 };
