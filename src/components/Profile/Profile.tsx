@@ -2,7 +2,6 @@ import { Card } from 'antd';
 import React, { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
-import { useOwnerRedirect } from '../../app/hooks/useOwnerRedirect';
 import {
   errorsCleared,
   fetchFollowingStatus,
@@ -22,7 +21,6 @@ import { TitlePart } from './TitlePart/TitlePart';
 import { ProfileError } from './ProfileError';
 
 export const Profile: React.FC = () => {
-  useOwnerRedirect();
   const isAuth = useAppSelector((state) => state.auth.isAuth);
   const profile = useAppSelector((state) => state.profile.profile);
   const isProfileFetching = useAppSelector(

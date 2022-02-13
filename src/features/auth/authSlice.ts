@@ -188,6 +188,13 @@ const authSlice = createSlice({
       })
       .addCase(signOut.fulfilled, (state) => {
         state.isSigningOut = false;
+        state.id = null;
+        state.email = null;
+        state.login = null;
+        state.profile = null;
+        state.status = null;
+        state.captcha = null;
+        state.isAuth = false;
       })
       .addCase(signOut.rejected, (state, { payload }) => {
         state.signingOutError = payload || null;

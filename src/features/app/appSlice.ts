@@ -23,8 +23,10 @@ export const init = createAsyncThunk<
   try {
     await Promise.all([dispatch(auth()).unwrap()]);
   } catch (e) {
-    const error = e as Error;
-    return rejectWithValue(error.message);
+    const error = e as string;
+    if (error !== 'You are not authorized') {
+      return rejectWithValue(error);
+    }
   }
 });
 

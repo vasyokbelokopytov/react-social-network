@@ -76,9 +76,9 @@ export const App: React.FC = () => {
               <ProtectedRoute path="/chat">
                 <Chat />
               </ProtectedRoute>
-              <Route path="/profile/:userId?">
+              <ProtectedRoute path="/profile/:userId?" allowWithParam="userId">
                 <Profile />
-              </Route>
+              </ProtectedRoute>
               <Route path="/users">
                 <Users />
               </Route>
