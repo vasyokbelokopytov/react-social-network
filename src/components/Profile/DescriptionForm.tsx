@@ -29,6 +29,7 @@ export const DescriptionForm: React.FC = () => {
 
   useEffect(() => {
     if (profile) setIsLookingForAJob(profile.lookingForAJob);
+    form.resetFields();
   }, [form, profile]);
 
   useErrorMessage(error);
