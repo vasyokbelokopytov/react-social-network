@@ -108,6 +108,11 @@ const usersSlice = createSlice({
     filterChanged: (state, { payload }) => {
       state.filter = payload;
     },
+
+    errorsCleared: (state) => {
+      state.fetchingError = null;
+      state.followingError = null;
+    },
   },
   extraReducers: (builder) =>
     builder
@@ -164,7 +169,11 @@ const usersSlice = createSlice({
       }),
 });
 
-export const { currentPageChanged, filterChanged, pageSizeChanged } =
-  usersSlice.actions;
+export const {
+  currentPageChanged,
+  filterChanged,
+  pageSizeChanged,
+  errorsCleared,
+} = usersSlice.actions;
 
 export default usersSlice.reducer;

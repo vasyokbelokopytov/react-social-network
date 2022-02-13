@@ -4,6 +4,7 @@ import { useParams } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../app/hooks/redux';
 import { useOwnerRedirect } from '../../app/hooks/useOwnerRedirect';
 import {
+  errorsCleared,
   fetchFollowingStatus,
   fetchProfile,
   fetchStatus,
@@ -61,6 +62,7 @@ export const Profile: React.FC = () => {
     return () => {
       dispatch(statusChanged(null));
       dispatch(profileChanged(null));
+      dispatch(errorsCleared());
     };
   }, [dispatch]);
 

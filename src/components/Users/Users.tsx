@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import {
   currentPageChanged,
+  errorsCleared,
   fetchUsers,
   filterChanged,
   pageSizeChanged,
@@ -41,6 +42,12 @@ export const Users: React.FC = () => {
     friend: BooleanParam,
     page: NumberParam,
     count: NumberParam,
+  });
+
+  useEffect(() => {
+    return () => {
+      dispatch(errorsCleared());
+    };
   });
 
   useEffect(() => {

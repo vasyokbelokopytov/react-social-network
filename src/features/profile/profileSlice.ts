@@ -185,6 +185,15 @@ const profileSlice = createSlice({
     isProfileEditingChanged: (state, { payload }) => {
       state.isProfileEditing = payload;
     },
+
+    errorsCleared: (state) => {
+      state.avatarUpdatingError = null;
+      state.statusFetchingError = null;
+      state.statusUpdatingError = null;
+      state.followingStatusError = null;
+      state.profileFetchingError = null;
+      state.profileUpdatingError = null;
+    },
   },
 
   extraReducers: (builder) =>
@@ -273,7 +282,11 @@ const profileSlice = createSlice({
       }),
 });
 
-export const { profileChanged, statusChanged, isProfileEditingChanged } =
-  profileSlice.actions;
+export const {
+  profileChanged,
+  statusChanged,
+  isProfileEditingChanged,
+  errorsCleared,
+} = profileSlice.actions;
 
 export default profileSlice.reducer;
